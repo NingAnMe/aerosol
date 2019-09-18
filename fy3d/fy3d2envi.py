@@ -1,13 +1,11 @@
 """
-aerosol的程序中，MODIS数据没有做日地距离修正，是否去除FY3D的日地距离修正
-aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
-aerosol的程序中，需要使用MODIS的5通道和32通道，FY3D中没有对应的通道
-FY3D的DEM数据集在使用的时候，是否需要除100，目前除了
+1、aerosol的程序中，MODIS数据在使用的时候没有做日地距离修正，是否去除FY3D的日地距离修正（通过GSISC的MODIS读取类确认的这个问题）
+2、aerosol的程序中，需要使用MODIS的5通道和32通道，FY3D中没有对应的通道
+3、aerosol程序中使用了cloudmask，对于couldmask程序，没有MODIS的5通道22通道27通道32通道33通道35通道
+    如果使用FY3D的cloudmask，需要将FY3D的cloudmask转为MODIS的数据格式和数值（这点需要支持）
+4、FY3D的GEO文件中的DEM数据使用
 
-
-在GSICS中，MODIS数据在使用的时候做了日地距离修正，但是FY3D的数据没有做
-在GSICS中，MODIS的Radiance转换到了FY3D的Radiance
-
+# ######aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
 """
 
 import os
