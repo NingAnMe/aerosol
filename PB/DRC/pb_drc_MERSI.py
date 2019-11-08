@@ -8,7 +8,7 @@ import h5py
 
 from PB.pb_io import attrs2dict
 from PB.pb_sat import planck_r2t
-from pb_drc_base import ReadL1
+from .pb_drc_base import ReadL1
 import numpy as np
 
 __description__ = 'MERSI传感器读取类'
@@ -1090,6 +1090,8 @@ class ReadMersiL1(ReadL1):
             data_pre = data_pre.astype(np.float32)
             data_pre[invalid_index] = np.nan
             data = data_pre / 100.
+            if 'FY3D' in self.satellite:
+                data[data > 180] -= 360
 
         return data
 
@@ -1162,6 +1164,8 @@ class ReadMersiL1(ReadL1):
             data_pre = data_pre.astype(np.float32)
             data_pre[invalid_index] = np.nan
             data = data_pre / 100.
+            if 'FY3D' in self.satellite:
+                data[data > 180] -= 360
 
         return data
 

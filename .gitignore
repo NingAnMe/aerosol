@@ -101,3 +101,6 @@ venv.bak/
 .mypy_cache/
 .idea
 /test_data/
+
+# fortran
+.o
