@@ -164,7 +164,7 @@ c --- Retrieve beginning element number
       keyindex = 1
       status=hdrgetkeyint(filename(1:len_name),keyname,keyindex,beg_ele)
       if( status.lt.0 ) beg_ele = 0
-      if( beg_ele.lt.0 .or. beg_ele.gt.1354) then
+      if( beg_ele.lt.0 .or. beg_ele.gt.2048) then
          call message( routine_name,
      &                 'FAILED: invalid beginning 1km element = ',
      &                 beg_ele, 2 )
@@ -176,7 +176,7 @@ c --- Retrieve number of elements to process
       keyindex = 1
       status=hdrgetkeyint(filename(1:len_name),keyname,keyindex,neles)
       if( status.lt.0 ) neles = -1
-      if( neles.lt.0 .or. neles.gt.1354) then
+      if( neles.lt.0 .or. neles.gt.2048) then
          call message( routine_name,
      &                 'FAILED: invalid number of samples/line = ',
      &                  neles, 2 )

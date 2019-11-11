@@ -250,7 +250,7 @@ c ...  Set up extraction parameters
       bandunits_geo(6) = 'deg'
       bandunits_geo(7) = 'm  '
       bandunits_geo(8) = '   '
-      
+
       status = mod04_get_angles(
      +                          cube,
      +                          geo_1km_lun,

@@ -139,10 +139,16 @@ def fy3d2modis_met(in_file, out_file, metadata_pickle):
     flag = data_loader.get_day_night_flag()
     flag[np.isnan(flag)] = 1
     flag[flag == 2] = 1  # Mix 设置为晚上
+
+    # MODIS和FY3的白天晚上好像是反的，在MODIS中，1是白天，0是晚上
+    idx0 = flag == 0
+    idx1 = flag == 1
+    flag[idx0] = 1
+    flag[idx1] = 0
+
     datas[:, 0] = flag.astype(np.int8).reshape(-1)
 
-    mirror = np.zeros((200, 1), dtype=np.int8)
-    mirror[mirror % 2 == 0] = 1
+    mirror = data_loader.get_mirror_side().reshape(-1).astype(np.int8)
     datas[:, 1] = mirror.reshape(-1)
 
     with open(metadata_pickle, 'rb') as f:
@@ -205,12 +211,12 @@ if __name__ == '__main__':
     metadatas_ = 'metadatas.pickle'
 
     indir = '../test_data/FY3D_MERSI'
+    outdir = '../test_data/fy3d_l2_test_input'
 
     l1_1000m = os.path.join(indir, 'FY3D_MERSI_GBAL_L1_20191022_1620_1000M_MS.HDF')
     l1_geo = os.path.join(indir, 'FY3D_MERSI_GBAL_L1_20191022_1620_GEO1K_MS.HDF')
     l1_couldmask = os.path.join(indir, 'FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_20191022_1620_1000M_MS.HDF')
 
-    outdir = '../test_data/fy3d_l2_test_input'
     l1_1000m_nevi = os.path.join(outdir, 'a1.17299.1910.1000m.hdr')
     fy3d2modis_1km(l1_1000m, l1_1000m_nevi, metadatas_)
 

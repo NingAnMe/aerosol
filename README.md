@@ -22,6 +22,10 @@ http://yangbaikal.blogspot.com/2017/10/modis35.html
 https://github.com/spectralpython/spectral/blob/master/spectral/io/envi.py
 ftp://ftp.ssec.wisc.edu/pub/eosdb/ancillary/
 
+### DEBUG 修改include/mod04.inc
+将`NUMCELLS`修改为`210`，大于sample / 10
+将`ISWATH`修改为`2100`，大于sample
+
 ### 测试aerosol.exe
 ```shell script
 # 必须进入文件目录，不能使用绝对路径

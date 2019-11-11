@@ -1268,6 +1268,25 @@ class ReadMersiL1(ReadL1):
 
         return data
 
+    def get_mirror_side(self):
+        data = None
+        if self.resolution == 1000:
+            satellite_type1 = ['FY3A', 'FY3B']
+            satellite_type2 = ['FY3C', 'FY3D']
+            if self.satellite in satellite_type1:
+                return
+            elif self.satellite in satellite_type2:
+                with h5py.File(self.in_file, 'r') as h5r:
+                    data_pre = h5r.get('/Calibration/Kmirror_Side')[:]
+            else:
+                raise ValueError(
+                    'Cant read this satellite`s data.: {}'.format(self.satellite))
+
+            # 过滤无效值
+            data = data_pre
+
+        return data
+
     def get_timestamp(self):
         """
         return from 1970-01-01 00:00:00 seconds
