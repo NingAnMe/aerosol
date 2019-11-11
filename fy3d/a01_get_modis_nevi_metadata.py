@@ -19,26 +19,29 @@ aid_dir = get_aid_path()
 in_dir = aid_dir
 out_dir = aid_dir
 
-filenames = ['a1.17299.1910.1000m.hdr',
-             'a1.17299.1910.geo.hdr',
-             'a1.17299.1910.mod35.hdr',
-             'a1.17299.1910.mod35qa.hdr',
-             'a1.17299.1910.met.hdr'
-             ]
 
-metadatas = {}
+def get_metadata():
+    filenames = ['a1.17299.1910.1000m.hdr',
+                 'a1.17299.1910.geo.hdr',
+                 'a1.17299.1910.mod35.hdr',
+                 'a1.17299.1910.mod35qa.hdr',
+                 'a1.17299.1910.met.hdr'
+                 ]
 
-for filename in filenames:
-    in_file = os.path.join(in_dir, filename)
-    print('hdr file: {}'.format(in_file))
+    metadatas = {}
 
-    metadata = envi.read_envi_header(in_file)
-    interleave = metadata.pop('interleave')
-    metadata.pop('description')
-    file_type = filename.split('.')[-2]
-    metadatas[file_type] = {'metadata': metadata, 'interleave': interleave}
+    for filename in filenames:
+        in_file = os.path.join(in_dir, filename)
+        print('hdr file: {}'.format(in_file))
 
-out_file = os.path.join(out_dir, 'metadatas.pickle')
+        metadata = envi.read_envi_header(in_file)
+        interleave = metadata.pop('interleave')
+        metadata.pop('description')
+        file_type = filename.split('.')[-2]
+        metadatas[file_type] = {'metadata': metadata, 'interleave': interleave}
 
-with open(out_file, 'wb') as fp:
-    pickle.dump(metadatas, fp)
+    out_file = os.path.join(out_dir, 'metadatas.pickle')
+
+    with open(out_file, 'wb') as fp:
+        pickle.dump(metadatas, fp)
+    return out_file
