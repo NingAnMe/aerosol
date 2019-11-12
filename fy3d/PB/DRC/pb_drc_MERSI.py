@@ -660,18 +660,19 @@ class ReadMersiL1(ReadL1):
                 k1 = self.get_k1()
                 k2 = self.get_k2()
 
+                # TODO 添加了校正
+                solar_zenith = self.get_solar_zenith()
+                scale = np.cos(np.deg2rad(solar_zenith))
                 # 逐个通道处理
                 for i in range(self.channels):
                     band = 'CH_{:02d}'.format(i + 1)
                     if i < 19:
-
                         pre_data = dn[band] ** 2 * k2[band] + dn[band] * \
                             k1[band] + k0[band]
-
                         idx = np.where(pre_data < 0.)
                         if len(idx[0] > 0):
                             pre_data[idx] = np.nan
-                        data[band] = pre_data / 100.
+                        data[band] = pre_data / 100. / scale
             else:
                 raise ValueError(
                     'Cant read this satellite`s data.: {}'.format(self.satellite))
