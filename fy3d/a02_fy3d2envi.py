@@ -7,16 +7,11 @@
 
 # ######aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
 """
-
-import os
-import sys
 import pickle
 
 import h5py
 from spectral.io import envi
 import numpy as np
-
-sys.path.append('..')
 
 from PB.DRC import ReadMersiL1
 
@@ -37,7 +32,7 @@ def fy3d2modis_1km(in_file, out_file, metadata_pickle):
         2: 'CH_04',
         3: 'CH_01',
         4: 'CH_02',
-        5: 'CH_05',  # 没有5通道的对应通道，暂时使用CH_05
+        5: 'CH_02',  # 没有5通道的对应通道，暂时使用CH_02
         6: 'CH_06',
         7: 'CH_07',
         8: 'CH_08',
@@ -116,9 +111,7 @@ def fy3d2modis_geo(in_file, out_file, metadata_pickle):
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)
-    print(metadatas.keys())
     metadata = metadatas.get('geo')
-    print(metadata.keys())
     _metadata = metadata.get('metadata')
     _interleave = metadata.get('interleave')
     envi.save_image(out_file, datas, metadata=_metadata, interleave=_interleave, force=True)
@@ -195,7 +188,7 @@ def fy3d2modis_cloudmask_qa(in_file, out_file, metadata_pickle):
 
     with h5py.File(in_file, 'r') as hdf:
         for i in range(10):
-            datas[:, i] = hdf.get('Cloud_Mask_QA')[i, :]
+            datas[:, :, i] = hdf.get('Cloud_Mask_QA')[i, :, :]
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)
@@ -204,30 +197,3 @@ def fy3d2modis_cloudmask_qa(in_file, out_file, metadata_pickle):
     _interleave = metadata.get('interleave')
     envi.save_image(out_file, datas, metadata=_metadata, interleave=_interleave, force=True)
     print('>>> {}'.format(out_file))
-
-
-if __name__ == '__main__':
-
-    metadatas_ = 'metadatas.pickle'
-
-    indir = '../test_data/FY3D_MERSI'
-    outdir = '../test_data/fy3d_l2_test_input'
-
-    l1_1000m = os.path.join(indir, 'FY3D_MERSI_GBAL_L1_20191022_1620_1000M_MS.HDF')
-    l1_geo = os.path.join(indir, 'FY3D_MERSI_GBAL_L1_20191022_1620_GEO1K_MS.HDF')
-    l1_couldmask = os.path.join(indir, 'FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_20191022_1620_1000M_MS.HDF')
-
-    l1_1000m_nevi = os.path.join(outdir, 'a1.17299.1910.1000m.hdr')
-    fy3d2modis_1km(l1_1000m, l1_1000m_nevi, metadatas_)
-
-    l1_geo_nevi = os.path.join(outdir, 'a1.17299.1910.geo.hdr')
-    fy3d2modis_geo(l1_1000m, l1_geo_nevi, metadatas_)
-
-    l1_met_nevi = os.path.join(outdir, 'a1.17299.1910.met.hdr')
-    fy3d2modis_met(l1_1000m, l1_met_nevi, metadatas_)
-
-    l1_cloudmask_nevi = os.path.join(outdir, 'a1.17299.1910.mod35.hdr')
-    fy3d2modis_cloudmask(l1_couldmask, l1_cloudmask_nevi, metadatas_)
-
-    l1_cloudmask_qa_nevi = os.path.join(outdir, 'a1.17299.1910.mod35qa.hdr')
-    fy3d2modis_cloudmask(l1_couldmask, l1_cloudmask_qa_nevi, metadatas_)

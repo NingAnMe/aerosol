@@ -45,3 +45,11 @@ install_dbvm.bash
 ```shell script
 dbvm_test.bash
 ```
+
+###
+```shell script
+cd imapp_modisl2/src/aerosol/src
+make clean
+make
+cp -f aerosol.exe ../../../bin/aerosol.exe
+```
