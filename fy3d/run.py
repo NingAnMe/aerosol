@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019/11/12 14:20
 # @Author  : NingAnMe <ninganme@qq.com>
+"""
+目前有问题：跑出来的结果。除了经纬度数据集，其他的数据集全部都是无效值
+1、将MODIS的数据，使用FY3D的格式化方法，转为envi格式，跑程序
+2、
+"""
 import argparse
 from datetime import datetime
 

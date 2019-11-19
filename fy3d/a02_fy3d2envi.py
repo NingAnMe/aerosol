@@ -54,24 +54,23 @@ def fy3d2modis_1km(in_file, out_file, metadata_pickle):
         32: 'CH_24',  # 没有32通道的对应通道，暂时使用CH_24
     }
 
-    data_map_reverse = {}
-    for k, v in data_map.items():
-        data_map_reverse[v] = k
-
     refs = data_loader.get_ref()
-    for channel in refs:
-        if channel not in data_map_reverse:
-            continue
-        _data = refs[channel]
-        _data[np.isnan(_data)] = -1
-        datas[:, :, data_map_reverse[channel] - 1] = _data
+    for k, v in data_map.items():
+        index = k
+        channel = data_map[k]
+        if channel in refs:
+            _data = refs[channel]
+            _data[np.isnan(_data)] = -1
+            datas[:, :, index - 1] = _data
+
     rads = data_loader.get_rad()
-    for channel in rads:
-        if channel not in data_map_reverse:
-            continue
-        _data = rads[channel]
-        _data[np.isnan(_data)] = -1
-        datas[:, :, data_map_reverse[channel] - 1] = _data
+    for k, v in data_map.items():
+        index = k
+        channel = data_map[k]
+        if channel in rads:
+            _data = rads[channel]
+            _data[np.isnan(_data)] = -1
+            datas[:, :, index - 1] = _data
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)
