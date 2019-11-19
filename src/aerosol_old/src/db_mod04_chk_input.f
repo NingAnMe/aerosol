@@ -92,7 +92,7 @@ c ...  to process.
       num_eles = beg_ele + neles - 1
       out_lines_10km = out_lines_1km / 10
       out_elements_10km = out_elements_1km  / 10
-
+      
       if (num_lines .gt. out_lines_1km .or. num_eles .gt. npixels)
      +  call message( 'mod06_chk_input',
      +    'Error: Number of lines or elements to process was .gt. max'

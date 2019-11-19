@@ -79,23 +79,7 @@ C  PORTED TO DIRECT BROADCAST VERSION BY:
 C  Kathy Strabala   Kathy.Strabala@ssec.wisc.edu
 C  University of Wisconsin-Madison/SSEC/CIMSS
 C  Phone:  608-263-8752
-
-C    Refl_1(4x,4y)   Storage buffer for band 1 reflectances.
-C    Refl_2(4x,4y)   Storage buffer for band 2 reflectances.
-C    Refl_3(2x,2y)   Storage buffer for band 3 reflectances.
-C    Refl_4(2x,2y)   Storage buffer for band 4 reflectances.
-C    Refl_5(2x,2y)   Storage buffer for band 5 reflectances.
-C    Refl_6(2x,2y)   Storage buffer for band 6 reflectances.
-C    Refl_7(2x,2y)   Storage buffer for band 7 reflectances.
-C    Refl_9(x,y)     Storage buffer for band 9 reflectances.
-C    Refl_12(x,y)    Storage buffer for band 12 reflectances.
-C    Refl_13(x,y)    Storage buffer for band 13 reflectances.
-C    Refl_16(x,y)    Storage buffer for band 16 reflectances.
-C    Refl_26(x,y)    Storage buffer for band 26 reflectances.
-C    Rad_20(x,y)     Storage buffer for band 20 radiances.
-C    Rad_31(x,y)     Storage buffer for band 31 radiances.
-C    Rad_32(x,y)     Storage buffer for band 32 radiances.
-
+C
 C!END
 C-----------------------------------------------------------------------
 C
@@ -514,7 +498,7 @@ c ...
 
            cloud_num=0
            Qcontrol=-1
-           IF(water.ge.100 .or. land.gt. 0) THEN
+           IF(water.ge.100 .or. land. gt. 0) THEN
              IF(WATER .GE. 100) THEN
 
               Set_Counter_Ocean=Set_Counter_Ocean+1
