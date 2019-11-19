@@ -1,0 +1,181 @@
+!-------------------------------------------------------------------------!
+!                                                                         !
+!  COPYRIGHT[copyright mark] 2000, Raytheon System Company, its vendors,  !
+!  and suppliers.  ALL RIGHTS RESERVED.                                   !
+!                                                                         !
+!-------------------------------------------------------------------------!
+!******************************************************************************
+! BEGIN_FILE_PROLOG:
+!     
+! FILENAME:
+!     
+!     PGS_SMF.f
+!     
+! DESCRIPTION:
+!     This file contains declarations needed by the FORTRAN SMF tools.
+!     
+! AUTHOR:
+!     Kelvin K. Wan / Applied Research Corp.
+!     
+! HISTORY:
+!     05-Jan-1995 KKW  Initial version
+!     21-Apr-1995 MES  Added file prolog.
+!                      Added status codes: 
+!                         PGSSMF_M_NOT_IN_CACHE
+!                         PGSSMF_W_NO_MESSAGE_FILE
+!     27-Sep-1995 MES Added return status codes: 
+!                         PGSSMF_M_NOT_ACTION
+!                         PGSSMF_M_REGULAR_ACTION
+!                         PGSSMF_M_EMAIL_ACTION
+!     25-Sep-1998 AT Added the macro definition (NCR ECSed18086)
+!                         PGS_SMF_MAX_MSG_SIZE
+!                         PGS_SMF_MAX_MSGBUF_SIZE
+!                         PGS_SMF_MAX_FUNC_SIZE
+!                         PGS_SMF_MAX_ACT_SIZE
+!                         PGS_SMF_MAX_MSGTAG_SIZE
+!     
+! END_FILE_PROLOG:
+!******************************************************************************
+
+        INTEGER PGS_TRUE           
+        PARAMETER (PGS_TRUE = 1)                
+        INTEGER PGS_FALSE          
+        PARAMETER (PGS_FALSE = 0)
+
+        INTEGER PGS_SMF_MAX_MSG_SIZE
+        PARAMETER (PGS_SMF_MAX_MSG_SIZE = 240)
+        INTEGER PGS_SMF_MAX_ACT_SIZE
+        PARAMETER (PGS_SMF_MAX_ACT_SIZE = 240)
+        INTEGER PGS_SMF_MAX_MSGBUF_SIZE
+        PARAMETER (PGS_SMF_MAX_MSGBUF_SIZE = 480)
+        INTEGER PGS_SMF_MAX_FUNC_SIZE
+        PARAMETER (PGS_SMF_MAX_FUNC_SIZE = 100)
+        INTEGER PGS_SMF_MAX_MSGTAG_SIZE
+        PARAMETER (PGS_SMF_MAX_MSGTAG_SIZE = 60)
+
+        INTEGER PGS_SMF_MASK_LEV_SH   
+        PARAMETER (PGS_SMF_MASK_LEV_SH = 0)
+        INTEGER PGS_SMF_MASK_LEV_S  
+        PARAMETER (PGS_SMF_MASK_LEV_S = 512)
+        INTEGER PGS_SMF_MASK_LEV_A           
+        PARAMETER (PGS_SMF_MASK_LEV_A = 1024)
+        INTEGER PGS_SMF_MASK_LEV_M             
+        PARAMETER (PGS_SMF_MASK_LEV_M = 1536)
+        INTEGER PGS_SMF_MASK_LEV_U          
+        PARAMETER (PGS_SMF_MASK_LEV_U = 2048)
+        INTEGER PGS_SMF_MASK_LEV_N           
+        PARAMETER (PGS_SMF_MASK_LEV_N = 2560)
+        INTEGER PGS_SMF_MASK_LEV_W           
+        PARAMETER (PGS_SMF_MASK_LEV_W = 3072)
+        INTEGER PGS_SMF_MASK_LEV_E           
+        PARAMETER (PGS_SMF_MASK_LEV_E = 3584)
+        INTEGER PGS_SMF_MASK_LEV_F            
+        PARAMETER (PGS_SMF_MASK_LEV_F = 4096)
+               
+        INTEGER PGS_S_SUCCESS   
+        PARAMETER (PGS_S_SUCCESS = 0)          
+        INTEGER PGS_SH_MEM_INIT
+        PARAMETER (PGS_SH_MEM_INIT = 247)
+        INTEGER PGS_SH_PC_DELETETMP
+        PARAMETER (PGS_SH_PC_DELETETMP = 248)
+        INTEGER PGS_SH_SMF_SENDRUNTIME
+        PARAMETER (PGS_SH_SMF_SENDRUNTIME = 249)
+        INTEGER PGS_SH_SMF_SENDLOGFILE
+        PARAMETER (PGS_SH_SMF_SENDLOGFILE = 250)
+        INTEGER PGS_SH_MEM_TERM
+        PARAMETER (PGS_SH_MEM_TERM = 251)
+        INTEGER PGS_SH_SMF_LOGFILE
+        PARAMETER (PGS_SH_SMF_LOGFILE = 252)
+        INTEGER PGS_SH_PC_LOADDATA
+        PARAMETER (PGS_SH_PC_LOADDATA = 253)
+        INTEGER PGS_SH_PC_ENV
+        PARAMETER (PGS_SH_PC_ENV = 254)
+        INTEGER PGS_SH_SMF_SHMMEM
+        PARAMETER (PGS_SH_SMF_SHMMEM = 255)
+        
+        INTEGER PGS_SH_SIGFPE
+        PARAMETER (PGS_SH_SIGFPE = 260)
+
+        INTEGER PGS_M_NULL
+        PARAMETER (PGS_M_NULL = 1797)
+        INTEGER PGS_M_UNIX
+        PARAMETER (PGS_M_UNIX = 1798)
+        INTEGER PGS_E_HDF
+        PARAMETER (PGS_E_HDF = 3847)
+        INTEGER PGS_E_UNIX
+        PARAMETER (PGS_E_UNIX = 3848)
+        INTEGER PGS_E_ECS
+        PARAMETER (PGS_E_ECS = 3849)
+        INTEGER PGS_E_TOOLKIT
+        PARAMETER (PGS_E_TOOLKIT = 3850)
+        INTEGER PGS_F_TOOLKIT
+        PARAMETER (PGS_F_TOOLKIT = 4363)
+        INTEGER PGS_E_GEO
+        PARAMETER (PGS_E_GEO = 3852)
+        INTEGER PGS_E_DCE
+        PARAMETER (PGS_E_DCE = 3853)
+        INTEGER PGS_E_MATH
+        PARAMETER (PGS_E_MATH = 3854)
+        INTEGER PGS_E_ENV
+        PARAMETER (PGS_E_ENV = 3855)       
+ 
+        INTEGER PGSSMF_E_UNDEFINED_CODE
+        PARAMETER (PGSSMF_E_UNDEFINED_CODE = 19968)
+        INTEGER PGSSMF_E_UNDEFINED_UNIXERRNO
+        PARAMETER (PGSSMF_E_UNDEFINED_UNIXERRNO = 19969)
+        INTEGER PGSSMF_E_CANT_OPEN_FILE
+        PARAMETER (PGSSMF_E_CANT_OPEN_FILE = 19970)
+        INTEGER PGSSMF_E_MSG_TOOLONG
+        PARAMETER (PGSSMF_E_MSG_TOOLONG = 19971)
+        INTEGER PGSSMF_E_SIGFPE
+        PARAMETER (PGSSMF_E_SIGFPE = 19972)
+        INTEGER PGSSMF_E_SIGACTION
+        PARAMETER (PGSSMF_E_SIGACTION = 19973)
+        INTEGER PGSSMF_E_INVALID_FORMAT
+        PARAMETER (PGSSMF_E_INVALID_FORMAT = 19974)
+        INTEGER PGSSMF_E_BAD_REFERENCE
+        PARAMETER (PGSSMF_E_BAD_REFERENCE = 19975)
+        INTEGER PGSSMF_E_INVALID_FILE
+        PARAMETER (PGSSMF_E_INVALID_FILE = 19976)
+        INTEGER PGSSMF_E_SENDFILE
+        PARAMETER (PGSSMF_E_SENDFILE = 19977)
+        INTEGER PGSSMF_E_NOMAIL_ADDR
+        PARAMETER (PGSSMF_E_NOMAIL_ADDR = 19978)
+        INTEGER PGSSMF_E_NONETRC_FILE
+        PARAMETER (PGSSMF_E_NONETRC_FILE = 19979)
+        INTEGER PGSSMF_E_NETRC_MODE
+        PARAMETER (PGSSMF_E_NETRC_MODE = 19980)
+        INTEGER PGSSMF_E_SENDMAIL
+        PARAMETER (PGSSMF_E_SENDMAIL = 19981)
+        INTEGER PGSSMF_E_REMOTEPATH
+        PARAMETER (PGSSMF_E_REMOTEPATH = 19982)
+        INTEGER PGSSMF_E_NOHOSTNAME
+        PARAMETER (PGSSMF_E_NOHOSTNAME = 19983)
+        INTEGER PGSSMF_E_LOGFILE
+        PARAMETER (PGSSMF_E_LOGFILE = 19984)
+        INTEGER PGSSMF_E_SENDRUNTIME_DATA
+        PARAMETER (PGSSMF_E_SENDRUNTIME_DATA = 19985)
+        INTEGER PGSSMF_E_SENDSTATUS_LOG
+        PARAMETER (PGSSMF_E_SENDSTATUS_LOG = 19986)
+
+        INTEGER PGSSMF_W_NOACTION
+        PARAMETER (PGSSMF_W_NOACTION = 19475)
+        INTEGER PGSSMF_W_SENDRUNTIME_DATA
+        PARAMETER (PGSSMF_W_SENDRUNTIME_DATA = 19476)
+        INTEGER PGSSMF_W_NO_CONSTRUCT_TAG
+        PARAMETER (PGSSMF_W_NO_CONSTRUCT_TAG = 19477)
+        INTEGER PGSSMF_W_NO_MESSAGE_FILE
+        PARAMETER (PGSSMF_W_NO_MESSAGE_FILE = 19478)
+
+        INTEGER PGSSMF_M_TRANSMIT_DISABLE
+        PARAMETER (PGSSMF_M_TRANSMIT_DISABLE = 17942)
+        INTEGER PGSSMF_M_UNIX
+        PARAMETER (PGSSMF_M_UNIX = 17943)
+        INTEGER PGSSMF_M_NOT_IN_CACHE 
+        PARAMETER (PGSSMF_M_NOT_IN_CACHE = 17944)
+        INTEGER PGSSMF_M_NOT_ACTION
+        PARAMETER (PGSSMF_M_NOT_ACTION = 17945)
+        INTEGER PGSSMF_M_REGULAR_ACTION
+        PARAMETER (PGSSMF_M_REGULAR_ACTION = 17946)
+        INTEGER PGSSMF_M_EMAIL_ACTION
+        PARAMETER (PGSSMF_M_EMAIL_ACTION = 17947)

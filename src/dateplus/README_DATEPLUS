@@ -1,0 +1,71 @@
+                    DATEPLUS INSTUCTIONS
+                            May 2007
+    ----------------------------------------------------------
+    The dateplus.exe utility is used by the IMAPP MODIS Level
+    2 software to convert dates from Julian to Gregorian and
+    back.  It is used by all of the ancillary data fetching
+    scripts and by some of the individual product scripts.
+
+    This tool was developed by Bob Orlando.  For more information,
+    please see his web site: http://www.orlandokuntao.com/dateplus_c.html
+
+    Executing the binary dateplus.exe provides this help:
+
+-----------------------------------------------------------------
+    Program ID: dateplus.exe (07-14-2004 / v2.2)
+
+      Usage: dateplus.exe -bHhJjSstuWwy
+               [-|+]adj_days [yyyymmdd [iterations]]
+
+                -b Basedate of today (or date specified)
+                   since Jan. 1, 0001
+                -H Detailed help (Documentation)
+                -h Summary help (Usage)
+                -J Julian (yyyyJJJ) to Gregorian (yyyymmdd)
+                -j Julian day (ddd) for today or yyyymmdd
+                -S Days since (or until) yyyymmdd (unsigned) 
+                -s Days since (or until) yyyymmdd **
+                -t Tomorrow's date
+                -u Basedate of today (or date specified)
+                   since Jan. 1, 1970--the Unix epoch date
+                   (essentially 'dateplus -s 19700101')
+                -W Date's long weekday
+                -w Date's weekday
+                   (-w or -W: see 'Exit Codes' below)
+                -y Yesterday's date
+
+      Notes: adj_days may be positive, negative, or unsigned.
+
+             adj_days by itself (without a yyyymmdd option
+             argument), yields an adjusted date that is
+             calculated from today's date.  For example,
+             'dateplus.exe 1' yields tomorrow's date).
+
+             yyyymmdd is an optional date from which an
+             adjusted date is calculated.
+
+             iterations generate multiple dates that are
+             adj_days apart (i.e. paydays).  This argument
+             is not allowed with the julian (-j) option.
+
+             yyyymmdd also may be a future date (useful for
+             determining the number of days until a certain
+             date).  Days future are reported negatively.
+             For example, run on October 27, 1997), the
+          ** 'dateplus -s 20000101' yielded -731, meaning
+             731 days until Y2K.  (For unsigned results use
+             -S option instead.)
+-----------------------------------------------------------------
+Platform requirements:
+
+   The dateplus.exe software has been compiled and executed
+   successfully on the following platforms:
+
+      The software has been compiled and executed successfully on the following
+       Linux operating systems using the g77 gnu (gcc 3.2.1) compiler:
+
+      Red Hat Linux x86 7.2, Red Hat Enterprise Linux 3 x86_64
+         and Linux CentOS 4.2 x86_64 on Sun Operton platforms
+
+There is a pre-compiled statically linked version in the /imapp_modisl2/bin
+directory.

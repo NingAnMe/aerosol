@@ -1,0 +1,557 @@
+C************************************************************************
+C			mapiL1A.inc utilities header file
+C			MODIS L1A DATA PRODUCT FORMAT			
+C				Version 2.2.0				
+C			HDF Object Identifier Constants			
+C************************************************************************
+
+C*********************************************************************
+C !F77-INC
+C
+C !Purpose:	Utilities header file containing constants for MOD 01
+C		product HDF object names.
+C
+C !Description: The Header file mapi.h is part of a larger software
+C              system called the MODIS Applications Programming Interface (API)
+C              Utility, abbreviated M-API.  The M-API Utility consists of
+C              subroutines which allow MODIS Science Team-supplied software
+C              to read in Level 1B radiance bands and write out output
+C              products and metadata to HDF files.  The functionality of the
+C              M-API is defined in the MODIS API User's Guide, Version 1,
+C              dated 4/3/95.
+C
+C	       The mapiL1A.h file contains macros for the specific
+C	       names of data objects contained in the MOD01 HDF file.
+C
+C
+C !Input Parameters: 
+C
+C     none.
+C
+C !Output Parameters: 
+C
+C     none.
+C
+C
+C !Revision History: 
+C       Revision 01.01 1996/01/31
+C       Qi Huang
+C       Defined IAW MOD01_L1A File Specification. 1995/10/18
+C
+C updated fshaw 1/14/97 
+C
+C Revision    1998/12/15
+C       Arvind Solanki
+C       Updated to match latest filespecs. (CCR443)
+C
+C !Team-unique Header: 
+C
+C !References and Credits: 
+C      This software is developed by the MODIS Science Data Support
+C      Team for the National Aeronautics and Space Administration,
+C      Goddard Space Flight Center, under contract NAS5-32373.
+C
+C      HDF portions developed at the National Center for Supercomputing
+C      Applications at the University of Illinois at Urbana-Champaign.
+C
+C !Design Notes: 
+C
+C !END
+C*********************************************************************
+C234567
+      CHARACTER  M01_PROD_ID*(*)
+      PARAMETER (M01_PROD_ID	= 'MOD01')
+
+C                                       OBSOLETE 
+C     CHARACTER  M01ORBITAL_NODE*(*) 
+C     PARAMETER (M01ORBITAL_NODE    =    'Orbital Node')
+
+      CHARACTER M01NUMBER_OF_SCANS*(*)
+      PARAMETER (M01NUMBER_OF_SCANS  =   'Number of Scans')
+
+      CHARACTER M01NUMBER_DAY_SCANS*(*)
+      PARAMETER (M01NUMBER_DAY_SCANS =   'Number of Day mode scans')
+
+      CHARACTER M01NUMBER_NIGHT_SCANS*(*)
+      PARAMETER (M01NUMBER_NIGHT_SCANS = 'Number of Night mode scans')
+
+      CHARACTER M01MAX_TOTAL_FRAMES*(*) 
+      PARAMETER (M01MAX_TOTAL_FRAMES   = 'Max Total Frames')
+
+      CHARACTER M01MAX_EARTH_FRAMES*(*) 
+      PARAMETER (M01MAX_EARTH_FRAMES =  'Max Earth Frames')
+
+      CHARACTER M01MAX_SD_FRAMES*(*)  
+      PARAMETER (M01MAX_SD_FRAMES =     'Max SD Frames')
+
+      CHARACTER M01MAX_SRCA_FRAMES*(*)    
+      PARAMETER (M01MAX_SRCA_FRAMES =   'Max SRCA Frames')
+
+      CHARACTER M01MAX_BB_FRAMES*(*)    
+      PARAMETER (M01MAX_BB_FRAMES  =    'Max BB Frames')
+
+      CHARACTER M01MAX_SV_FRAMES*(*)            
+      PARAMETER (M01MAX_SV_FRAMES  =    'Max SV Frames')
+
+      CHARACTER M01SCAN_TYPES*(*)  
+      PARAMETER (M01SCAN_TYPES  =       'Scan Types in product')
+      
+      CHARACTER M01SCAN_TYPES_IN_PROD*(*)  
+      PARAMETER (M01SCAN_TYPES_IN_PROD  = M01SCAN_TYPES)
+
+      CHARACTER M01INCOMPL_SCANS*(*)   
+      PARAMETER (M01INCOMPL_SCANS =     'Incomplete Scans')
+
+      CHARACTER M01MISSING_PACKETS*(*)  
+      PARAMETER (M01MISSING_PACKETS  =  'Missing Packets')
+
+      CHARACTER M01DISCARD_PACKETS*(*) 
+      PARAMETER (M01DISCARD_PACKETS  =  'Discarded packets')
+
+      CHARACTER M01PACKTS_BAD_CRC*(*)
+      PARAMETER (M01PACKTS_BAD_CRC  =   'Packets with bad CRC')
+
+
+C	SCAN-LEVEL METADATA
+
+      CHARACTER  M01SCAN_NUMBER*(*)
+      PARAMETER (M01SCAN_NUMBER   =     'Scan number')
+      CHARACTER  M01FRAME_COUNT_ARRAY*(*)		
+      PARAMETER (M01FRAME_COUNT_ARRAY = 'Frame count array')
+      CHARACTER  M01SCAN_TYPE*(*)		
+      PARAMETER (M01SCAN_TYPE	   =      'Scan Type')
+      CHARACTER  M01SD_START_TIME*(*)		
+      PARAMETER (M01SD_START_TIME   =   'SD start time')
+      CHARACTER  M01SRCA_START_TIME*(*)		
+      PARAMETER (M01SRCA_START_TIME   = 'SRCA start time')
+      CHARACTER  M01BB_START_TIME*(*)		
+      PARAMETER (M01BB_START_TIME   =   'BB start time')
+      CHARACTER  M01SV_START_TIME*(*)		
+      PARAMETER (M01SV_START_TIME   =   'SV start time')
+      CHARACTER  M01EV_START_TIME*(*)		
+      PARAMETER (M01EV_START_TIME   =   'EV start time')
+      CHARACTER  M01SRCA_CALIBRATION_MODE*(*)		
+      PARAMETER (M01SRCA_CALIBRATION_MODE = 'SRCA calibration mode')
+      CHARACTER  M01PACKET_SCAN_COUNT*(*)		
+      PARAMETER (M01PACKET_SCAN_COUNT = 'Packet scan count')
+      CHARACTER  M01CCSDS_APID*(*)		
+      PARAMETER (M01CCSDS_APID   = 'CCSDS Application Identifiers')
+      CHARACTER  M01PACKET_QL*(*)		
+      PARAMETER (M01PACKET_QL   = 'Packet expedited data flag')
+      CHARACTER  M01MIRROR_SIDE*(*)		
+      PARAMETER (M01MIRROR_SIDE   =    'Mirror side')
+      CHARACTER  M01SCAN_QUALITY_ARRAY*(*)		
+      PARAMETER (M01SCAN_QUALITY_ARRAY = 'Scan quality array')
+
+
+C	Pixel Quality Data 
+C	Earth sector Pixel quality 
+      CHARACTER  M01EV_PIX_QUAL*(*)
+      PARAMETER (M01EV_PIX_QUAL   = 'Earth sector Pixel quality')	
+
+C	SD sector Pixel quality 
+      CHARACTER  M01SD_PIX_QUAL*(*)
+      PARAMETER (M01SD_PIX_QUAL   = 'SD sector Pixel quality')	
+
+C	SRCA sector Pixel quality 
+      CHARACTER  M01SRCA_PIX_QUAL*(*)
+      PARAMETER (M01SRCA_PIX_QUAL = 'SRCA sector Pixel quality')	
+
+C	BB sector Pixel quality 
+      CHARACTER  M01BB_PIX_QUAL*(*)
+      PARAMETER (M01BB_PIX_QUAL   = 'BB sector Pixel quality')	
+
+C	SV sector Pixel quality 
+      CHARACTER  M01SV_PIX_QUAL*(*)
+      PARAMETER (M01SV_PIX_QUAL   = 'SV sector Pixel quality')	
+
+C	Pachet Data SDSs
+C	Bands 1 and 2 
+      CHARACTER  M01EV_250M*(*)
+      PARAMETER (M01EV_250M   = 'EV_250m')	
+
+C	Bands 3 through 7 
+      CHARACTER  M01EV_500M*(*)
+      PARAMETER (M01EV_500M   = 'EV_500m')	
+
+C	Bands 8 through 19 
+      CHARACTER  M01EV_1KM_DAY*(*)
+      PARAMETER (M01EV_1KM_DAY = 'EV_1km_day')	
+
+C	Bands 20 through 36 
+      CHARACTER  M01EV_1KM_NITE*(*)
+      PARAMETER (M01EV_1KM_NITE = 'EV_1km_night')	
+
+C	Bands 1 and 2 
+      CHARACTER  M01SD_250M*(*)
+      PARAMETER (M01SD_250M   = 'SD_250m')	
+
+C	Bands 3 through 7 
+      CHARACTER  M01SD_500M*(*)
+      PARAMETER (M01SD_500M   = 'SD_500m')	
+
+C	Bands 8 through 19 
+      CHARACTER  M01SD_1KM_DAY*(*)
+      PARAMETER (M01SD_1KM_DAY   = 'SD_1km_day')	
+ 
+C	Bands 20 through 36 
+      CHARACTER  M01SD_1KM_NITE*(*)
+      PARAMETER (M01SD_1KM_NITE   = 'SD_1km_night')	
+
+C	Bands 1 and 2 
+      CHARACTER  M01SRCA_250M*(*)
+      PARAMETER (M01SRCA_250M     = 'SRCA_250m')	
+
+C	Bands 3 through 7 
+      CHARACTER  M01SRCA_500M*(*)
+      PARAMETER (M01SRCA_500M     = 'SRCA_500m')	
+
+C	Bands 8 through 19 
+      CHARACTER  M01SRCA_1KM_DAY*(*)
+      PARAMETER (M01SRCA_1KM_DAY  = 'SRCA_1km_day')	
+
+C	Bands 20 through 36 
+      CHARACTER  M01SRCA_1KM_NITE*(*)
+      PARAMETER (M01SRCA_1KM_NITE = 'SRCA_1km_night')	
+
+C	Bands 1 and 2 
+      CHARACTER  M01BB_250M*(*)
+      PARAMETER (M01BB_250M     =   'BB_250m')	
+
+C	Bands 3 through 7 
+      CHARACTER  M01BB_500M*(*)
+      PARAMETER (M01BB_500M     = 'BB_500m')	
+
+C	Bands 8 through 19 
+      CHARACTER  M01BB_1KM_DAY*(*)
+      PARAMETER (M01BB_1KM_DAY  = 'BB_1km_day')	
+
+C	Bands 20 through 36 
+      CHARACTER  M01BB_1KM_NITE*(*)
+      PARAMETER (M01BB_1KM_NITE = 'BB_1km_night')	
+
+C	Bands 1 and 2 
+      CHARACTER  M01SV_250M*(*)
+      PARAMETER (M01SV_250M   = 'SV_250m')	
+
+C	Bands 3 through 7 
+      CHARACTER  M01SV_500M*(*)
+      PARAMETER (M01SV_500M       =  'SV_500m')
+
+C	Bands 8 through 19 
+      CHARACTER  M01SV_1KM_DAY*(*)
+      PARAMETER (M01SV_1KM_DAY    = 'SV_1km_day')	
+
+C	Bands 20 through 36 
+      CHARACTER  M01SV_1KM_NITE*(*)
+      PARAMETER (M01SV_1KM_NITE   = 'SV_1km_night')	
+
+C	FPA/AEM Config   
+      CHARACTER  M01FPA_AEM_CONFIG*(*)
+      PARAMETER (M01FPA_AEM_CONFIG  = 'fpa_aem_config')	
+
+C       Science State
+      CHARACTER  M01SCIENCE_STATE*(*)
+      PARAMETER (M01SCIENCE_STATE   = 'science_state')	
+
+C       Science Abnormal
+      CHARACTER  M01SCIENCE_ABNORM*(*)
+      PARAMETER (M01SCIENCE_ABNORM   = 'science_abnormal')	
+
+C	FPA DCR offset data 
+      CHARACTER  M01FPA_DCR_OFFST*(*), M01FPA_DCR_OFFSET*(*)
+      PARAMETER (M01FPA_DCR_OFFST   = 'fpa_dcr_offset')	
+      PARAMETER (M01FPA_DCR_OFFSET  =  M01FPA_DCR_OFFST)	
+
+C	Raw mirror encoder data 
+      CHARACTER  M01RAW_MIR_ENC*(*)
+      PARAMETER (M01RAW_MIR_ENC     = 'raw_mir_enc')	
+
+C	View Sector Start Definitions  
+      CHARACTER  M01RAW_VS_START*(*), M01RAW_VS_DEF*(*)
+      PARAMETER (M01RAW_VS_START   = 'raw_vs_def')	
+      PARAMETER (M01RAW_VS_DEF     =  M01RAW_VS_START) 
+
+C	View Sector Start Actuals
+      CHARACTER  M01RAW_VS_ACT*(*)
+      PARAMETER (M01RAW_VS_ACT     = 'raw_vs_act')	
+
+C	Sci Eng Data  
+      CHARACTER  M01RAW_SCI_ENG*(*)
+      PARAMETER (M01RAW_SCI_ENG    = 'raw_sci_eng')	
+
+C	Current/Prior HK Telem  
+      CHARACTER  M01RAW_HK_TELEM*(*)
+      PARAMETER (M01RAW_HK_TELEM   = 'raw_hk_telem')	
+
+C	Raw s/c ancill data 
+      CHARACTER  M01RAW_SC_ANCIL*(*)
+      PARAMETER (M01RAW_SC_ANCIL   = 'raw_sc_ancil')	
+
+C	Parameter Table   
+      CHARACTER  M01RAW_PARAM*(*)
+      PARAMETER (M01RAW_PARAM    = 'raw_param')	
+
+C	PV Gains
+      CHARACTER  M01RAW_PV_GAINS*(*)
+      PARAMETER (M01RAW_PV_GAINS = 'raw_pv_gains')	
+
+C	Eng. packet 1 data                OBSOLETE
+C	CHARACTER  M01RAW_ENG_PKT_1*(*)
+C	PARAMETER (M01RAW_ENG_PKT_1   = 'raw_eng_pkt_1')	
+
+C	Eng. packet 2 data                OBSOLETE
+C	CHARACTER  M01RAW_ENG_PKT_2*(*)
+C	PARAMETER (M01RAW_ENG_PKT_2   = 'raw_eng_pkt_2')	
+
+C	Mem. packet 1 data                OBSOLETE
+C	CHARACTER  M01RAW_MEM_PKT_1*(*)
+C	PARAMETER (M01RAW_MEM_PKT_1   = 'raw_mem_pkt_1')	
+
+C	Mem. packet 2 data                OBSOLETE
+C	CHARACTER  M01RAW_MEM_PKT_2*(*)
+C	PARAMETER (M01RAW_MEM_PKT_2   = 'raw_mem_pkt_2')	
+
+C	FAM Registration sample Delays               OBSOLETE
+C	CHARACTER  M01FAM_SAMP_DELAY*(*)
+C	PARAMETER (M01FAM_SAMP_DELAY   = 'fam_samp_delay')	
+
+C	CP Event Log                                 OBSOLETE
+C	CHARACTER  M01RAW_CP_EVENT*(*)
+C	PARAMETER (M01RAW_CP_EVENT   = 'raw_cp_event')	
+
+C	FR Event Log                                 OBSOLETE
+C	CHARACTER  M01RAW_FR_EVENT*(*)
+C	PARAMETER (M01RAW_FR_EVENT   = 'raw_fr_event')	
+
+C	Dump Request Info                            OBSOLETE
+C	CHARACTER  M01RAW_DUMP_REQ*(*)
+C	PARAMETER (M01RAW_DUMP_REQ   = 'raw_dump_req')	
+
+C	Dump Data                                    OBSOLETE
+C	CHARACTER  M01RAW_DUMP_DATA*(*)
+C	PARAMETER (M01RAW_DUMP_DATA   = 'raw_dump_data')	
+
+C	FPA Use                                      OBSOLETE
+C	CHARACTER  M01FPA_USE*(*)
+C	PARAMETER (M01FPA_USE = 'fpa_use')
+
+
+C       Current Ancillary Data
+      CHARACTER  M01CURR_SC_ANCIL_DATA*(*)
+      PARAMETER (M01CURR_SC_ANCIL_DATA = "Current S/C Ancillary Data")
+      CHARACTER  M01PACKET_HEADER*(*)
+      PARAMETER (M01PACKET_HEADER      = "PACKET_HEADER")
+      CHARACTER  M01TIME_STAMP*(*)
+      PARAMETER (M01TIME_STAMP	       = "TIME_STAMP")
+      CHARACTER  M01FLAG_BYTE*(*)
+      PARAMETER (M01FLAG_BYTE	       = "FLAG_BYTE")
+      CHARACTER  M01TIME_CONVERSION*(*)
+      PARAMETER (M01TIME_CONVERSION    = "TIME_CONVERSION")
+
+
+      CHARACTER  M01SC_POSITION_X*(*)
+      PARAMETER (M01SC_POSITION_X      = "S/C_POSITION_X")
+      CHARACTER  M01SC_POSITION_Y*(*)
+      PARAMETER (M01SC_POSITION_Y      = "S/C_POSITION_Y")
+      CHARACTER  M01SC_POSITION_Z*(*)
+      PARAMETER (M01SC_POSITION_Z      = "S/C_POSITION_Z")
+      CHARACTER  M01SC_VELOCITY_X*(*)
+      PARAMETER (M01SC_VELOCITY_X      = "S/C_VELOCITY_X")
+      CHARACTER  M01SC_VELOCITY_Y*(*)
+      PARAMETER (M01SC_VELOCITY_Y      = "S/C_VELOCITY_Y")
+      CHARACTER  M01SC_VELOCITY_Z*(*)
+      PARAMETER (M01SC_VELOCITY_Z      = "S/C_VELOCITY_Z")
+
+
+      CHARACTER  M01RESERVED_ANGLE_ROLL*(*)
+      PARAMETER (M01RESERVED_ANGLE_ROLL  = "RESERVED_ANGLE_ROLL")
+      CHARACTER  M01ATTITUDE_ANGLE_ROLL*(*)
+      PARAMETER (M01ATTITUDE_ANGLE_ROLL  = "ATTITUDE_ANGLE_ROLL")
+      CHARACTER  M01RESERVED_ANGLE_PITCH*(*)
+      PARAMETER (M01RESERVED_ANGLE_PITCH = "RESERVED_ANGLE_PITCH")
+      CHARACTER  M01ATTITUDE_ANGLE_PITCH*(*)
+      PARAMETER (M01ATTITUDE_ANGLE_PITCH = "ATTITUDE_ANGLE_PITCH")
+      CHARACTER  M01RESERVED_ANGLE_YAW*(*)
+      PARAMETER (M01RESERVED_ANGLE_YAW   = "RESERVED_ANGLE_YAW")
+      CHARACTER  M01ATTITUDE_ANGLE_YAW*(*)
+      PARAMETER (M01ATTITUDE_ANGLE_YAW   = "ATTITUDE_ANGLE_YAW")
+      CHARACTER  M01RESERVED_RATE_ROLL*(*)
+      PARAMETER (M01RESERVED_RATE_ROLL   = "RESERVED_RATE_ROLL")
+      CHARACTER  M01ATTITUDE_RATE_ROLL*(*)
+      PARAMETER (M01ATTITUDE_RATE_ROLL   = "ATTITUDE_RATE_ROLL")
+      CHARACTER  M01RESERVED_RATE_PITCH*(*)
+      PARAMETER (M01RESERVED_RATE_PITCH  = "RESERVED_RATE_PITCH")
+      CHARACTER  M01ATTITUDE_RATE_PITCH*(*)
+      PARAMETER (M01ATTITUDE_RATE_PITCH  = "ATTITUDE_RATE_PITCH")
+      CHARACTER  M01RESERVED_RATE_YAW*(*)
+      PARAMETER (M01RESERVED_RATE_YAW	 = "RESERVED_RATE_YAW")
+      CHARACTER  M01ATTITUDE_RATE_YAW*(*)
+      PARAMETER (M01ATTITUDE_RATE_YAW	 = "ATTITUDE_RATE_YAW")
+
+
+      CHARACTER  M01MAGNETIC_COIL_CURRENT_X*(*)
+      PARAMETER (M01MAGNETIC_COIL_CURRENT_X = "MAGNETIC_COIL_CURRENT_X")
+      CHARACTER  M01MAGNETIC_COIL_CURRENT_Y*(*)
+      PARAMETER (M01MAGNETIC_COIL_CURRENT_Y = "MAGNETIC_COIL_CURRENT_Y")
+      CHARACTER  M01MAGNETIC_COIL_CURRENT_Z*(*)
+      PARAMETER (M01MAGNETIC_COIL_CURRENT_Z = "MAGNETIC_COIL_CURRENT_Z")
+      CHARACTER  M01SOLAR_ARRAY_CURRENT*(*)
+      PARAMETER (M01SOLAR_ARRAY_CURRENT     = "SOLAR_ARRAY_CURRENT")
+      CHARACTER  M01SOLAR_POSITION_X*(*)
+      PARAMETER (M01SOLAR_POSITION_X	    = "SOLAR_POSITION_X")
+      CHARACTER  M01SOLAR_POSITION_Y*(*)
+      PARAMETER (M01SOLAR_POSITION_Y	    = "SOLAR_POSITION_Y")
+      CHARACTER  M01SOLAR_POSITION_Z*(*)
+      PARAMETER (M01SOLAR_POSITION_Z	    = "SOLAR_POSITION_Z")
+      CHARACTER  M01MOON_POSITION_X*(*)
+      PARAMETER (M01MOON_POSITION_X	    = "MOON_POSITION_X")
+      CHARACTER  M01MOON_POSITION_Y*(*)
+      PARAMETER (M01MOON_POSITION_Y	    = "MOON_POSITION_Y")
+      CHARACTER  M01MOON_POSITION_Z*(*)
+      PARAMETER (M01MOON_POSITION_Z	    = "MOON_POSITION_Z")
+
+
+C       Prior Ancillary Data
+      CHARACTER  M01PRIOR_SC_ANCIL_DATA*(*)
+      PARAMETER (M01PRIOR_SC_ANCIL_DATA = "Prior S/C Ancillary Data")
+      CHARACTER  M01COMMAND_PARAM*(*)
+      PARAMETER (M01COMMAND_PARAM	= "Command Parameters")
+      CHARACTER  M01SET_BB_HTR_TEMP*(*)
+      PARAMETER (M01SET_BB_HTR_TEMP	= "SET_BB_HTR_TEMP")
+      CHARACTER  M01SET_CP_OPER_MODE*(*)
+      PARAMETER (M01SET_CP_OPER_MODE	= "SET_CP_OPER_MODE")
+      CHARACTER  M01SET_FR_RATE*(*)
+      PARAMETER (M01SET_FR_RATE	        = "SET_FR_RATE")
+      CHARACTER  M01SET_FR_SCI_APID*(*)
+      PARAMETER (M01SET_FR_SCI_APID	= "SET_FR_SCI_APID")
+      CHARACTER  M01SET_SR_L10WX1*(*)
+      PARAMETER (M01SET_SR_L10WX1	= "SET_SR_L10WX1")
+      CHARACTER  M01SET_FR_PKT_TYPE*(*)
+      PARAMETER (M01SET_FR_PKT_TYPE	= "SET_FR_PKT_TYPE")
+
+
+      CHARACTER  M01SET_PVVIS_VCAL*(*)
+      PARAMETER (M01SET_PVVIS_VCAL	= "SET_PVVIS_VCAL")
+      CHARACTER  M01SET_PVNIR_VCAL*(*)
+      PARAMETER (M01SET_PVNIR_VCAL	= "SET_PVNIR_VCAL")
+      CHARACTER  M01SET_PVSM_ITWK_V*(*)
+      PARAMETER (M01SET_PVSM_ITWK_V	= "SET_PVSM_ITWK_V")
+      CHARACTER  M01SET_PVLW_ITWK_V*(*)
+      PARAMETER (M01SET_PVLW_ITWK_V	= "SET_PVLW_ITWK_V")
+      CHARACTER  M01SET_PVSM_VDET_V*(*)
+      PARAMETER (M01SET_PVSM_VDET_V	= "SET_PVSM_VDET_V")
+      CHARACTER  M01SET_PVLW_VDET_V*(*)
+      PARAMETER (M01SET_PVLW_VDET_V	= "SET_PVSM_VDET_V")
+
+
+      CHARACTER  M01SET_FR_ENG_APID*(*)
+      PARAMETER (M01SET_FR_ENG_APID	= "SET_FR_ENG_APID")
+      CHARACTER  M01SET_FR_L10WX2*(*)
+      PARAMETER (M01SET_FR_L10WX2	= "SET_FR_L10WX2")
+      CHARACTER  M01ENABLE_CP_IMOK*(*)
+      PARAMETER (M01ENABLE_CP_IMOK	= "ENABLE_CP_IMOK")
+      CHARACTER  M01SET_FR_BBRADTAB*(*)
+      PARAMETER (M01SET_FR_BBRADTAB	= "SET_FR_BBRADTAB")
+      CHARACTER  M01SET_FR_OFFSETTAB*(*)
+      PARAMETER (M01SET_FR_OFFSETTAB	= "SET_FR_OFFSETTAB")
+      CHARACTER  M01SET_FR_GAIN_TAB*(*)
+      PARAMETER (M01SET_FR_GAIN_TAB	= "SET_FR_GAIN_TAB")
+      CHARACTER  M01TEST_FR_BBRAD*(*)
+      PARAMETER (M01TEST_FR_BBRAD	= "TEST_FR_BBRAD")
+      CHARACTER  M01SET_FR_SCI_QLK*(*)
+      PARAMETER (M01SET_FR_SCI_QLK	= "SET_FR_SCI_QLK")
+      CHARACTER  M01SET_FR_SR_DELAY*(*)
+      PARAMETER (M01SET_FR_SR_DELAY	= "SET_FR_SR_DELAY")
+      CHARACTER  M01SET_FR_BB_DELAY*(*)
+      PARAMETER (M01SET_FR_BB_DELAY	= "SET_FR_BB_DELAY")
+      CHARACTER  M01SET_CP_TMF_BUS*(*)
+      PARAMETER (M01SET_CP_TMF_BUS	= "SET_CP_TMF_BUS")
+      CHARACTER  M01OPEN_DR_UL_LOCK*(*)
+      PARAMETER (M01OPEN_DR_UL_LOCK	= "OPEN_DR_UL_LOCK")
+      CHARACTER  M01SET_FR_SD_DELAY*(*)
+      PARAMETER (M01SET_FR_SD_DELAY	= "SET_FR_SD_DELAY")
+      CHARACTER  M01SET_FR_SP_DELAY*(*)
+      PARAMETER (M01SET_FR_SP_DELAY	= "SET_FR_SP_DELAY")
+      CHARACTER  M01SET_PV_MEM*(*)
+      PARAMETER (M01SET_PV_MEM	        = "SET_PV_MEM")
+      CHARACTER  M01SET_FR_ENG_QLK*(*)
+      PARAMETER (M01SET_FR_ENG_QLK	= "SET_FR_ENG_QLK")
+      CHARACTER  M01CP_SPARE*(*)
+      PARAMETER (M01CP_SPARE		= "CP_SPARE")
+      CHARACTER  M01SET_SR_3L10W*(*)
+      PARAMETER (M01SET_SR_3L10W	= "SET_SR_3L10W")
+      CHARACTER  M01SET_FR_ENC_DELTA*(*)
+      PARAMETER (M01SET_FR_ENC_DELTA	= "SET_FR_ENC_DELTA")
+      CHARACTER  M01SET_PVSMIR_ECAL*(*)
+      PARAMETER (M01SET_PVSMIR_ECAL	= "SET_PVSMIR_ECAL")
+      CHARACTER  M01SET_PVLW_ECAL*(*)
+      PARAMETER (M01SET_PVLW_ECAL	= "SET_PVLW_ECAL")
+
+
+      CHARACTER  M01TEST_FR_PCOFFSET*(*)
+      PARAMETER (M01TEST_FR_PCOFFSET	= "TEST_FR_PCOFFSET")
+      CHARACTER  M01TEST_FR_PVOFFSET*(*)
+      PARAMETER (M01TEST_FR_PVOFFSET	= "TEST_FR_PVOFFSET")
+      CHARACTER  M01TEST_FR_PVGAIN*(*)
+      PARAMETER (M01TEST_FR_PVGAIN	= "TEST_FR_PVGAIN")
+
+
+      CHARACTER  M01SET_PVVIS_NSTEP*(*)
+      PARAMETER (M01SET_PVVIS_NSTEP	= "SET_PVVIS_NSTEP")
+      CHARACTER  M01SET_PVNIR_NSTEP*(*)
+      PARAMETER (M01SET_PVNIR_NSTEP	= "SET_PVNIR_NSTEP")
+      CHARACTER  M01SET_PVSM_NSTEP*(*)
+      PARAMETER (M01SET_PVSM_NSTEP	= "SET_PVSM_NSTEP")
+      CHARACTER  M01SET_PVLW_NSTEP*(*)
+      PARAMETER (M01SET_PVLW_NSTEP	= "SET_PVLW_NSTEP")
+
+
+      CHARACTER  M01SET_FR_EA_DELAY*(*)
+      PARAMETER (M01SET_FR_EA_DELAY	= "SET_FR_EA_DELAY")
+      CHARACTER  M01SET_PVSMIR_CSUB*(*)
+      PARAMETER (M01SET_PVSMIR_CSUB	= "SET_PVSMIR_CSUB")
+      CHARACTER  M01SET_PVLW_CSUB*(*)
+      PARAMETER (M01SET_PVLW_CSUB	= "SET_PVLW_CSUB")
+      CHARACTER  M01SET_DR_SVD_UL*(*)
+      PARAMETER (M01SET_DR_SVD_UL	= "SET_DR_SVD_UL")
+      CHARACTER  M01SET_DR_NAD_UL*(*)
+      PARAMETER (M01SET_DR_NAD_UL	= "SET_DR_NAD_UL")
+      CHARACTER  M01SET_DR_SDD_UL*(*)
+      PARAMETER (M01SET_DR_SDD_UL	= "SET_DR_SDD_UL")
+      CHARACTER  M01SET_DR_SDD_FS*(*)
+      PARAMETER (M01SET_DR_SDD_FS	= "SET_DR_SDD_FS")
+      CHARACTER  M01SET_FR_PV_DCRCMP*(*)
+      PARAMETER (M01SET_FR_PV_DCRCMP	= "SET_FR_PV_DCRCMP")
+      CHARACTER  M01SET_FR_PC_DCRCMP*(*)
+      PARAMETER (M01SET_FR_PC_DCRCMP	= "SET_FR_PC_DCRCMP")
+      CHARACTER  M01FR_SPARE_1*(*)
+      PARAMETER (M01FR_SPARE_1	        = "FR_SPARE_1")
+      CHARACTER  M01FR_SPARE_2*(*)
+      PARAMETER (M01FR_SPARE_2	        = "FR_SPARE_2")
+      CHARACTER  M01SET_SR_SIPD_HTR*(*)
+      PARAMETER (M01SET_SR_SIPD_HTR	= "SET_SR_SIPD_HTR")
+      CHARACTER  M01SET_SR_SIS_FB*(*)
+      PARAMETER (M01SET_SR_SIS_FB	= "SET_SR_SIS_FB")
+      CHARACTER  M01SET_SR_LOV_SHDN*(*)
+      PARAMETER (M01SET_SR_LOV_SHDN	= "SET_SR_LOV_SHDN")
+      CHARACTER  M01SET_SR_LAMPLEVEL*(*)
+      PARAMETER (M01SET_SR_LAMPLEVEL	= "SET_SR_LAMPLEVEL")
+      CHARACTER  M01SET_SR_LAMPS*(*)
+      PARAMETER (M01SET_SR_LAMPS	= "SET_SR_LAMPS")
+      CHARACTER  M01SET_CP_LOGSTATE*(*)
+      PARAMETER (M01SET_CP_LOGSTATE	= "SET_CP_LOGSTATE")
+      CHARACTER  M01SET_FR_LOGSTATE*(*)
+      PARAMETER (M01SET_FR_LOGSTATE	= "SET_FR_LOGSTATE")
+      CHARACTER  M01SET_SR_IR_SRC*(*)
+      PARAMETER (M01SET_SR_IR_SRC	= "SET_SR_IR_SRC")
+      CHARACTER  M01FR_SPARE_3*(*)
+      PARAMETER (M01FR_SPARE_3	        = "FR_SPARE_3")
+      CHARACTER  M01SET_SR_LIWX1*(*)
+      PARAMETER (M01SET_SR_LIWX1	= "SET_SR_L1WX1")
+      CHARACTER  M01SET_PVNIR_ECAL*(*)
+      PARAMETER (M01SET_PVNIR_ECAL	= "SET_PVNIR_ECAL")
+      CHARACTER  M01SET_FR_SCIABNORM*(*)
+      PARAMETER (M01SET_FR_SCIABNORM	= "SET_FR_SCIABNORM")
+      CHARACTER  M01FILL_BITS*(*)
+      PARAMETER (M01FILL_BITS		= "FILL_BITS")

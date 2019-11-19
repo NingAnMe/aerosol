@@ -1,0 +1,41 @@
+Please read the following explanation of the use of FORTRAN include files with 
+the Toolkit.
+
+In order to provide the FORTRAN and C user of the PGS toolkit with similar 
+functionality, FORTRAN include files were created and are found 
+in the $PGSHOME/include directory. These include files allow the following 
+features to be supported in the toolkit:
+
+    *   PGS Toolkit status message information required to support the Fortran  
+        bindings can be delivered in files which are separated by functionality;
+        this allows Fortran code to directly incorporate specific files         
+        according to the Toolkit functionality required. 
+    *   Easier maintenance of status message information since    
+        only the INCLUDE file gets modified during smfcompile operations (i.e., 
+        user code is not updated by Toolkit functionality) 
+    *   Uniqueness of status codes; seed values used to generate  
+        status codes for INCLUDE files are guaranteed not to conflict with any  
+        other status codes in the ECS.
+    *   The same mechanism is used for many different languages,   
+        reducing inconsistencies for those groups using more than one language.
+ 
+The FORTRAN INCLUDE statement requires the full path to a file referenced in 
+the statement. The toolkit user has two options in using these include files:
+
+Option 1. Create a symbolic link from a symbolic directory
+          <compile_dir>/include to $PGSHOME/include, where <compile_dir>
+          means the directory in which the science software is compiled:
+     
+          ln -s $PGSHOME/include <compile_dir>/include
+    
+          In order for certain toolkit functions to work, the toolkit user must 
+          include statements of the following form in his/her code:
+     
+          INCLUDE 'include/PGS_TD.f'
+  
+   
+Option 2. Copy the needed include files to <compile_dir>. Then the INCLUDE  
+          statement would be of the form:
+     
+          INCLUDE 'PGS_TD.f'
+
