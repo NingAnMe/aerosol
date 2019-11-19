@@ -1,0 +1,392 @@
+            INSTRUCTIONS FOR EXECUTING THE IMAPP MODIS AEROSOL
+              STANDALONE SOFTWARE FOR DIRECT BROADCAST
+                            October 2011
+             No changes were made to the software, since MODIS_L2_V2.1
+                    only to this documentation.
+    ----------------------------------------------------------
+     This software should be executed by the main IMAPP MODIS
+     Level 2 processing script (scripts/modis_level2.csh). The
+     instructions for this are available in the top level IMAPP
+     MODIS Level 2 README file.
+
+     If you do not wish to use the automated script then
+     this file describes the procedure to run the aerosol software 
+     individual executable (aerosol.exe).  Please read the 
+     top level MODIS Level 2 00README file which contains information
+     about the entire MODIS Level 2 package prior to reading this 
+     aerosol specific file. 
+     --------------------------------------------------------
+
+     This file contains instructions for creating the MODIS
+     aerosol product, which consists of these 6 arrays at a 
+     resolution of 10x10 1 km MODIS pixels for daytime only
+     scenes.
+
+         Latitude
+         Longitude
+         Optical_Depth_Land_And_Ocean - 
+            AOT at 0.55 micron for both ocean (best) and land (corrected)
+         Optical_Depth_Ratio_Small_Land_And_Ocean -
+            Ratio of small mode optical depth at 0.55 micron
+         Corrected_Optical_Depth_Land  (3 bands) - 
+            Corrected optical thickness at 0.47, 0.55, and 0.66 micron
+         Effective_Optical_Depth_Average_Ocean (7 bands) -
+            AOT at seven bands for average solution at .47, .55, .66, 
+            .86, 1.2, 1.6 and 2.1 micron
+
+     A detailed description of the contents of the output files
+     can be found in theAerosol_Output_Description.txt located within 
+     the imapp_modisl2/doc directory.
+
+     The product relies on the configuration file (aerosol/src/aerosol_only.cfg)
+     for input and output file information. The file can be edited
+     for each individual scene or can be used as part of an automated
+     script (see modis_level2.csh in the imapp_modisl2/scripts directory).
+
+     For a description of the algorithm, please see:
+         Algorithm for Remote Sensing of Tropospheric Aerosol from
+          MODIS: Collection 5.  Algorithm Theoretical Basis Document,
+          November 2006.
+          http://modis-atmos.gsfc.nasa.gov/_docs/MOD04:MYD04_ATBD_C005_rev1.pdf
+         Levy, R. C., L. A. Remer, and O. Dubovik, 2007: Global 
+          aerosol optical properties and application to Moderate 
+          Resolution Imaging Spectroradiometer aerosol retrieval 
+          over land. J. Geophys. Res., 112, D13210.
+          http://modis-atmos.gsfc.nasa.gov/reference/docs/Levy_et_al._Optical_Properties_(2007).pdf
+         Levy, R. C., L. Remer, S. Mattoo, E. Vermote, and Y. J. Kaufman, 
+          2007: Second-generation algorithm for retrieving aerosol 
+          properties over land from MODIS spectral reflectance. 
+          J. Geophys. Res., 112, D13211. 
+          http://modis-atmos.gsfc.nasa.gov/reference/docs/Levy_et_al._MODIS_algorithm_(2007).pdf
+         Chu, D. A., Y. J. Kaufman, G. Zibordi, J-D Chern,  J-M Mao, 
+           C. Li, H. B. Holben, Global Monitoring of Air Pollution over 
+           Land from EOS-Terra MODIS, J. Geophys. Res., 108(D21), 4661, 
+           doi: 10.1029/2002JD003179, 2003.
+         Chu, D. A., Y. J. Kaufman, C. Ichoku, L. A. Remer, D, Tanre, 
+           B. N. Holben, Validation of MODIS aerosol optical depth retrieval 
+           over land, Geophys. Res. Lett., 29(12), doi:10.1029/2001GL013205, 
+           2002.
+         Ichoku C., D. A. Chu, S. Mattoo, Y. J. Kaufman, L. A. Remer, 
+           D. Tanre, Ilya Slutsker, B. N. Holben, A Spatio-Temporal 
+           approach for global validation and analysis of MODIS aerosol 
+         Remer, L. A., Y. J. Kaufman, D. Tanre, C. Ichoku, S. Mattoo, 
+           R. Levy, D. A. Chu, B. N. Holben, J. V. Martins, R.-R. Li, 
+           Validation of MODIS aerosol retrieval over ocean, Geosphy. 
+           Res. Lett., MOD 3, 1-4, 2002.
+         Remer, L. A., Y. J. Kaufman, D. Tanre, S. Mattoo, D. A. Chu, 
+           J. V. Martins, R-R. Li, C. Ichoku, R. C. Levy, R. G. Kleidman, 
+           T. F. Eck, E. Vermote, & B. N. Holben, 2004:  The MODIS Aerosol 
+           Algorithm, Products and Validation. Accepted to the Journal of
+           Atmospheric Sciences.
+
+     A detailed description of the contents of the output files
+     can be found in each binary output header file or in 
+     the Aerosol_Output_Description.txt located within the 
+     imapp_modisl2/doc directory.  Each of the binary output
+     14 parameters are 4 byte float arrays.  
+
+     A script which produces an image of the MODIS aerosol optical 
+     depth product from the output HDF file given the chosen output
+     image file size is included as part of the imapp_modisl2 release 
+     (imapp_modisl2/scripts/make_mclite_images.sh).  
+
+--------------------------------------------------------------------------
+
+Instructions for running the MODIS aerosol production software
+
+Platform requirements:
+
+   The MODIS aserosol software has been compiled and executed 
+   successfully on the following platforms:
+
+      The software has been compiled and executed successfully on the following
+       Linux operating systems using the g77 gnu (gcc 3.2.1) compiler:
+
+      Red Hat Linux x86 7.2, Red Hat Enterprise Linux 3 x86_64
+         and Linux CentOS 4.2 x86_64 on Sun Operton platforms
+
+Ancillary data requirements:
+      This distribution contains all ancillary data required to successfully
+      run the pre-configured test.  However, for processing real time MODIS
+      direct broadcast data, you will want to use real time files
+      (data descriptions below) which can be fetched from:
+
+      ftp://ftp.ssec.wisc.edu/pub/eosdb/ancillary/
+
+      This site contains the entire record of ancillary data files
+      covering the lifetimes of the Aqua and Terra missions.
+
+      The aerosol processing software uses the global data assimilation 
+      system (gdas) analysis GRIB files, or the forecast GFS files (gfs) 
+      and either the TOVS global ozone GRIB file (yymmdd.grb) or TOAST 
+      global ozone GRIB file (TOAST16_yymmdd.GRB) as inputs.
+      For more information on ancillary data, please see the 
+      ftp://ftp.ssec.wisc.edu/pub/eosdb/ancillary/00README_ANCILLARY.txt
+      file.
+
+Software Requirements:
+
+   (1) The ancillary data can be automatically identified and
+       transferred by using the ancillary scripts located within
+       the /imapp_modisl2/scripts directory. These scripts require 
+       the LOCAL_ANC_DIR (the local ancillary directory that you 
+       want the data to be downloaded to) and the REMOTE_ANC_DIR 
+       (the remote FTP ancillary data directory that you wish to 
+       download data from) environmental variables to be set 
+       prior to execution.  These scripts use the ncftpget utility 
+       to fetch the data.  One version of ncftpget that has been 
+       tested on the supported platforms is included in the 
+       /imapp_modisl2/bin directory.  
+       
+       The scripts used are:
+          Fetch the matching GDAS or GFS GRIB forecast files to the MODIS
+          input L1B time.
+           get_anc_gdas_gfs.csh date time
+                  where
+              date is the required date (yyyyddd)
+              time is the required time (hhmm)
+        
+          Fetch the closest Toast Ozone GRIB file
+           get_anc_toast_ozone.csh date
+                  where
+              date is the required date (yyyyddd)
+
+          Or if the date is prior to 1 April 2005,
+          fetch the closest TOVS Ozone GRIB file
+           get_anc_tovs_ozone.csh date date (yyyyddd)
+                  where
+              date is the required date (yyyyddd)
+
+       Once you have the gdas/gfs and ozone files locally, you need
+       to extract the native GRIB file into binary 
+       fields. These extraction .csh scripts are located within the 
+       /imapp_modisl2/bin directory.  The wgrib utility
+       performs the extraction of the GRIB files and is called from 
+       within these scripts:
+
+            extract_ncep_gdas1.csh gdas1file outputfilename
+
+                      and
+
+            extract_tovs_ozone.csh ozone_file outfile
+            
+                where ozone_file is either the tovs or toast grib file   
+
+       A version of wgrib that has been statically linked and tested on the
+       supported platforms in located in the /imapp_modisl2/bin directory.
+       
+   (2) The L1B data must be extracted into binary .img and .hdr
+       files.  These binary files are used as input to the aerosol
+       software.
+
+       This is done through executing the flatfile software, whose
+       binary executables are located within the /imapp_modisl2/bin
+       directory.
+
+       The flatfile software is executed as follows:
+
+Routine Name                 Input         Platform    Output data
+-----------                ----------      --------    -----------
+modis_extract_1km.exe    L1b 1km hdf file  SatName  1km flat file and header
+                                                         file
+modis_extract_met.exe    L1b 1km hdf file  SatName  Scan based meta file and
+                                                         header file
+modis_extract_hkm.exe    L1b 500m hdf file  SatName  500m flat file and header
+                                                         file
+modis_extract_qkm.exe    L1b 250m hdf file  SatName  250m flat file and header
+                                                         file
+modis_extract_geo.exe    L1b geo. hdf file  SatName  Geolocation flat file and
+                                                         header file
+
+   (3) The cloud mask binary (.img) and header files (.hdr) need 
+       to be available.  These are created using the cloudmask
+       executable and setting the output file type to 1 or 3.
+       Please see the README_CLOUDMASK file located within the 
+       /imapp_modisl2/src/cloudmask directory.  The binary and
+       header files (<prefix>.mod35.img, <prefix>.mod35qa.img,
+       <prefix>.mod35.hdr and <prefix>.mod35qa.hdr) are used as 
+       input to the aerosol software.
+
+
+Installation:
+   (1) Download the full IMAPP Level 2 package from:
+
+        http://cimss.ssec.wisc.edu/imapp/
+
+       and upack the tar file as descibed in the README file
+       that accompanies the software release.
+
+
+   (2) Build the executables, if you choose to.  Statically linked
+       binary executables tested on the supported platforms are located 
+       within the imapp_modisl2/bin directory.  A make file for the
+       aerosol software is located in the /imapp_modisl2/src/aerosol/src
+       directory.  It will attempt to use standard compilers for
+       detected platforms to build the executables.  To use this
+       make file, within the imapp_modisl2/src/aerosol/src directory,
+       type make.  This will attempt to build the executable, aerosol.exe,
+       in the same directory.
+
+       To build other executables, please see the README files that
+       are located with each inidividual software unit located in the
+       imapp_modisl2/src directory.
+       
+Run:
+
+   (1) Again, you will need to have the ancillary data extracted into
+       binary form, the L1B files extracted into binary form, and the
+       cloudmask binary files ready as input.  For more information,
+       please see the software requirements section above.
+
+       Once these binary files are ready, fill out the input/output
+       information including the full data paths, in the aerosol_only.cfg 
+       file located within the imapp_modisl2/src/aerosol/src directory.  
+       There is another configuration file that exists in the 
+       imapp_modisl2/config directory (aerosol.cfg) that is used with the 
+       automated processing script run_modis_aerosol.csh which is
+       called by modis_level2.csh.  The aerosol.cfg script has pre-set
+       placeholders which are dynamically filled during run time.
+       This script will not work as an input file to aerosol.exe
+       in this standalone execution.  You should fill in the 
+       input and output file information in the aerosol_only.cfg file.
+
+       The static coefficient file names are set in the aerosol_only.cfg
+       file.  These files are located in the aerosol/coefficients
+       directory and statically linked into the imapp_modisl2/coeff
+       directory.  You should set the path to these coefficient
+       files in the aerosol_only.cfg file.
+
+       The coefficient files are:
+
+         aerosol_land_map.v2
+         big_v1c1.dat.v2
+         big_v2c1.dat.v5
+         big_v3c1.dat.v2
+         lookup_land_w0466.v1
+         lookup_land_w0553.v1
+         lookup_land_w0644.v1
+         lookup_land_w2119.v1
+         mod04ocean.in.v1
+         small_v1c1.dat.v2
+         small_v2c1.dat.v3
+         small_v3c1.dat.v2
+      
+   
+   (2) To use the preconfigured test Terra data set, follow the 
+       instructions in the main top level 00README file
+       to unpack the test input and output data sets. You may
+       choose to unpack them into the imapp_modisl2/input_data
+       directory.  This will unpack all of the required input 
+       files needed to create the MODIS level2 IMAPP aerosol
+       products:
+
+          t1.11302.1935.1000m.hdf    -  Terra MODIS 1km L1B input file
+          t1.11302.1935.250m.hdf     -  Terra MODIS 250m L1B input file
+          t1.11302.1935.500m.hdf     -  Terra MODIS 500m L1B input file
+          t1.11302.1935.geo.hdf      -  Terra MODIS 1km geolocation file
+          gdas1.PGrbF00.111029.18z   -  Global model analysis grib file 
+          TOAST16_111029.GRB         -  Total ozone global grib file
+
+       Follow the instructions to run the flatfile extractors, the
+       ancillary data extractors and the cloud mask to get the 
+       inputs needed for the aerosol production software.  You must 
+       then modify the aerosol_only.cfg file to point to these inputs.  
+       To use the test data set, you will need to extract these 
+       files into binary and header files:
+
+       t1.11302.1935.1000m.hdr
+          MODIS extracted Level 1B 1km header file 
+       t1.11302.1935.1000m.img
+          MODIS extracted Level 1B 1km binary image file 
+       t1.11302.1935.250m.hdr
+          MODIS extracted Level 1B 250m header file
+       t1.11302.1935.250m.img
+          MODIS extracted Level 1B 250m binary image file
+       t1.11302.1935.500m.hdr
+          MODIS extracted Level 1B 500m header file 
+       t1.11302.1935.500m.img
+          MODIS extracted Level 1B 500m binary image file
+       t1.11302.1935.geo.hdr
+          MODIS extracted geolocation header file
+       t1.11302.1935.geo.img
+          MODIS extracted geolocation binary image file
+       t1.11302.1935.met.hdr 
+          MODIS extracted Level 1B met header file
+       t1.11302.1935.met.img
+          MODIS extracted Level 1B met binary image file (scan type and mirror side info)
+       gdas1.PGrbF00..bin
+          Global model analysis binary grid fields extracted from grib file 
+       TOAST16_111029.GRB.bin  
+          Total ozone binary grid field extracted from grib file
+       t1.11302.1935.mod35.hdr     - Cloud mask header file
+       t1.11302.1935.mod35.img     - Cloud mask binary image file
+       t1.11302.1935.mod35qa.hdr   - Cloud mask QA header file
+       t1.11302.1935.mod35qa.img   - Cloud mask QA binary image file
+
+   (3) Once you have modified the aerosol_only.cfg file you are
+       ready to run the software.  Make sure you have set the correct
+       file and path names, including paths to the coefficient files.
+       Create a run directory at the same 
+       level as aerosol/src, i.e., imapp_modisl2/src/aerosol/run and                   copy the aerosol.exe and the aerosol_only.cfg file into it.
+       The following shows how to execute the aerosol retrieval software:
+
+            Usage: aerosol.exe cfgname sat_name month
+              where
+            cfgname: name of the aserosol configuration file
+            sat_name: MODIS satellite platform name (Aqua or Terra)
+            month: numeric month (1-12) of dataset
+
+       For the test data set example you would type:
+
+             aerosol.exe aerosol_only.cfg Terra 10
+
+       The executable run using the input Terra test files will produce 
+       output files with the names and locations indicated in the
+       aerosol_only.cfg file.  For instance, the test output data
+       sets have these names:
+
+       t1.11302.1935.mod04.hdr     - Atmospheric aerosol header file
+       t1.11302.1935.mod04.img     - Atmospheric aerosol image file
+       t1.11302.1935.mod04debug.txt- Aerosol nadir statistics file
+
+Output file descriptions:
+       
+       See the Aerosol_Output_Description.txt file located within
+       the imapp_modisl2/doc directory.  The .hdr files will also 
+       contain output file format information.
+
+Verifying the aerosol direct broadcast product output.
+
+       The aerosol package includes both sample MOD04 HDF
+       output files along with an executable used to create it from the
+       mod04.img files (create_fake_mod04.exe).  There is a statcially 
+       compiled binary for the supported platforms located in the 
+       MODIS_L2_HOME/bin directory
+
+       To use the create_fake_mod04.exe software, the 1000m hdf
+       file will be used as an input to get lat/lon array values.
+
+        Usage: create_fake_mod04.exe <mod021km> <img file> <hdf file>
+          where <mod021km> - modis 1km L1B file
+          where <img file> - t1.11302.1935.img file for the mod04 image file
+          where <hdf file> - output hdf file
+
+       To use with the test data sets as an example, 
+       you would type:
+
+       create_fake_mod04.exe t1.11302.1935.1000m.hdf t1.11302.1935.mod04.img t1.11302.1935.mod04.hdf
+
+       Please note that the output hdf file is not intended to be
+       a reproduction of the official MOD04 aerosol HDF file. It is
+       nothing more than a file that contains enough information
+       for a viewer to display the data.  It also includes enough
+       information for the files to be compared using the 
+       HDF utility hdiff.  One statically compiled version for linux 
+       platforms is located in the imapp_modisl2/bin directory.
+
+       To use hdiff to compare files, you could use this command where 
+       the first file is the output file you just created, and the
+       second file is the benchmark file that you unpacked from the 
+       test input and output data file that accompanies this release:      
+
+        hdiff -b -S  t1.11302.1935.mod04.hdf  ../benchmark/t1.11302.1935.mod04.hdf
