@@ -153,7 +153,14 @@ c ... array arguments
      +     solar_zen(Buf_Size1,Buf_Size2), elev(Buf_Size1,Buf_Size2), 
      +     sens_azim(Buf_Size1,Buf_Size2), 
      +     solar_azim(Buf_Size1,Buf_Size2), 
-     +     rel_azim(Buf_Size1,Buf_Size2), 
+     +     rel_azim(Buf_Size1,Buf_Size2),
+     +     Refl_1_1km(Buf_Size1,Buf_Size2),
+     +     Refl_2_1km(Buf_Size1,Buf_Size2),
+     +     Refl_3_1km(Buf_Size1,Buf_Size2),
+     +     Refl_4_1km(Buf_Size1,Buf_Size2),
+     +     Refl_5_1km(Buf_Size1,Buf_Size2),
+     +     Refl_6_1km(Buf_Size1,Buf_Size2),
+     +     Refl_7_1km(Buf_Size1,Buf_Size2),
      +     Refl_1(4*Buf_Size1,4*Buf_Size2),
      +     Refl_2(4*Buf_Size1,4*Buf_Size2),
      +     Refl_3(2*Buf_Size1,2*Buf_Size2),
@@ -278,7 +285,7 @@ c ...  Set up extraction parameters
            call message('get_mod04_data:',
      +                  'FAILED - could not extract geolocation data',
      +                   0, 3 )
-           get_mod04_data = -1      
+           get_mod04_data = -1
        endif
 c ...............................................................
 c ...  Get radiance/reflectance data
@@ -286,16 +293,16 @@ c ...  Get radiance/reflectance data
      +         l1b_qkm_lun, datatype_1km, interleave_1km,
      +         resolution_1km, offset_1km, samples_1km, lines_1km,
      +         error_1km, bands_1km, bandnames_1km, bandunits_1km,
-     +         cube, Buf_Size1, Buf_Size2, Refl_1, Refl_2, Refl_3,
-     +         Refl_4, Refl_5, Refl_6, Refl_7, Refl_9, Refl_12,
+     +         cube, Buf_Size1, Buf_Size2, Refl_1_1km, Refl_2_1km, Refl_3_1km,
+     +         Refl_4_1km, Refl_5_1km, Refl_6_1km, Refl_7_1km, Refl_9, Refl_12,
      +         Refl_13, Refl_16, Refl_26, Rad_20, Rad_31, Rad_32,
      +         NUMSQ, Data_Size)
-
+        write( *, '(''Processing mod04_get_L1b # '',i4)' ) cube
        if( status.lt.0 ) then
            call message('get_mod04_data:',
      +                  'FAILED - could not extract L1B data',
      +                   0, 2 )
-           get_mod04_data = -1      
+           get_mod04_data = -1
        endif
 c ..................................................................
 
@@ -326,7 +333,6 @@ C
          Else
             x_cossza = 1.0/cossza
          End If
-
 C
 C Normalize 1-km bands to reflectance units
 C
@@ -375,6 +381,7 @@ c
             Refl_16(ip1,il1) = FV_L1B
             Refl_26(ip1,il1) = FV_L1B
          endif
+
 C
 C Loop over 500-m lines and pixels between 1-km footprints.
 C
@@ -389,6 +396,7 @@ C
                Refl_6(ip2,il2) = FV_L1B
                Refl_7(ip2,il2) = FV_L1B
 
+
             else if (abs(cossza) .LT. Zero_Eps) then
                Refl_3(ip2,il2) = FV_L1B
                Refl_4(ip2,il2) = FV_L1B
@@ -397,25 +405,25 @@ C
                Refl_7(ip2,il2) = FV_L1B
 
             else if (solar_zen(ip1,il1) .LT. SolZen_Threshold) then
-               if (abs((Refl_3(ip2,il2)-FV_L1B)/FV_L1B)
+               if (abs((Refl_3_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_3(ip2,il2) = x_cossza*Refl_3(ip2,il2)
+                  Refl_3(ip2,il2) = x_cossza*Refl_3_1km(ip1,il1)
                end if
-               if (abs((Refl_4(ip2,il2)-FV_L1B)/FV_L1B)
+               if (abs((Refl_4_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_4(ip2,il2) = x_cossza*Refl_4(ip2,il2)
+                  Refl_4(ip2,il2) = x_cossza*Refl_4_1km(ip1,il1)
                end if
-               if (abs((Refl_5(ip2,il2)-FV_L1B)/FV_L1B)
+               if (abs((Refl_5_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_5(ip2,il2) = x_cossza*Refl_5(ip2,il2)
+                  Refl_5(ip2,il2) = x_cossza*Refl_5_1km(ip1,il1)
                end if
-               if (abs((Refl_6(ip2,il2)-FV_L1B)/FV_L1B)
+               if (abs((Refl_6_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_6(ip2,il2) = x_cossza*Refl_6(ip2,il2)
+                  Refl_6(ip2,il2) = x_cossza*Refl_6_1km(ip1,il1)
                end if
-               if (abs((Refl_7(ip2,il2)-FV_L1B)/FV_L1B)
+               if (abs((Refl_7_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_7(ip2,il2) = x_cossza*Refl_7(ip2,il2)
+                  Refl_7(ip2,il2) = x_cossza*Refl_7_1km(ip1,il1)
                end if
             else
                Refl_3(ip2,il2) = FV_L1B
@@ -448,14 +456,14 @@ C
 
             else if (solar_zen(ip1,il1) .LT. SolZen_Threshold) then
 
-               if (abs((Refl_1(ip4,il4)-FV_L1B)/FV_L1B)
+               if (abs((Refl_1_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_1(ip4,il4) = x_cossza*Refl_1(ip4,il4)
+                  Refl_1(ip4,il4) = x_cossza*Refl_1_1km(ip1,il1)
                end if
 
-               if (abs((Refl_2(ip4,il4)-FV_L1B)/FV_L1B)
+               if (abs((Refl_2_1km(ip1,il1)-FV_L1B)/FV_L1B)
      &            .GT. Rel_Equality_Eps) then
-                  Refl_2(ip4,il4) = x_cossza*Refl_2(ip4,il4)
+                  Refl_2(ip4,il4) = x_cossza*Refl_2_1km(ip1,il1)
                end if
 
             else
@@ -472,14 +480,14 @@ c ... Get cloud mask data
       status = mod04_get_mask(mask_lun, mask_qa_lun,
      +        datat_mask, interl_mask, resol_mask, offset_mask,
      +        sampl_mask, lines_mask, bands_mask, bnames_mask,
-     +        cube, Buf_Size1, Buf_Size2, Buf_cldmsk, Buf_cldmsk_QA, 
+     +        cube, Buf_Size1, Buf_Size2, Buf_cldmsk, Buf_cldmsk_QA,
      +        Cloud, QA_Cloud)
-
+      write( *, '(''Processing mod04_get_mask  # '',i4)' ) cube
        if( status.lt.0 ) then
            call message('get_mod04_data:',
      +                  'FAILED - could not extract cloud mask data',
      +                   0, 2 )
-           get_mod04_data = -1      
+           get_mod04_data = -1
        endif
 
 c ... Get Cloud mask specific flags, 250 m and 500 m mask
@@ -494,7 +502,7 @@ c ...  and account for mis-registration
      +    Cloud_SpatVar_Flag)
 C
 C      Return Status flag
-
+      write( *, '(''Processing db_CldMsk_Info_MOD04  # '',i4)' ) cube
        get_mod04_data = 0
 
       end

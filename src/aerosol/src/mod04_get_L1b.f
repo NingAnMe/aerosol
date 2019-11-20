@@ -98,13 +98,13 @@ c ... array arguments
       integer       data_size(2)
       character*(*) interleave_1km,  bandnames_1km(*),
      +              bandunits_1km(*)
-      Real  Refl_1(4*Buf_Size1,4*Buf_Size2),
-     +      Refl_2(4*Buf_Size1,4*Buf_Size2),
-     +      Refl_3(2*Buf_Size1,2*Buf_Size2),
-     +      Refl_4(2*Buf_Size1,2*Buf_Size2),
-     +      Refl_5(2*Buf_Size1,2*Buf_Size2),
-     +      Refl_6(2*Buf_Size1,2*Buf_Size2),
-     +      Refl_7(2*Buf_Size1,2*Buf_Size2),
+      Real  Refl_1(Buf_Size1,Buf_Size2),
+     +      Refl_2(Buf_Size1,Buf_Size2),
+     +      Refl_3(Buf_Size1,Buf_Size2),
+     +      Refl_4(Buf_Size1,Buf_Size2),
+     +      Refl_5(Buf_Size1,Buf_Size2),
+     +      Refl_6(Buf_Size1,Buf_Size2),
+     +      Refl_7(Buf_Size1,Buf_Size2),
      +      Refl_9(Buf_Size1,Buf_Size2),
      +      Refl_12(Buf_Size1,Buf_Size2),
      +      Refl_13(Buf_Size1,Buf_Size2),
@@ -116,25 +116,25 @@ c ... array arguments
 
 c --- 250m file swath metadata
       integer	        datatype_250m
-      character*(4)     interleave_250m 
-      integer           resolution_250m 
+      character*(4)     interleave_250m
+      integer           resolution_250m
       real		error_250m
       integer	        offset_250m
       integer           samples_250m
-      integer           lines_250m  
-      integer           bands_250m 
+      integer           lines_250m
+      integer           bands_250m
       character*80      bandnames_250m(2)
       character*80      bandunits_250m(2)
 
 c --- 500m file swath metadata
       integer	        datatype_500m
-      character*(4)     interleave_500m 
-      integer           resolution_500m 
+      character*(4)     interleave_500m
+      integer           resolution_500m
       real		error_500m
       integer	        offset_500m
       integer           samples_500m
-      integer           lines_500m  
-      integer           bands_500m 
+      integer           lines_500m
+      integer           bands_500m
       character*80      bandnames_500m(7)
       character*80      bandunits_500m(7)
 
@@ -169,27 +169,18 @@ c --- internal variables
 
 c --- set inital function status to FAILED
       mod04_get_L1b = -1
-
+      debug = 3
 c ... Initialize output arrays
-      do i = 1 , Buf_Size2*4
-         do j = 1 , Buf_Size1*4
+
+      do i = 1 , Buf_Size2
+         do j = 1 , Buf_Size1
             Refl_1(j,i) = FV_L1B
             Refl_2(j,i) = FV_L1B
-         enddo
-      enddo
-            
-      do i = 1 , Buf_Size2*2
-         do j = 1 , Buf_Size1*2
             Refl_3(j,i) = FV_L1B
             Refl_4(j,i) = FV_L1B
             Refl_5(j,i) = FV_L1B
             Refl_6(j,i) = FV_L1B
             Refl_7(j,i) = FV_L1B
-         enddo
-      enddo
-            
-      do i = 1 , Buf_Size2
-         do j = 1 , Buf_Size1
             Refl_9(j,i) = FV_L1B
             Refl_12(j,i) = FV_L1B
             Refl_13(j,i) = FV_L1B
@@ -205,65 +196,55 @@ c ...   250 M DATA ................................................
 C     -----------------
 C     Read MODIS band 1
 C     -----------------
+
 c ... Initialize output variables
       data_size(1) = 0
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 16
+      req_resolution = 1
       req_bandname = '1'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*4
-      LineSize = Buf_Size2*4
-      datatype_250m = 4
-      interleave_250m = 'bil'
-      resolution_250m = 16 
-      error_250m = -1.0
-      offset_250m = 0
-      samples_250m = samples_1km * 4
-      lines_250m = lines_1km * 4
-      bands_250m = 2
-      bandnames_250m(1) = '1'
-      bandnames_250m(2) = '2'
-      bandunits_250m(1) = 'ref'
-      bandunits_250m(2) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
 c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_qkm_lun,
-     &				      datatype_250m,
-     &				      interleave_250m,
-     &				      resolution_250m,
-     &                                error_250m,
-     &				      offset_250m,
-     &				      samples_250m,
-     &				      lines_250m,
-     &				      bands_250m,
-     &				      bandnames_250m,
-     &				      bandunits_250m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v250m_buf,
-     &				      v250m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &          'Failed to extract 250m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 250m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v250m_flag(k) .eq. 0)
-     +               Refl_1(jj,ii) = v250m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_1(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -277,67 +258,56 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 16 
+      req_resolution = 1
       req_bandname = '2'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*4
-      LineSize = Buf_Size2*4
-      datatype_250m = 4
-      interleave_250m = 'bil'
-      resolution_250m = 16 
-      error_250m = -1.0
-      offset_250m = 0
-      samples_250m = samples_1km * 4
-      lines_250m = lines_1km * 4
-      bands_250m = 2
-      bandnames_250m(1) = '1'
-      bandnames_250m(2) = '2'
-      bandunits_250m(1) = 'ref'
-      bandunits_250m(2) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 250m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_qkm_lun,
-     &				      datatype_250m,
-     &				      interleave_250m,
-     &				      resolution_250m,
-     &                                error_250m,
-     &				      offset_250m,
-     &				      samples_250m,
-     &				      lines_250m,
-     &				      bands_250m,
-     &				      bandnames_250m,
-     &				      bandunits_250m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v250m_buf,
-     &				      v250m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &          'Failed to extract 250m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 250m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v250m_flag(k) .eq. 0)
-     +               Refl_2(jj,ii) = v250m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_2(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
 
 
 c ...   500 M DATA ................................................
-            
+
 C     -----------------
 C     Read MODIS band 3
 C     -----------------
@@ -347,70 +317,49 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 4
+      req_resolution = 1
       req_bandname = '3'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*2
-      LineSize = Buf_Size2*2
-      datatype_500m = 4
-      interleave_500m = 'bil'
-      resolution_500m = 4
-      error_500m = -1.0
-      offset_500m = 0
-      samples_500m = samples_1km * 2
-      lines_500m = lines_1km * 2
-      bands_500m = 7
-      bandnames_500m(1) = '1'
-      bandnames_500m(2) = '2'
-      bandnames_500m(3) = '3'
-      bandnames_500m(4) = '4'
-      bandnames_500m(5) = '5'
-      bandnames_500m(6) = '6'
-      bandnames_500m(7) = '7'
-      bandunits_500m(1) = 'ref'
-      bandunits_500m(2) = 'ref'
-      bandunits_500m(3) = 'ref'
-      bandunits_500m(4) = 'ref'
-      bandunits_500m(5) = 'ref'
-      bandunits_500m(6) = 'ref'
-      bandunits_500m(7) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 500m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_hkm_lun,
-     &				      datatype_500m,
-     &				      interleave_500m,
-     &				      resolution_500m,
-     &                                error_500m,
-     &				      offset_500m,
-     &				      samples_500m,
-     &				      lines_500m,
-     &				      bands_500m,
-     &				      bandnames_500m,
-     &				      bandunits_500m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v500m_buf,
-     &				      v500m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &          'Failed to extract 500m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 500m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v500m_flag(k) .eq. 0)
-     +               Refl_3(jj,ii) = v500m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_3(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -424,70 +373,49 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 4
+      req_resolution = 1
       req_bandname = '4'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*2
-      LineSize = Buf_Size2*2
-      datatype_500m = 4
-      interleave_500m = 'bil'
-      resolution_500m = 4
-      error_500m = -1.0
-      offset_500m = 0
-      samples_500m = samples_1km * 2
-      lines_500m = lines_1km * 2
-      bands_500m = 7
-      bandnames_500m(1) = '1'
-      bandnames_500m(2) = '2'
-      bandnames_500m(3) = '3'
-      bandnames_500m(4) = '4'
-      bandnames_500m(5) = '5'
-      bandnames_500m(6) = '6'
-      bandnames_500m(7) = '7'
-      bandunits_500m(1) = 'ref'
-      bandunits_500m(2) = 'ref'
-      bandunits_500m(3) = 'ref'
-      bandunits_500m(4) = 'ref'
-      bandunits_500m(5) = 'ref'
-      bandunits_500m(6) = 'ref'
-      bandunits_500m(7) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 500m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_hkm_lun,
-     &				      datatype_500m,
-     &				      interleave_500m,
-     &				      resolution_500m,
-     &                                error_500m,
-     &				      offset_500m,
-     &				      samples_500m,
-     &				      lines_500m,
-     &				      bands_500m,
-     &				      bandnames_500m,
-     &				      bandunits_500m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v500m_buf,
-     &				      v500m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &         'Failed to extract 500m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 500m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v500m_flag(k) .eq. 0)
-     +               Refl_4(jj,ii) = v500m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_4(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -502,70 +430,49 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 4
+      req_resolution = 1
       req_bandname = '5'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*2
-      LineSize = Buf_Size2*2
-      datatype_500m = 4
-      interleave_500m = 'bil'
-      resolution_500m = 4
-      error_500m = -1.0
-      offset_500m = 0
-      samples_500m = samples_1km * 2
-      lines_500m = lines_1km * 2
-      bands_500m = 7
-      bandnames_500m(1) = '1'
-      bandnames_500m(2) = '2'
-      bandnames_500m(3) = '3'
-      bandnames_500m(4) = '4'
-      bandnames_500m(5) = '5'
-      bandnames_500m(6) = '6'
-      bandnames_500m(7) = '7'
-      bandunits_500m(1) = 'ref'
-      bandunits_500m(2) = 'ref'
-      bandunits_500m(3) = 'ref'
-      bandunits_500m(4) = 'ref'
-      bandunits_500m(5) = 'ref'
-      bandunits_500m(6) = 'ref'
-      bandunits_500m(7) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 500m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_hkm_lun,
-     &				      datatype_500m,
-     &				      interleave_500m,
-     &				      resolution_500m,
-     &                                error_500m,
-     &				      offset_500m,
-     &				      samples_500m,
-     &				      lines_500m,
-     &				      bands_500m,
-     &				      bandnames_500m,
-     &				      bandunits_500m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v500m_buf,
-     &				      v500m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &         'Failed to extract 500m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 500m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v500m_flag(k) .eq. 0)
-     +               Refl_5(jj,ii) = v500m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_5(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -579,70 +486,49 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 4
+      req_resolution = 1
       req_bandname = '6'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*2
-      LineSize = Buf_Size2*2
-      datatype_500m = 4
-      interleave_500m = 'bil'
-      resolution_500m = 4
-      error_500m = -1.0
-      offset_500m = 0
-      samples_500m = samples_1km * 2
-      lines_500m = lines_1km * 2
-      bands_500m = 7
-      bandnames_500m(1) = '1'
-      bandnames_500m(2) = '2'
-      bandnames_500m(3) = '3'
-      bandnames_500m(4) = '4'
-      bandnames_500m(5) = '5'
-      bandnames_500m(6) = '6'
-      bandnames_500m(7) = '7'
-      bandunits_500m(1) = 'ref'
-      bandunits_500m(2) = 'ref'
-      bandunits_500m(3) = 'ref'
-      bandunits_500m(4) = 'ref'
-      bandunits_500m(5) = 'ref'
-      bandunits_500m(6) = 'ref'
-      bandunits_500m(7) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 500m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_hkm_lun,
-     &				      datatype_500m,
-     &				      interleave_500m,
-     &				      resolution_500m,
-     &                                error_500m,
-     &				      offset_500m,
-     &				      samples_500m,
-     &				      lines_500m,
-     &				      bands_500m,
-     &				      bandnames_500m,
-     &				      bandunits_500m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v500m_buf,
-     &				      v500m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &         'Failed to extract 500m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 500m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v500m_flag(k) .eq. 0)
-     +               Refl_6(jj,ii) = v500m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_6(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -656,70 +542,49 @@ c ... Initialize output variables
       data_size(2) = 0
 
 c ... Initialize input variables
-      req_resolution = 4
+      req_resolution = 1
       req_bandname = '7'
       req_bandunit = 'ref'
-      ElementSize = Buf_Size1*2
-      LineSize = Buf_Size2*2
-      datatype_500m = 4
-      interleave_500m = 'bil'
-      resolution_500m = 4
-      error_500m = -1.0
-      offset_500m = 0
-      samples_500m = samples_1km * 2
-      lines_500m = lines_1km * 2
-      bands_500m = 7
-      bandnames_500m(1) = '1'
-      bandnames_500m(2) = '2'
-      bandnames_500m(3) = '3'
-      bandnames_500m(4) = '4'
-      bandnames_500m(5) = '5'
-      bandnames_500m(6) = '6'
-      bandnames_500m(7) = '7'
-      bandunits_500m(1) = 'ref'
-      bandunits_500m(2) = 'ref'
-      bandunits_500m(3) = 'ref'
-      bandunits_500m(4) = 'ref'
-      bandunits_500m(5) = 'ref'
-      bandunits_500m(6) = 'ref'
-      bandunits_500m(7) = 'ref'
+      ElementSize = Buf_Size1
+      LineSize = Buf_Size2
 
-c --------- Read a 500m scan cube-s worth of data out of the granule
+c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
-     &				      l1b_hkm_lun,
-     &				      datatype_500m,
-     &				      interleave_500m,
-     &				      resolution_500m,
-     &                                error_500m,
-     &				      offset_500m,
-     &				      samples_500m,
-     &				      lines_500m,
-     &				      bands_500m,
-     &				      bandnames_500m,
-     &				      bandunits_500m,
+     &				      l1b_1km_lun,
+     &				      datatype_1km,
+     &				      interleave_1km,
+     &				      resolution_1km,
+     &                                error_1km,
+     &				      offset_1km,
+     &				      samples_1km,
+     &				      lines_1km,
+     &				      bands_1km,
+     &				      bandnames_1km,
+     &				      bandunits_1km,
      &				      ElementSize,
      &				      LineSize,
-     &				      v500m_buf,
-     &				      v500m_flag,
+     &				      v1km_buf,
+     &				      v1km_flag,
      &				      data_size(1),
      &				      data_size(2)
      &                               )
 
              if(status .lt.0 ) then
-               call message('mod04_get_L1b',
-     &         'Failed to extract 500m L1B data for band '//req_bandname
+                call message('mod04_get_L1b',
+     &           'Failed to extract 1km L1B data for band '//req_bandname
      &            ,0, 3 )
              endif
-c ---------- Place the data into the 500m holding arrays
+
+c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if (v500m_flag(k) .eq. 0)
-     +               Refl_7(jj,ii) = v500m_buf(k)
+                 if (v1km_flag(k) .eq. 0)
+     +               Refl_7(jj,ii) = v1km_buf(k)
                  k = k+1
                enddo
              enddo
@@ -743,7 +608,7 @@ c ... Initialize input variables
 
 c --------- Read a 1km scan cube-s worth of data out of the granule
             status = db_read_flat_file(
-     &			  	      cube,	 	
+     &			  	      cube,
      &				      req_resolution,
      &				      req_bandname,
      &				      req_bandunit,
@@ -951,7 +816,7 @@ c ---------- Place the data into the 1km holding arrays
              enddo
 
 C     ------------------
-C     Read MODIS band 16 
+C     Read MODIS band 16
 C     ------------------
 
 c ... Initialize output variables
@@ -1007,7 +872,7 @@ c ---------- Place the data into the 1km holding arrays
              enddo
 
 C     ------------------
-C     Read MODIS band 26 
+C     Read MODIS band 26
 C     ------------------
 
 c ... Initialize output variables
@@ -1063,7 +928,7 @@ c ---------- Place the data into the 1km holding arrays
              enddo
 
 C     ------------------
-C     Read MODIS band 20 
+C     Read MODIS band 20
 C     ------------------
 
 c ... Initialize output variables
@@ -1112,7 +977,7 @@ c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0 
+                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0
      +              .and. v1km_buf(k).lt.1000.0))
      +               Rad_20(jj,ii) = v1km_buf(k)
                  k = k+1
@@ -1120,7 +985,7 @@ c ---------- Place the data into the 1km holding arrays
              enddo
 
 C     ------------------
-C     Read MODIS band 31 
+C     Read MODIS band 31
 C     ------------------
 
 c ... Initialize output variables
@@ -1169,7 +1034,7 @@ c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0 
+                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0
      +              .and. v1km_buf(k).lt.1000.0))
      +               Rad_31(jj,ii) = v1km_buf(k)
                  k = k+1
@@ -1177,7 +1042,7 @@ c ---------- Place the data into the 1km holding arrays
              enddo
 
 C     ------------------
-C     Read MODIS band 32 
+C     Read MODIS band 32
 C     ------------------
 
 c ... Initialize output variables
@@ -1226,7 +1091,7 @@ c ---------- Place the data into the 1km holding arrays
              k = 1
              do ii = 1 , data_size(2)
                do jj = 1 , data_size(1)
-                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0 
+                 if ((v1km_flag(k) .eq. 0) .and. (v1km_buf(k).gt.0.0
      +              .and. v1km_buf(k).lt.1000.0))
      +               Rad_32(jj,ii) = v1km_buf(k)
                  k = k+1
@@ -1240,18 +1105,18 @@ c ------- debug statement
             write(h_output,'(15x,'' CONTEXT FOR 250 CUBE '',3I10)')cube,
      &              data_size(1), data_size(2)
          write(h_output,'(2x,'' vis250_band 1(.66um)'',/,40(10f10.6/))')
-     &              ((Refl_1(i,j),i=2780,2789),j=1,40)
+     &              ((Refl_1(i,j),i=696,705),j=1,40)
          write(h_output,'(2x,'' vis250_band 2(.87um)'',/,40(10f10.6/))')
-     &              ((Refl_2(i,j),i=2780,2789),j=1,40)
+     &              ((Refl_2(i,j),i=696,705),j=1,40)
       endif
 
           if (debug .gt. 3) then
             write(h_output,'(15x,'' CONTEXT FOR 500 CUBE '',3I10)')cube,
      &              data_size(1), data_size(2)
          write(h_output,'(2x,'' vis500_band 3(.66um)'',/,40(10f10.6/))')
-     &              ((Refl_3(i,j),i=1392,1411),j=1,20)
+     &              ((Refl_3(i,j),i=696,705),j=1,20)
          write(h_output,'(2x,'' vis250_band 7(.87um)'',/,40(10f10.6/))')
-     &              ((Refl_7(i,j),i=1392,1411),j=1,20)
+     &              ((Refl_7(i,j),i=696,705),j=1,20)
       endif
 
       if (debug .gt. 3) then

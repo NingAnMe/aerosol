@@ -5,6 +5,7 @@
 import os
 import gdal
 import argparse
+import numpy as np
 
 parse = argparse.ArgumentParser()
 parse.add_argument('in_dir')
@@ -26,3 +27,7 @@ for root, dirs, filenames in os.walk(in_dir):
             index = data > 0
             if index.any():
                 print('>>>>>>>>> {}'.format(infile))
+                print(np.where(index))
+                print(data[index])
+                print(index.sum())
+                print()

@@ -15,8 +15,8 @@ metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 
 
 def product_fy3d_aerosol(datetime_start: datetime = None, datetime_end: datetime = None, **kwargs):
-    in_dir = '/mnt/hgfs/Projects/imapp_modisl2/test_data/fy3d_in'
-    out_dir = '/mnt/hgfs/Projects/imapp_modisl2/test_data/fy3d_result'
+    in_dir = '/mnt/hgfs/Projects/imapp_fy3dl2/test_data/fy3d_in'
+    out_dir = '/mnt/hgfs/Projects/imapp_fy3dl2/test_data/fy3d_result'
     l1_1000m_filename = 'FY3D_MERSI_GBAL_L1_{yyyymmdd}_{hhmm}_1000M_MS.HDF'
     l1_geo_filename = 'FY3D_MERSI_GBAL_L1_{yyyymmdd}_{hhmm}_GEO1K_MS.HDF'
     l1_cloudmask_filename = 'FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_{yyyymmdd}_{hhmm}_1000M_MS.HDF'
