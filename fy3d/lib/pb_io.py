@@ -9,7 +9,6 @@ import h5py
 import numpy as np
 import time
 import yaml
-from configobj import ConfigObj
 from datetime import datetime
 
 
@@ -137,77 +136,6 @@ def attrs2dict(attrs):
     for k, v in list(attrs.items()):
         d[k] = v
     return d
-
-
-class Config(object):
-    """
-    加载配置文件
-    """
-
-    def __init__(self, config_file):
-        """
-        初始化
-        """
-        self.error = False
-
-        self.config_file = config_file  # config 文件路径
-        self.config_data = None  # 加载到的配置数据
-
-        # load config file
-        self.load_config_file()
-        # load config data
-        self.load_config_data()
-
-    def load_config_file(self):
-        """
-        尝试加载配置文件
-        :return:
-        """
-        try:
-            self.load_yaml_file()
-        except Exception:
-            self.load_cfg_file()
-        finally:
-            if len(self.config_data) == 0:
-                self.error = True
-                print("Load config file error: {}".format(self.config_file))
-
-    def load_yaml_file(self):
-        """
-        加载 yaml 文件内容
-        :return:
-        """
-        with open(self.config_file, 'r') as stream:
-            self.config_data = yaml.load(stream)
-
-    def load_cfg_file(self):
-        """
-        加载 config 文件内容
-        :return:
-        """
-        self.config_data = ConfigObj(self.config_file)
-
-    def load_config_data(self):
-        """
-        读取配置数据
-        :return:
-        """
-        self._load_config_data(self.config_data)
-
-    def _load_config_data(self, config_data, prefix=""):
-        """
-        读取配置数据，动态创建属性值
-        :return:
-        """
-        if self.error:
-            return
-        for k in config_data:
-            data = config_data[k]
-            attr = prefix + k.lower()
-            self.__dict__[attr] = data
-            if isinstance(data, dict):
-                next_prefix = attr + "_"
-                self._load_config_data(data, prefix=next_prefix)
 
 
 @contextmanager

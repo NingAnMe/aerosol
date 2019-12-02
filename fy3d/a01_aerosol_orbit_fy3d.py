@@ -14,7 +14,7 @@ aid_dir = get_aid_path()
 metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 
 
-def aerosol_orbit_fy3d(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp):
+def aerosol_orbit_fy3d(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_file):
     print("<<< l1_1000m      : {}".format(l1_1000m))
     print("<<< l1_cloudmask  : {}".format(l1_cloudmask))
     print("<<< l1_geo        : {}".format(l1_geo))
@@ -78,7 +78,7 @@ def aerosol_orbit_fy3d(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp)
     os.system(cmd)
     print('>>> success: {}'.format(out_dir_temp))
     return {
-                "data": {},
+                "data": {"aerosol": out_file},
                 "status": SUCCESS,
                 "statusInfo": {
                     "message": "完成",

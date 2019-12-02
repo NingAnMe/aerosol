@@ -13,7 +13,7 @@ import h5py
 from spectral.io import envi
 import numpy as np
 
-from .DRC import ReadMersiL1
+from .load_mersi import ReadMersiL1
 
 
 def fy3d2modis_1km(in_file, out_file, metadata_pickle):
@@ -54,12 +54,16 @@ def fy3d2modis_1km(in_file, out_file, metadata_pickle):
         32: 'CH_24',  # 没有32通道的对应通道，暂时使用CH_24
     }
 
+    # 日地距离校正
+    solar_zenith = data_loader.get_solar_zenith()
+    scale = np.cos(np.deg2rad(solar_zenith))
+
     refs = data_loader.get_ref()
     for k, v in data_map.items():
         index = k
         channel = data_map[k]
         if channel in refs:
-            _data = refs[channel]
+            _data = refs[channel] / scale  # 日地距离校正
             _data[np.isnan(_data)] = -1
             datas[:, :, index - 1] = _data
 
