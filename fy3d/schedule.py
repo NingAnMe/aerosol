@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 import os
 
 from lib.path import get_aid_path
-from a02_fy3d2envi import fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo, fy3d2modis_met
+from lib.fy3d2envi import fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo, fy3d2modis_met
 
 
 aid_dir = get_aid_path()

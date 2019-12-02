@@ -4,6 +4,6 @@
 # @Author  : NingAnMe <ninganme@qq.com>
 
 
-from .a01_get_modis_nevi_metadata import get_metadata
+from lib.aid_get_modis_nevi_metadata import get_metadata
 file_ = get_metadata()
 print('Install: {}'.format(file_))

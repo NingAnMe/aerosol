@@ -40,7 +40,6 @@ cd $DBVM_HOME/scripts
 install_dbvm.bash
 ```
 
-
 ### 测试dbvm
 ```shell script
 dbvm_test.bash

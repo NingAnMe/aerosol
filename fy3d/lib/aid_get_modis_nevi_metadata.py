@@ -12,7 +12,7 @@ import pickle
 
 from spectral import envi
 
-from .lib.path import get_aid_path
+from .path import get_aid_path
 
 aid_dir = get_aid_path()
 

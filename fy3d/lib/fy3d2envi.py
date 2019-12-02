@@ -13,7 +13,7 @@ import h5py
 from spectral.io import envi
 import numpy as np
 
-from PB.DRC import ReadMersiL1
+from .DRC import ReadMersiL1
 
 
 def fy3d2modis_1km(in_file, out_file, metadata_pickle):
