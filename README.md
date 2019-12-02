@@ -1,3 +1,9 @@
+### 修改imapp/env/imapp_modisl2.bash_env
+```shell script
+# 修改imapp程序的路径
+export MODIS_L2_HOME=/RED1BDATA/chanpinproc/liujian/qiae/mod_aerosol/imapp
+```
+
 ### 修改`~/.bashrc`，添加
 ```
 export MODIS_L2_HOME=/mnt/hgfs/Projects/imapp_modisl2
@@ -10,7 +16,7 @@ source $MODIS_L2_HOME/env/imapp_modisl2.bash_env
 modis_level2.csh aqua $MODIS_L2_HOME/test_data/modis_l2_test_input/a1.17299.1910.1000m.hdf  $MODIS_L2_HOME/test_data/modis_l2_test_output
 ```
  
- ### 测试couldmask.exe
+### 测试couldmask.exe
  ```shell script
 # 必须进入文件目录，不能使用绝对路径
 cd $MODIS_L2_HOME/test_data/cloudmask_test_input/
