@@ -1,0 +1,90 @@
+    IMAPP MODIS Direct Broadcast Polar Inversion
+  Depth and Inversion Strength  Product Description
+   ----------------------------------------------
+
+--------------------------------------------------------------------------
+
+  The IMAPP Inversion software produces retrievals of inversion strength
+  and inversion depth over the polar regions. The inputs to the software
+  are the MODIS 1 km resolution L1B file and the MODIS 1 km Cloud Mask 
+  file. The software was developed by Yinghui Liu, and converted to C
+  by Jerry Straka, under the directory of Dr. Jeffrey Key, NOAA/NESDIS and 
+  integrated into IMAPP by Kathleen Strabala, kathy.strabala@ssec.wisc.edu.
+
+  For a description of the algorithm, please see:
+
+  Liu, Y. and J. Key, 2003, Detection and analysis of clear sky, 
+    low-level atmospheric temperature inversions with MODIS, J. Atmos. 
+    Ocean. Tech., 20, 1727-1737.
+
+  Output for this product is a flat binary file and an HDF4 file.
+
+-------------------
+Binary Output Files
+-------------------
+  There are two binary output files associated with this software.  
+  The *inversion_strength.bin file contains 2 byte integer values
+  scaled by .1 at 1 km resolution in degrees K. The size of the file
+  will depend upon the size of the pass that is being processed
+  (1354 x number_of_lines x 2 bytes).
+
+   Example file name:  a1.11194.0633.inversion_strength.bin
+   Two byte integers
+   Scale factor:  0.1
+   1 parameter  -  Inversion Strength Degrees K
+   1 km pixel resolution
+
+  The *inversion_depth.bin file contains 2 byte integer values
+  scaled by .1 at 1 km resolution in meters. The size of the file
+  will depend upon the size of the pass that is being processed
+  (1354 x number_of_lines x 2 bytes).
+
+   Example file name:  a1.11194.0633.inversion_depth.bin
+   Two byte integers
+   Scale factor:  0.1
+   1 parameter  -  Inversion Depth in meters (m)
+   1 km pixel resolution
+
+------------------
+HDF4 OUTPUT FILE
+------------------
+  The HDF4 output file (*inversion.hdf) contains 4 arrays.  Latitude, 
+  Longitude at 5 km resolution and Inversion Strength in degrees K and 
+  Inversion Depth in meters at 1 km resolution. Inversionn Strength and
+  Inversion Depth arrays are stored as 2 Byte Integers, and can be 
+  converted to actual values by multiplying by the scale factor of 0.1.
+
+  The Latitude and Longitude arrays are stored as 4 byte float values
+  at 5 km resolution.
+  
+  Example filename:  a1.11194.1737.inversion.hdf
+
+
+ (Example ncdump -h of an IMAPP Inversion HDF file)
+
+netcdf a1.11194.1737.inversion.hdf {
+dimensions:
+        Cell_Along_Swath_5km = 896 ;
+        Cell_Across_Swath_5km = 271 ;
+        Cell_Along_Swath_1km = 4480 ;
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        short Inversion_Depth(Cell_Along_Swath_1km, Cell_Across_Swath_1km) ;
+                Inversion_Depth:units = "m" ;
+                Inversion_Depth:scale_factor = 0.1 ;
+                Inversion_Depth:add_offset = 0. ;
+                Inversion_Depth:valid_range = 0s, 20000s ;
+                Inversion_Depth:_FillValue = -10s ;
+        short Inversion_Strength(Cell_Along_Swath_1km, Cell_Across_Swath_1km)
+;
+                Inversion_Strength:units = "C" ;
+                Inversion_Strength:scale_factor = 0.1 ;
+                Inversion_Strength:add_offset = 0. ;
+                Inversion_Strength:valid_range = 0s, 1000s ;
+                Inversion_Strength:_FillValue = -10s ;
+}

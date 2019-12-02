@@ -1,0 +1,94 @@
+    IMAPP MODIS Direct Broadcast Ice Mask
+  and Ice Concentration Product Description
+  -------------------------------------------
+
+--------------------------------------------------------------------------
+
+  The IMAPP Ice Mask and Ice Concentration software produces retrievals 
+  of the percentage of ice cover on water bodies within a 1 km
+  MODIS pixel, as well as an Ice Mask that includes whether ice
+  was found using wavelengths in the visible wavelength spectrum or 
+  infrared wavelengths.  The output is at 1 km resolution.  The 
+  inputs are the MODIS 1 km resolution L1B file, the MODIS Geolocation
+  file and the and the MODIS 1 km Cloud Mask file. The software 
+  was created by Yinhui Liu, University of Wisconsin-Madison, Space
+  Science and Engineering Center, and integrated into
+  IMAPP by Kathleen Strabala, kathy.strabala@ssec.wisc.edu.
+
+  For a description of the algorithm, please see:
+
+  Liu Y., and J.R. Key, 2010: Algorithm theoretical basis document 
+    for ABI ice cover and concentration. NOAA NESDIS center for 
+    satellite applications and research.
+
+  Output for this product is a flat binary file and an HDF4 file.
+
+------------------
+Binary Output File
+------------------
+  The software produces output files in binary format (.icecon.bin 
+  extension) which consist of 4 bands of 4 byte data and no
+  scaling at 1 km resolution.  The data is band sequential, meaning
+  each band contains a complete swath of data prior to the beginning of the
+  next band. The size of the file will depend upon the size of the 
+  pass that is being processed (1354 x number_of_lines x 4 bands  x 4 bytes).
+
+   Example file name:  t1.11110.0246.icecon.bin
+   4 - 4 byte fields
+   1). Latitude  4 byte float
+   2). Longitude  4 byte float
+   3). Ice Mask Long Integer (4 bytes)
+        Values:
+         -2: water, -1: land, 0: cloud over water, 1: visible technique 
+         found ice, 2: infrared technique found ice, -999: missing
+   4). Ice Concentration  4 byte float
+         Values 0.-100. percent.  Missing values -999.
+
+   Scale factor:  1.0
+   1 km pixel resolution
+
+------------------
+HDF4 OUTPUT FILE
+------------------
+  The HDF4 output file (*icecon.hdf) contains 4 SDS arrays.  
+  Latitude, Longitude at 5km resolution, Ice Mask at 1 km resolution
+  and Ice Concentration in percent (%) at 1 km resolution.
+
+  The Latitude and Longitude arrays are stored as 4 byte float values
+  at 5 km resolution.
+
+  The Ice_Mask SDS is stored as a long integer (4 byte) at 1 km.
+
+  The Ice_Concentration is stored a 4 byte float value  at 1 km.
+  
+  Example filename:  a1.08055.1850.icecon.hdf
+
+
+ (Example ncdump -h of an IMAPP MODIS Ice Concentration HDF4 file)
+
+netcdf a1.08055.1850.icecon {
+
+dimensions:
+        Cell_Along_Swath_5km = 406 ;
+        Cell_Across_Swath_5km = 271 ;
+        Cell_Along_Swath_1km = 2030 ;
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        long Ice_Mask(Cell_Along_Swath_1km, Cell_Across_Swath_1km) ;
+                Ice_Mask:units = "None" ;
+                Ice_Mask:scale_factor = 1. ;
+                Ice_Mask:add_offset = 0. ;
+                Ice_Mask:valid_range = -2, 2 ;
+                Ice_Mask:_FillValue = -999 ;
+        float Ice_Concentration(Cell_Along_Swath_1km, Cell_Across_Swath_1km) ;
+                Ice_Concentration:units = "%" ;
+                Ice_Concentration:scale_factor = 1. ;
+                Ice_Concentration:add_offset = 0. ;
+                Ice_Concentration:valid_range = 0.f, 100.f ;
+                Ice_Concentration:_FillValue = -999.f ;
+}

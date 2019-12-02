@@ -1,0 +1,542 @@
+   MODIS DB Cloud Top Property and Cloud Phase 
+      Output Product Description
+   -------------------------------------------
+   The MODIS IMAPP Cloud Top Property and Cloud Phase software produces
+   binary and/or hdf output files at 5x5 pixel resolution.  This software
+   produces a subset of the official DAAC MOD06 Cloud Product (it 
+   does not include the cloud optical properties such as cloud optical 
+   thickness and cloud effective radius).
+
+   For a description of the algorithm, please see:
+   Cloud Top Properties and Cloud Phase Theoretical Basis Document
+   Menzel, W. P, R. A. Frey, B. A. Baum and H. Zhang:
+   http://modis-atmos.gsfc.nasa.gov/_docs/MOD06CT:MYD06CT_ATBD_C005.pdf
+   This document was updated in October 2006. The Cloud Phase output
+   array is a byte array containing a 4 category cloud phase as:
+
+	0 – Clear
+	1 – Water Cloud 
+        2 – Ice Cloud 
+        3 – Mixed Phase Cloud
+        6 - Undecided
+        
+   The native IMAPP format is binary, however software is included
+   which will convert the file from binary to HDF.  Please see
+   instructions in the imapp_modisl2/src/cloudtop/README_CLOUDTOP
+   file.
+
+   The user can choose the output format type, either HDF or
+   binary files. If you are using the modis_level2.csh script,
+   you set the OUTPUT_TYPE environmental variable in the
+   imapp_modisl2/env scripts to:
+
+               1 = binary only
+               2 = hdf only
+               3 = binary and hdf
+
+Binary Output
+-------------
+  The Direct Broadcast output file differs from the operational MOD06
+  output file in that:
+
+  1) It is a 4 byte float binary flat file instead of HDF.  All parameters
+     (bands) are of type 4 byte float.  
+
+  2) There are two .img and two .hdr files representing the 48 operational
+     MOD06 HDF SDS's listed below, and the MOD06 HDF SDS 
+     Quality_Assurance_5km.
+
+  3) There are no geolocation or solar and viewing geometry parameters 
+     included as part of the Direct Broadcast product.
+
+  4) The output product consists of 48 band interleaved parameters 
+     instead of individual HDF file SDS's.  
+
+  5) The output product does not include several operational 
+     MOD06 SDS's.  These are: 
+       Effective_Particle_Radius
+       Cloud_Optical_Thickness
+       Effective_Radius_Difference
+       Water_Path
+       Cirrus_Reflectance
+       Cirrus_Reflectance_Flag
+       Cloud_Mask_5km
+       Cloud_Mask_1km
+       Quality_Assurance_1km
+
+  6) The Quality_Assurance_5km array indices are ordered differently.
+     The DB mod06qa.img order is (element,line,qa_byte), while the DAAC 
+     operational HDF SDS is ordered (qa_byte,element,line).
+
+--------------------------------------------------------------------------
+  The cloud top propery output file product consists of two separate
+  .img files in flat binary format, and accompanying header files.
+
+  The mod06.img file is a 48 float band interleaved product at 5x5 1km pixel
+  resolution. Please see a list of these bands below.
+  The parameters correspond to the DAAC Production HDF 
+  MOD06 product SDS's. The test output file that you create from the 
+  input test data sets contains the nominal MODIS swath size 
+  270 (1354/5 elements) and 578 lines (2890 scans/5).  Therefore, the 
+  product mod06.img file is 270 elements, by 48 bands (parameters), 
+  by 578 lines. In FORTRAN, it would be read as cloud_properties(270,48,578).
+  This would be reversed in C - cloud_properties(578,48,270).
+
+  The mod06qa.img file is a 10 byte per pixel product with information
+  at the bit level. Please see the bit description below.
+  This corresponds to the DAAC Production HDF MOD06 product SDS
+  Quality_Assurance_5km. It contains information on the quality of  
+  individual output parameters, as well as some ancillary data information.
+  The test output file that you create from the input test data sets
+  contains the nominal MODIS swath size 270 (1354/5 elements) and 578 
+  lines (2890 scans/5). Therefore, product mod06qa.img file is 10 bytes,
+  by 578 lines, by 270 elements.  In FORTRAN, it would be read as
+  cloud_properties_qa(270,578,10).  This would be reversed in 
+  C - cloud_propertiesqa(10,578,270).
+--------------------------------------------------------------------------
+
+   MODIS Direct Broadcast MOD06 mod06.img file description
+
+   Four byte float data
+   48 parameters
+   5x5 1km-pixel resolution
+   Band Interleaved
+   fill value = -327.68
+
+band names = {
+band  1: Brightness_Temperature_B29,
+band  2: Brightness_Temperature_B31,
+band  3: Brightness_Temperature_B32,
+band  4: Brightness_Temperature_B33,
+band  5: Brightness_Temperature_B34,
+band  6: Brightness_Temperature_B35,
+band  7: Brightness_Temperature_B36,
+band  8: Surface_Temperature,
+band  9: Surface_Pressure,
+band 10: Processing_Flag,
+band 11: Cloud_Height_Method,
+band 12: Cloud_Top_Pressure,
+band 13: Cloud_Top_Pressure_Night,
+band 14: Cloud_Top_Pressure_Day,
+band 15: Cloud_Top_Temperature,
+band 16: Cloud_Top_Temperature_Night,
+band 17: Cloud_Top_Temperature_Day,
+band 18: Tropopause_Height,
+band 19: Cloud_Fraction,
+band 20: Cloud_Fraction_Night,
+band 21: Cloud_Fraction_Day,
+band 22: Cloud_Effective_Emissivity,
+band 23: Cloud_Effective_Emissivity_Night,
+band 24: Cloud_Effective_Emissivity_Day,
+band 25: Cloud_Top_Pressure_Infrared,
+band 26: Spectral_Cloud_Forcing_B36,
+band 27: Spectral_Cloud_Forcing_B35,
+band 28: Spectral_Cloud_Forcing_B34,
+band 29: Spectral_Cloud_Forcing_B33,
+band 30: Spectral_Cloud_Forcing_B31,
+band 31: Cloud_Top_Pressure_From_Ratios_36/35,
+band 32: Cloud_Top_Pressure_From_Ratios_35/34,
+band 33: Cloud_Top_Pressure_From_Ratios_35/33,
+band 34: Cloud_Top_Pressure_From_Ratios_34/33,
+band 35: Cloud_Top_Pressure_From_Ratios_33/31,
+band 36: Surface_Type,
+band 37: Radiance_Variance_B29,
+band 38: Radiance_Variance_B31,
+band 39: Radiance_Variance_B32,
+band 40: Radiance_Variance_B33,
+band 41: Radiance_Variance_B34,
+band 42: Radiance_Variance_B35,
+band 43: Radiance_Variance_B36,
+band 44: Brightness_Temperature_Difference_B29-B31,
+band 45: Brightness_Temperature_Difference_B31-B32,
+band 46: Cloud_Phase_Infrared,
+band 47: Cloud_Phase_Infrared_Night,
+band 48: Cloud_Phase_Infrared_Day
+}
+band units = {
+band  1: tmp,
+band  2: tmp,
+band  3: tmp,
+band  4: tmp,
+band  5: tmp,
+band  6: tmp,
+band  7: tmp,
+band  8: tmp,
+band  9: msl,
+band 10: flg,
+band 11: flg,
+band 12: hPa,
+band 13: hPa,
+band 14: hPa,
+band 15: tmp,
+band 16: tmp,
+band 17: tmp,
+band 18: hPa,
+band 19: pct,
+band 20: pct,
+band 21: pct,
+band 22: pct,
+band 23: pct,
+band 24: pct,
+band 25: hPa,
+band 26: rad,
+band 27: rad,
+band 28: rad,
+band 29: rad,
+band 30: rad,
+band 31: hPa,
+band 32: hPa,
+band 33: hPa,
+band 34: hPa,
+band 35: hPa,
+band 36: flg,
+band 37: rad,
+band 38: rad,
+band 39: rad,
+band 40: rad,
+band 41: rad,
+band 42: rad,
+band 43: rad,
+band 44: tmp,
+band 45: tmp,
+band 46: flg,
+band 47: flg,
+band 48: flg
+}
+
+
+   MODIS DB Cloud Top Property and Cloud Phase 
+   Output Quality Assurance Product Description (mod06qa.img)
+   -------------------------------------------
+
+   10 bytes per retrieval
+   Bit level information
+   5x5 1km-pixel resolution
+   Byte Sequential 
+   fill value = -1
+
+  
+
+  Common Runtime QA (Cloud Mask) Flags
+
+  bit field       Number of Bits              Bit value and Description
+  
+  Cloud Top       1                           0 = Not useful
+  Pressure QA                                 1 = Useful
+
+  Cloud Top       3                           0-3 Confidence levels
+  Pressure                                        0:Bad-3:Very Good 
+  Confidence QA
+
+  Cloud Top       1                           0 = Not useful
+  Temperature                                 1 = Useful  
+  Confidence QA
+ 
+  Cloud Top       3                           0-3 Confidence levels
+  Temperature                                     0:Bad-3:Very Good 
+  Confidence QA
+
+  ____ END BYTE 1 _________________________________________________________
+
+  bit field       Number of Bits              Bit value and Description
+  ---------       -----------                 -----------------------
+  Cloud Fraction  1                           0 = Not useful
+  QA                                          1 = Useful
+
+  Cloud Fraction  3                           0-3 Confidence levels
+  Confidence QA                                   0:Bad-3:Very Good
+
+  Cloud Effective 1                           0 = Not useful
+  Emissivity QA                               1 = Useful  
+ 
+  Cloud Effective 3                           0-3 Confidence levels
+  Emissivity                                      0:Bad-3:Very Good
+  Confidence QA
+
+  ____ END BYTE 2 _________________________________________________________
+
+  bit field       Number of Bits              Bit value and Description
+  ---------       -----------                 -----------------------
+  Cloud Phase     1                           0 = Not useful
+  Infrared QA                                 1 = Useful
+
+  Cloud Phase     3                           0-3 Confidence levels
+  Infrared                                        0:Bad-3:Very Good
+  Confidence QA
+
+
+  Retrieval processing QA flags - processing path flags
+ 
+  Cirrus Level    2                           0 - missing
+  3 flag                                      1 - no cirrus found
+                                              2 - cirrus found
+ 
+  High Cloud      2                           0 - missing
+  Level 3 Flag                                1 - no high cloud found
+                                              2 - high cloud found
+  ____ END BYTE 3 _________________________________________________________
+
+  bit field       Number of Bits              Bit value and Description
+  ---------       -----------                 -----------------------
+  Number of 
+  Cloudy Pixels   Int 8                       0-25 cloudy pixels
+  in 5x5 box                                  
+  ____ END BYTE 4 _________________________________________________________
+
+  Number of 
+  Clear Pixels    Int 8                       0-25 clear pixels
+  in 5x5 box                                  
+  ____ END BYTE 5 _________________________________________________________
+
+  Number of 
+  Missing Pixels  Int 8                       0-25 missing data pixels
+  in 5x5 box                                  
+  ____ END BYTE 6 _________________________________________________________
+
+  Remainder of bytes currently not used.
+
+
+HDF OUTPUT FILE
+---------------
+  The HDF output file (*mod06ct.hdf) contains 29 arrays stored as 
+  different types with a variety of scale factors and offsets. 
+
+  (Example ncdump -h for an IMAPP cloud top properties hdf file)
+dimensions:
+        fakeDim0 = 578 ;
+        fakeDim1 = 270 ;
+        fakeDim2 = 578 ;
+        fakeDim3 = 270 ;
+        fakeDim4 = 7 ;
+        fakeDim5 = 578 ;
+        fakeDim6 = 270 ;
+        fakeDim7 = 578 ;
+        fakeDim8 = 270 ;
+        fakeDim9 = 578 ;
+        fakeDim10 = 270 ;
+        fakeDim11 = 578 ;
+        fakeDim12 = 270 ;
+        fakeDim13 = 578 ;
+        fakeDim14 = 270 ;
+        fakeDim15 = 578 ;
+        fakeDim16 = 270 ;
+        fakeDim17 = 578 ;
+        fakeDim18 = 270 ;
+        fakeDim19 = 578 ;
+        fakeDim20 = 270 ;
+        fakeDim21 = 578 ;
+        fakeDim22 = 270 ;
+        fakeDim23 = 578 ;
+        fakeDim24 = 270 ;
+        fakeDim25 = 578 ;
+        fakeDim26 = 270 ;
+        fakeDim27 = 578 ;
+        fakeDim28 = 270 ;
+        fakeDim29 = 578 ;
+        fakeDim30 = 270 ;
+        fakeDim31 = 578 ;
+        fakeDim32 = 270 ;
+        fakeDim33 = 578 ;
+        fakeDim34 = 270 ;
+        fakeDim35 = 578 ;
+        fakeDim36 = 270 ;
+        fakeDim37 = 578 ;
+        fakeDim38 = 270 ;
+        fakeDim39 = 578 ;
+        fakeDim40 = 270 ;
+        fakeDim41 = 578 ;
+        fakeDim42 = 270 ;
+        fakeDim43 = 5 ;
+        fakeDim44 = 578 ;
+        fakeDim45 = 270 ;
+        fakeDim46 = 5 ;
+        fakeDim47 = 578 ;
+        fakeDim48 = 270 ;
+        fakeDim49 = 578 ;
+        fakeDim50 = 270 ;
+        fakeDim51 = 7 ;
+        fakeDim52 = 578 ;
+        fakeDim53 = 270 ;
+        fakeDim54 = 2 ;
+        fakeDim55 = 578 ;
+        fakeDim56 = 270 ;
+        fakeDim57 = 578 ;
+        fakeDim58 = 270 ;
+        fakeDim59 = 578 ;
+        fakeDim60 = 270 ;
+        fakeDim61 = 578 ;
+        fakeDim62 = 270 ;
+
+variables:
+        float Latitude(fakeDim0, fakeDim1) ;
+        float Longitude(fakeDim2, fakeDim3) ;
+        short Brightness_Temperature(fakeDim4, fakeDim5, fakeDim6) ;
+                Brightness_Temperature:units = "K" ;
+                Brightness_Temperature:scale_factor = 0.01 ;
+                Brightness_Temperature:add_offset = -15000. ;
+                Brightness_Temperature:valid_range = 0s, 20000s ;
+                Brightness_Temperature:_FillValue = -32768s ;
+        short Surface_Temperature(fakeDim7, fakeDim8) ;
+                Surface_Temperature:units = "K" ;
+                Surface_Temperature:scale_factor = 0.01 ;
+                Surface_Temperature:add_offset = -15000. ;
+                Surface_Temperature:valid_range = 0s, 20000s ;
+                Surface_Temperature:_FillValue = -32768s ;
+        short Surface_Pressure(fakeDim9, fakeDim10) ;
+                Surface_Pressure:units = "hPa" ;
+                Surface_Pressure:scale_factor = 0.1 ;
+                Surface_Pressure:add_offset = 0. ;
+                Surface_Pressure:valid_range = 8000s, 11000s ;
+                Surface_Pressure:_FillValue = -32768s ;
+        byte Processing_Flag(fakeDim11, fakeDim12) ;
+                Processing_Flag:units = "none" ;
+                Processing_Flag:scale_factor = 1. ;
+                Processing_Flag:add_offset = 0. ;
+                Processing_Flag:valid_range = '\0', '\3' ;
+                Processing_Flag:_FillValue = '\177' ;
+        byte Cloud_Height_Method(fakeDim13, fakeDim14) ;
+                Cloud_Height_Method:units = "none" ;
+                Cloud_Height_Method:scale_factor = 1. ;
+                Cloud_Height_Method:add_offset = 0. ;
+                Cloud_Height_Method:valid_range = '\1', '\6' ;
+                Cloud_Height_Method:_FillValue = '\177' ;
+        short Cloud_Top_Pressure(fakeDim15, fakeDim16) ;
+                Cloud_Top_Pressure:units = "hPa" ;
+                Cloud_Top_Pressure:scale_factor = 0.1 ;
+                Cloud_Top_Pressure:add_offset = 0. ;
+                Cloud_Top_Pressure:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_Night(fakeDim17, fakeDim18) ;
+                Cloud_Top_Pressure_Night:units = "hPa" ;
+                Cloud_Top_Pressure_Night:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Night:add_offset = 0. ;
+                Cloud_Top_Pressure_Night:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Night:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_Day(fakeDim19, fakeDim20) ;
+                Cloud_Top_Pressure_Day:units = "hPa" ;
+                Cloud_Top_Pressure_Day:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Day:add_offset = 0. ;
+                Cloud_Top_Pressure_Day:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Day:_FillValue = -32768s ;
+        short Cloud_Top_Temperature(fakeDim21, fakeDim22) ;
+                Cloud_Top_Temperature:units = "K" ;
+                Cloud_Top_Temperature:scale_factor = 0.01 ;
+                Cloud_Top_Temperature:add_offset = -15000. ;
+                Cloud_Top_Temperature:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature:_FillValue = -32768s ;
+        short Cloud_Top_Temperature_Night(fakeDim23, fakeDim24) ;
+                Cloud_Top_Temperature_Night:units = "K" ;
+                Cloud_Top_Temperature_Night:scale_factor = 0.01 ;
+                Cloud_Top_Temperature_Night:add_offset = -15000. ;
+                Cloud_Top_Temperature_Night:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature_Night:_FillValue = -32768s ;
+        short Cloud_Top_Temperature_Day(fakeDim25, fakeDim26) ;
+                Cloud_Top_Temperature_Day:units = "K" ;
+                Cloud_Top_Temperature_Day:scale_factor = 0.01 ;
+                Cloud_Top_Temperature_Day:add_offset = -15000. ;
+                Cloud_Top_Temperature_Day:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature_Day:_FillValue = -32768s ;
+        short Tropopause_Height(fakeDim27, fakeDim28) ;
+                Tropopause_Height:units = "hPa" ;
+                Tropopause_Height:scale_factor = 0.1 ;
+                Tropopause_Height:add_offset = 0. ;
+                Tropopause_Height:valid_range = 10s, 11000s ;
+                Tropopause_Height:_FillValue = -32768s ;
+        byte Cloud_Fraction(fakeDim29, fakeDim30) ;
+                Cloud_Fraction:units = "none" ;
+                Cloud_Fraction:scale_factor = 0.01 ;
+                Cloud_Fraction:add_offset = 0. ;
+                Cloud_Fraction:valid_range = '\0', 'd' ;
+                Cloud_Fraction:_FillValue = '\177' ;
+        byte Cloud_Fraction_Night(fakeDim31, fakeDim32) ;
+                Cloud_Fraction_Night:units = "none" ;
+                Cloud_Fraction_Night:scale_factor = 0.01 ;
+                Cloud_Fraction_Night:add_offset = 0. ;
+                Cloud_Fraction_Night:valid_range = '\0', 'd' ;
+                Cloud_Fraction_Night:_FillValue = '\177' ;
+        byte Cloud_Fraction_Day(fakeDim33, fakeDim34) ;
+                Cloud_Fraction_Day:units = "none" ;
+                Cloud_Fraction_Day:scale_factor = 0.01 ;
+                Cloud_Fraction_Day:add_offset = 0. ;
+                Cloud_Fraction_Day:valid_range = '\0', 'd' ;
+                Cloud_Fraction_Day:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity(fakeDim35, fakeDim36) ;
+                Cloud_Effective_Emissivity:units = "none" ;
+                Cloud_Effective_Emissivity:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity:add_offset = 0. ;
+                Cloud_Effective_Emissivity:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity_Night(fakeDim37, fakeDim38) ;
+                Cloud_Effective_Emissivity_Night:units = "none" ;
+                Cloud_Effective_Emissivity_Night:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity_Night:add_offset = 0. ;
+                Cloud_Effective_Emissivity_Night:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity_Night:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity_Day(fakeDim39, fakeDim40) ;
+                Cloud_Effective_Emissivity_Day:units = "none" ;
+                Cloud_Effective_Emissivity_Day:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity_Day:add_offset = 0. ;
+                Cloud_Effective_Emissivity_Day:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity_Day:_FillValue = '\177' ;
+        short Cloud_Top_Pressure_Infrared(fakeDim41, fakeDim42) ;
+                Cloud_Top_Pressure_Infrared:units = "hPa" ;
+                Cloud_Top_Pressure_Infrared:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Infrared:add_offset = 0. ;
+                Cloud_Top_Pressure_Infrared:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Infrared:_FillValue = -32768s ;
+        short Spectral_Cloud_Forcing(fakeDim43, fakeDim44, fakeDim45) ;
+                Spectral_Cloud_Forcing:units = "Watts/meter2/steradian/micron"
+;
+                Spectral_Cloud_Forcing:scale_factor = 0.01 ;
+                Spectral_Cloud_Forcing:add_offset = 0. ;
+                Spectral_Cloud_Forcing:valid_range = -2000s, 2000s ;
+                Spectral_Cloud_Forcing:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_From_Ratios(fakeDim46, fakeDim47, fakeDim48)
+;
+                Cloud_Top_Pressure_From_Ratios:units = "hPa" ;
+                Cloud_Top_Pressure_From_Ratios:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_From_Ratios:add_offset = 0. ;
+                Cloud_Top_Pressure_From_Ratios:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_From_Ratios:_FillValue = -3277s ;
+        short Surface_Type(fakeDim49, fakeDim50) ;
+                Surface_Type:units = "none" ;
+                Surface_Type:scale_factor = 1. ;
+                Surface_Type:add_offset = 0. ;
+                Surface_Type:valid_range = 0s, 200s ;
+                Surface_Type:_FillValue = -32768s ;
+        short Radiance_Variance(fakeDim51, fakeDim52, fakeDim53) ;
+                Radiance_Variance:units = "Watts/meter2/steradian/micron" ;
+                Radiance_Variance:scale_factor = 0.01 ;
+                Radiance_Variance:add_offset = 0. ;
+                Radiance_Variance:valid_range = 0s, 20s ;
+                Radiance_Variance:_FillValue = -32768s ;
+        short Brightness_Temperature_Difference(fakeDim54, fakeDim55,
+fakeDim56)
+ ;
+                Brightness_Temperature_Difference:units = "K" ;
+                Brightness_Temperature_Difference:scale_factor = 0.01 ;
+                Brightness_Temperature_Difference:add_offset = 0. ;
+                Brightness_Temperature_Difference:valid_range = -2000s, 30000s
+;
+                Brightness_Temperature_Difference:_FillValue = -32768s ;
+        byte Cloud_Phase_Infrared(fakeDim57, fakeDim58) ;
+                Cloud_Phase_Infrared:units = "none" ;
+                Cloud_Phase_Infrared:scale_factor = 1. ;
+                Cloud_Phase_Infrared:add_offset = 0. ;
+                Cloud_Phase_Infrared:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared:_FillValue = '\177' ;
+        byte Cloud_Phase_Infrared_Night(fakeDim59, fakeDim60) ;
+                Cloud_Phase_Infrared_Night:units = "none" ;
+                Cloud_Phase_Infrared_Night:scale_factor = 1. ;
+                Cloud_Phase_Infrared_Night:add_offset = 0. ;
+                Cloud_Phase_Infrared_Night:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared_Night:_FillValue = '\177' ;
+        byte Cloud_Phase_Infrared_Day(fakeDim61, fakeDim62) ;
+                Cloud_Phase_Infrared_Day:units = "none" ;
+                Cloud_Phase_Infrared_Day:scale_factor = 1. ;
+                Cloud_Phase_Infrared_Day:add_offset = 0. ;
+                Cloud_Phase_Infrared_Day:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared_Day:_FillValue = '\177' ;
+
+
+

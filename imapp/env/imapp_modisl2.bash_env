@@ -1,0 +1,14 @@
+export MODIS_L2_HOME=/RED1BDATA/chanpinproc/liujian/qiae/mod_aerosol/imapp
+export HDF_HOME=${MODIS_L2_HOME}/hdf
+export LOCAL_ANC_DIR=${MODIS_L2_HOME}/ancillary
+export REMOTE_ANC_DIR=ftp://ftp.ssec.wisc.edu/pub/eosdb/ancillary
+export MODIS_L2_CFG=${MODIS_L2_HOME}/config
+export MODIS_L2_COEFF=${MODIS_L2_HOME}/coeff
+export MODIS_L2_BIN=${MODIS_L2_HOME}/bin
+export MODIS_L2_IMAGES=${MODIS_L2_HOME}/images
+export MODIS_L2_XSIZE=900
+export MODIS_L2_YSIZE=900
+export OUTPUT_TYPE=2
+#export http_proxy="http://username:password@foo.bar:8080"
+export PATH=.:${MODIS_L2_BIN}:${MODIS_L2_HOME}/scripts:${PATH}
+export HDFLOOKMAPS=${MODIS_L2_HOME}/hdflook/MAPS

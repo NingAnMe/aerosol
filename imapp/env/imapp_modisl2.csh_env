@@ -1,0 +1,13 @@
+setenv MODIS_L2_HOME /home/anning/AOD/IMAPP_MODISL2_V2.2/imapp_modisl2
+setenv HDF_HOME ${MODIS_L2_HOME}/hdf
+setenv LOCAL_ANC_DIR ${MODIS_L2_HOME}/ancillary
+setenv REMOTE_ANC_DIR ftp://ftp.ssec.wisc.edu/pub/eosdb/ancillary
+setenv MODIS_L2_CFG ${MODIS_L2_HOME}/config
+setenv MODIS_L2_COEFF ${MODIS_L2_HOME}/coeff
+setenv MODIS_L2_BIN ${MODIS_L2_HOME}/bin
+setenv MODIS_L2_IMAGES ${MODIS_L2_HOME}/images
+setenv MODIS_L2_XSIZE 900
+setenv MODIS_L2_YSIZE 900
+setenv OUTPUT_TYPE 2
+#setenv http_proxy "http://username:password@foo.bar:8080"
+setenv PATH .:${MODIS_L2_BIN}:${MODIS_L2_HOME}/scripts:${PATH}

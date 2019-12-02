@@ -1,0 +1,96 @@
+   IMAPP MODIS Direct Broadcast Near-Infrared Total 
+   Column Water Vapor (WVNIR) Product Description
+   -------------------------------------------
+
+     The IMAPP WVNIR software produces retrievals at 1 km
+     resolution over all pixels.  It should be noted
+     that this is not the algorithm used in the official DAAC
+     MOD05 water vapor product.
+
+     The NIR water vapor algorithm can only produce reasonable
+     results above bright surfaces. Therefore, over ocean the
+     retrieved water vapor content will most of the time be wrong.
+     However, water pixels have not been generally flagged out in
+     order to allow the use of the product above sunglint regions.
+     A land/sea mask is contained in the MOD03 geolocation (.geo.hdf)
+     files.
+
+     Also, please make sure to mask out cloudy pixels (using e.g.
+     the MOD35 cloud mask) prior to any interpretation of the
+     retrieved product.
+     Multiple scattering at cloud droplets has not been accounted
+     for during algorithm development, and results for cloudy
+     pixels are unpredictable. The combined effects of reflection
+     (i.e. shading of lower atmospheric levels)and multiple scattering
+     can lead to increased or decreased results compared to the true
+     integrated columnar water vapor.
+
+     For a description of the algorithm, please see:
+
+     P. ALBERT, R. BENNARTZ, R. PREUSKER, R. LEINWEBER, AND J. FISCHER,
+      2005:  Remote Sensing of Atmospheric Water Vapor Using the Moderate
+      Resolution Imaging Spectroradiometer.  Journal of Atmospheric and
+      Oceanic Technology, Vol. 22, 309-314.
+
+     The user can choose the output format type, either HDF or
+     binary.  If you are using the modis_level2.csh script,
+     you set the OUTPUT_TYPE environmental variable in the
+     imapp_modisl2/env scripts to:
+
+               1 = binary only
+               2 = hdf only
+               3 = binary and hdf
+
+
+--------------------------------------------------------------------------
+BINARY OUTPUT FILE
+  The near-infrared water vapor output product consists of a separate
+  .img file in flat binary format, and accompanying header file.
+
+  The wvnir.img file is a 1 float band interleaved product at 1 km 
+  pixel resolution. Please see a list of these bands below.
+  The test output file that you create from the input aqua test data 
+  sets contains the nominal MODIS swath size 1354 elements and 
+  2890 lines.  In FORTRAN, it would be read as wvnir(1354,2890).
+  This would be reversed in C - wvnir(2890,1354).  
+
+--------------------------------------------------------------------------
+   MODIS Direct Broadcast Near-Infared Water Vapor
+          Output Product Description
+   -------------------------------------------
+   Four byte float data
+   1 parameter
+   1 km-pixel resolution
+
+band names = {
+band  1: WVNIR_LAND
+}
+band units = {
+band  1: kg/m^2
+}
+
+--------------------------------------------------------------------------
+HDF OUTPUT FILE
+  The HDF output file (*wvnir.hdf) contains 3 arrays.  Latitude, Longitude and 
+    the Near-Infrared Retrieved Water Vapor field in units of kilograms
+    per square meter.
+
+  (Example ncdump -h of an IMAPP wvnir HDF file)
+
+dimensions:
+        Cell_Along_Swath_5km = 578 ;
+        Cell_Across_Swath_5km = 270 ;
+        Cell_Along_Swath_1km = 2890 ;
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        float Water_Vapor_Direct_Broadcast_Near_Infrared(Cell_Along_Swath_1km,
+Cell_Across_Swath_1km) ;
+                Water_Vapor_Direct_Broadcast_Near_Infrared:units = "kg/m2" ;
+                Water_Vapor_Direct_Broadcast_Near_Infrared:scale_factor = 1. ;
+                Water_Vapor_Direct_Broadcast_Near_Infrared:add_offset = 0. ;
+                Water_Vapor_Direct_Broadcast_Near_Infrared:_FillValue = -1.f ;

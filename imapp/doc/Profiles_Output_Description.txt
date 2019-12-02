@@ -1,0 +1,490 @@
+  MODIS Direct Broadcast Atmospheric Profiles 
+        Output Product Description
+              December 2011
+   -------------------------------------------
+
+  The IMAPP MODIS atmospheric profiles software creates vertical
+  profiles of temperature, moisture and ozone at 20 levels, surface 
+  temperature, total column ozone, precipitable water vapor 
+  and stability indices (Total totals, K-index, and the Lifted 
+  Index) at 5x5 1km pixel resolution.  
+
+  The vertical temperature and moisture profiles are retrieved
+  at these levels  (hPa) :
+     5, 10, 20, 30, 50, 70, 100, 150, 200, 250, 300, 400, 500,
+     620, 700, 780, 850, 920, 950 and 1000 hPa
+
+  For a description of the algorithm, please see:
+    Seemann, S.W., Borbas, E.E., Knuteson, R.O., Stephenson, G.R.,
+      and Huang, H-L., 2008: Development of a global infrared
+      emissivity database for application to clear sky sounding retrievals
+      from multi-spectral satellite radiances measurements. J. Appl.
+      Meteorol. and Clim. 47, 108-123
+   Seemann, S. W., J. Li, W. P. Menzel and L. E. Gumley, 2003:
+    Operational Retrieval of Atmospheric Temperature, Moisture, and
+    Ozone from MODIS Infrared Radiances.  Jounal of Applied
+    Meteorology, Vol. 42, 1072-1091.
+   MODIS Atmospheric Profile Retrieval Algorithm Theoretical
+      Basis Document. Borbas, Seemann, Kern, Moy, Li, Gumley and Menzel,
+      2011.
+      http://modis-atmos.gsfc.nasa.gov/_docs//MOD07_atbd_v7_April2011.pdf
+
+   The native IMAPP format is binary, however software is included
+   which will convert the file from binary to HDF.  Please see
+   instructions in the imapp_modisl2/src/profiles/README_PROFILES
+   file.
+
+   The user can choose the output format type, either HDF or
+   binary, files. If you are using the modis_level2.csh script,
+   you set the OUTPUT_TYPE environmental variable in the
+   imapp_modisl2/env scripts to:
+
+               1 = binary only
+               2 = hdf only
+               3 = binary and hdf
+
+Algorithm Changes
+-----------------
+    1)  The levels used to integrate Water_Vapor_High and Water_Vapor_Low
+          have been redefined.
+             Water_Vapor_Low       surface - 680 hPA
+             Water_Vapor_High          440 - 10 hPa
+    2)  New coefficients have been created taking into  account the spectral
+         shifts for Terra MODIS based upon the work of Tobin, et al., 2006
+         and Quinn et al., 2010.
+    3)  A bug fix was implemented in the create_fake_mod07 software
+         that converts from the binary to the hdf4 file.
+
+Binary Output
+-------------
+  The Direct Broadcast output file differs from the operational MOD07
+  output file in that:
+
+  1) It is a 4 byte float binary flat file instead of HDF.  All parameters
+     (bands) are of type 4 byte float.  
+
+  2) There are two .img and two .hdr files representing the 103 operational
+     MOD07 HDF SDS's listed below.
+
+  3) There are no geolocation or solar and viewing geometry parameters 
+     included as part of the Direct Broadcast product.
+
+  4) The output product consists of 103 band interleaved parameters 
+     instead of individual HDF file SDS's.  
+
+  5) The output product does not include several operational 
+     MOD07 SDS's.  These are: 
+       
+       Cloud_Mask
+       Processing_Flag
+       Tropopause_Height
+       Guess_Temperature_Profile
+       Guess_Moisture_Profile
+       Quality_Assurance_Infrared
+
+  6) There is an additional array included with this retrieval:
+  
+       Retrieved_Ozone_Profile
+
+     which provides the Ozone values in g/kg for 20 vertical levels
+     in the atmosphere.  This array will be included in the Collect
+     6 version of MOD07, if there is a decision made by the MODIS 
+     science team to reprocess the data again.
+     
+  7) There is no quality assurance array or file included with this
+     delivery.  In opertional processing, the quality is always set
+     to good if a retrieval was performed.
+
+--------------------------------------------------------------------------
+  The atmospheric profiles output product consists of a separate
+  .img file in flat binary format, and accompanying header file.
+
+  The mod07.img file is a 103 float band interleaved product at 5x5 1km 
+  pixel resolution. Please see a list of these bands below.
+  The bands correspond to the DAAC Production HDF 
+  MOD07 product SDS's. The test output file that you create from the 
+  input test data sets contains the nominal MODIS swath size 
+  270 (1354/5 elements) and 578 lines (2890 scans/5).  Therefore, the 
+  product mod07.img file is 270 elements, by 103 bands (parameters), 
+  by 578 lines. In FORTRAN, it would be read as profiles(270,103,578).
+  This would be reversed in C - profiles(578,103,270).
+
+--------------------------------------------------------------------------
+   MODIS Direct Broadcast Atmospheric Profiles 
+          Output Product Description
+   -------------------------------------------
+   Four byte float data
+   103 parameters
+   5x5 1km-pixel resolution
+   Band Interleaved
+   fill value = -327.68
+
+band names = {
+band  1: Brightness_Temperature_B24,
+band  2: Brightness_Temperature_B25,
+band  3: Brightness_Temperature_B27,
+band  4: Brightness_Temperature_B28,
+band  5: Brightness_Temperature_B29,
+band  6: Brightness_Temperature_B30,
+band  7: Brightness_Temperature_B31,
+band  8: Brightness_Temperature_B32,
+band  9: Brightness_Temperature_B33,
+band 10: Brightness_Temperature_B34,
+band 11: Brightness_Temperature_B35,
+band 12: Brightness_Temperature_B36,
+band 13: Skin_Temperature,
+band 14: Surface_Pressure,
+band 15: Surface_Elevation,
+band 16: Retrieved_Temperature_Profile_Lev5,
+band 17: Retrieved_Temperature_Profile_Lev10,
+band 18: Retrieved_Temperature_Profile_Lev20,
+band 19: Retrieved_Temperature_Profile_Lev30,
+band 20: Retrieved_Temperature_Profile_Lev50,
+band 21: Retrieved_Temperature_Profile_Lev70,
+band 22: Retrieved_Temperature_Profile_Lev100,
+band 23: Retrieved_Temperature_Profile_Lev150,
+band 24: Retrieved_Temperature_Profile_Lev200,
+band 25: Retrieved_Temperature_Profile_Lev250,
+band 26: Retrieved_Temperature_Profile_Lev300,
+band 27: Retrieved_Temperature_Profile_Lev400,
+band 28: Retrieved_Temperature_Profile_Lev500,
+band 29: Retrieved_Temperature_Profile_Lev620,
+band 30: Retrieved_Temperature_Profile_Lev700,
+band 31: Retrieved_Temperature_Profile_Lev780,
+band 32: Retrieved_Temperature_Profile_Lev850,
+band 33: Retrieved_Temperature_Profile_Lev920,
+band 34: Retrieved_Temperature_Profile_Lev950,
+band 35: Retrieved_Temperature_Profile_Lev1000,
+band 36: Retrieved_Moisture_Profile_Lev5,
+band 37: Retrieved_Moisture_Profile_Lev10,
+band 38: Retrieved_Moisture_Profile_Lev20,
+band 39: Retrieved_Moisture_Profile_Lev30,
+band 40: Retrieved_Moisture_Profile_Lev50,
+band 41: Retrieved_Moisture_Profile_Lev70,
+band 42: Retrieved_Moisture_Profile_Lev100,
+band 43: Retrieved_Moisture_Profile_Lev150,
+band 44: Retrieved_Moisture_Profile_Lev200,
+band 45: Retrieved_Moisture_Profile_Lev250,
+band 46: Retrieved_Moisture_Profile_Lev300,
+band 47: Retrieved_Moisture_Profile_Lev400,
+band 48: Retrieved_Moisture_Profile_Lev500,
+band 49: Retrieved_Moisture_Profile_Lev620,
+band 50: Retrieved_Moisture_Profile_Lev700,
+band 51: Retrieved_Moisture_Profile_Lev780,
+band 52: Retrieved_Moisture_Profile_Lev850,
+band 53: Retrieved_Moisture_Profile_Lev920,
+band 54: Retrieved_Moisture_Profile_Lev950,
+band 55: Retrieved_Moisture_Profile_Lev1000,
+band 56: Retrieved_Height_Profile_Lev5,
+band 57: Retrieved_Height_Profile_Lev10,
+band 58: Retrieved_Height_Profile_Lev20,
+band 59: Retrieved_Height_Profile_Lev30,
+band 60: Retrieved_Height_Profile_Lev50,
+band 61: Retrieved_Height_Profile_Lev70,
+band 62: Retrieved_Height_Profile_Lev100,
+band 63: Retrieved_Height_Profile_Lev150,
+band 64: Retrieved_Height_Profile_Lev200,
+band 65: Retrieved_Height_Profile_Lev250,
+band 66: Retrieved_Height_Profile_Lev300,
+band 67: Retrieved_Height_Profile_Lev400,
+band 68: Retrieved_Height_Profile_Lev500,
+band 69: Retrieved_Height_Profile_Lev620,
+band 70: Retrieved_Height_Profile_Lev700,
+band 71: Retrieved_Height_Profile_Lev780,
+band 72: Retrieved_Height_Profile_Lev850,
+band 73: Retrieved_Height_Profile_Lev920,
+band 74: Retrieved_Height_Profile_Lev950,
+band 75: Retrieved_Height_Profile_Lev1000,
+band 76: Retrieved_Ozone_Profile_Lev5,
+band 77: Retrieved_Ozone_Profile_Lev10,
+band 78: Retrieved_Ozone_Profile_Lev20,
+band 79: Retrieved_Ozone_Profile_Lev30,
+band 80: Retrieved_Ozone_Profile_Lev50,
+band 81: Retrieved_Ozone_Profile_Lev70,
+band 82: Retrieved_Ozone_Profile_Lev100,
+band 83: Retrieved_Ozone_Profile_Lev150,
+band 84: Retrieved_Ozone_Profile_Lev200,
+band 85: Retrieved_Ozone_Profile_Lev250,
+band 86: Retrieved_Ozone_Profile_Lev300,
+band 87: Retrieved_Ozone_Profile_Lev400,
+band 88: Retrieved_Ozone_Profile_Lev500,
+band 89: Retrieved_Ozone_Profile_Lev620,
+band 90: Retrieved_Ozone_Profile_Lev700,
+band 91: Retrieved_Ozone_Profile_Lev780,
+band 92: Retrieved_Ozone_Profile_Lev850,
+band 93: Retrieved_Ozone_Profile_Lev920,
+band 94: Retrieved_Ozone_Profile_Lev950,
+band 95: Retrieved_Ozone_Profile_Lev1000,
+band 96: Total_Ozone,
+band 97: Total_Totals,
+band 98: Lifted_Index,
+band 99: K_Index,
+band 100 Water_Vapor,
+band 101 Water_Vapor_Direct,
+band 102 Water_Vapor_Low,
+band 103 Water_Vapor_High
+}
+band units = {
+band  1: K,
+band  2: K,
+band  3: K,
+band  4: K,
+band  5: K,
+band  6: K,
+band  7: K,
+band  8: K,
+band  9: K,
+band 10: K,
+band 11: K,
+band 12: K,
+band 13: K,
+band 14: hPa,
+band 15: m,
+band 16: K,
+band 17: K,
+band 18: K,
+band 19: K,
+band 20: K, 
+band 21: K,
+band 22: K,
+band 23: K,
+band 24: K,
+band 25: K,
+band 26: K,
+band 27: K,
+band 28: K,
+band 29: K,
+band 30: K,
+band 31: K,
+band 32: K,
+band 33: K,
+band 34: K,
+band 35: K,
+band 36: K,
+band 37: K,
+band 38: K,
+band 39: K,
+band 40: K,
+band 41: K,
+band 42: K,
+band 43: K,
+band 44: K,
+band 45: K,
+band 46: K,
+band 47: K,
+band 48: K,
+band 49: K,
+band 50: K,
+band 51: K,
+band 52: K,
+band 53: K,
+band 54: K,
+band 55: K,
+band 56: m,
+band 57: m,
+band 58: m,
+band 59: m,
+band 60: m,
+band 61: m,
+band 62: m,
+band 63: m,
+band 64: m,
+band 65: m,
+band 66: m,
+band 67: m,
+band 68: m,
+band 69: m,
+band 70: m,
+band 71: m,
+band 72: m,
+band 73: m,
+band 74: m,
+band 75: m,
+band 76: g/kg,
+band 77: g/kg,
+band 78: g/kg,
+band 79: g/kg,
+band 80: g/kg,
+band 81: g/kg,
+band 82: g/kg,
+band 83: g/kg,
+band 84: g/kg,
+band 85: g/kg,
+band 86: g/kg,
+band 87: g/kg,
+band 88: g/kg,
+band 89: g/kg,
+band 90: g/kg,
+band 91: g/kg,
+band 92: g/kg,
+band 93: g/kg,
+band 94: g/kg,
+band 95: g/kg,
+band 96: Dob,
+band 97: K,
+band 98: K,
+band 99: K,
+band 100 cm,
+band 101 cm,
+band 102 cm,
+band 103 cm
+}
+bad value = -327.68
+
+
+HDF OUTPUT FILE
+---------------
+  The HDF output file (*mod07.hdf) contains 18 arrays stored as
+  different types with a variety of scale factors and offsets.
+
+  (Example ncdump -h for an IMAPP profiles hdf file)
+dimensions:
+        fakeDim0 = 406 ;
+        fakeDim1 = 270 ;
+        fakeDim2 = 406 ;
+        fakeDim3 = 270 ;
+        fakeDim4 = 12 ;
+        fakeDim5 = 406 ;
+        fakeDim6 = 270 ;
+        fakeDim7 = 406 ;
+        fakeDim8 = 270 ;
+        fakeDim9 = 406 ;
+        fakeDim10 = 270 ;
+        fakeDim11 = 406 ;
+        fakeDim12 = 270 ;
+        fakeDim13 = 20 ;
+        fakeDim14 = 406 ;
+        fakeDim15 = 270 ;
+        fakeDim16 = 20 ;
+        fakeDim17 = 406 ;
+        fakeDim18 = 270 ;
+        fakeDim19 = 20 ;
+        fakeDim20 = 406 ;
+        fakeDim21 = 270 ;
+        fakeDim22 = 20 ;
+        fakeDim23 = 406 ;
+        fakeDim24 = 270 ;
+        fakeDim25 = 406 ;
+        fakeDim26 = 270 ;
+        fakeDim27 = 406 ;
+        fakeDim28 = 270 ;
+        fakeDim29 = 406 ;
+        fakeDim30 = 270 ;
+        fakeDim31 = 406 ;
+        fakeDim32 = 270 ;
+        fakeDim33 = 406 ;
+        fakeDim34 = 270 ;
+        fakeDim35 = 406 ;
+        fakeDim36 = 270 ;
+        fakeDim37 = 406 ;
+        fakeDim38 = 270 ;
+        fakeDim39 = 406 ;
+        fakeDim40 = 270 ;
+
+variables:
+        float Latitude(fakeDim0, fakeDim1) ;
+        float Longitude(fakeDim2, fakeDim3) ;
+        short Brightness_Temperature(fakeDim4, fakeDim5, fakeDim6) ;
+                Brightness_Temperature:units = "K" ;
+                Brightness_Temperature:scale_factor = 0.01 ;
+                Brightness_Temperature:add_offset = -15000. ;
+                Brightness_Temperature:valid_range = 0s, 20000s ;
+                Brightness_Temperature:_FillValue = -32768s ;
+        short Skin_Temperature(fakeDim7, fakeDim8) ;
+                Skin_Temperature:units = "K" ;
+                Skin_Temperature:scale_factor = 0.01 ;
+                Skin_Temperature:add_offset = -15000. ;
+                Skin_Temperature:valid_range = 0s, 20000s ;
+                Skin_Temperature:_FillValue = -32768s ;
+        short Surface_Pressure(fakeDim9, fakeDim10) ;
+                Surface_Pressure:units = "hPa" ;
+                Surface_Pressure:scale_factor = 0.1 ;
+                Surface_Pressure:add_offset = 0. ;
+                Surface_Pressure:valid_range = 8000s, 11000s ;
+                Surface_Pressure:_FillValue = -32768s ;
+        short Surface_Elevation(fakeDim11, fakeDim12) ;
+                Surface_Elevation:units = "m" ;
+                Surface_Elevation:scale_factor = 1. ;
+                Surface_Elevation:add_offset = 0. ;
+                Surface_Elevation:valid_range = -400s, 8840s ;
+                Surface_Elevation:_FillValue = -32768s ;
+        short Retrieved_Temperature_Profile(fakeDim13, fakeDim14, fakeDim15) ;
+                Retrieved_Temperature_Profile:units = "K" ;
+                Retrieved_Temperature_Profile:scale_factor = 0.01 ;
+                Retrieved_Temperature_Profile:add_offset = -15000. ;
+                Retrieved_Temperature_Profile:valid_range = 0s, 20000s ;
+                Retrieved_Temperature_Profile:_FillValue = -32768s ;
+        short Retrieved_WV_Mixing_Ratio_Profile(fakeDim16, fakeDim17,
+fakeDim18) ;
+                Retrieved_WV_Mixing_Ratio_Profile:units = "g/kg" ;
+                Retrieved_WV_Mixing_Ratio_Profile:scale_factor = 0.001 ;
+                Retrieved_WV_Mixing_Ratio_Profile:add_offset = 0. ;
+                Retrieved_WV_Mixing_Ratio_Profile:valid_range = 0s, 20000s ;
+                Retrieved_WV_Mixing_Ratio_Profile:_FillValue = -32768s ;
+        short Retrieved_Height_Profile(fakeDim19, fakeDim20, fakeDim21) ;
+                Retrieved_Height_Profile:units = "m" ;
+                Retrieved_Height_Profile:scale_factor = 1. ;
+                Retrieved_Height_Profile:add_offset = -32500. ;
+                Retrieved_Height_Profile:valid_range = -32500s, 32500s ;
+                Retrieved_Height_Profile:_FillValue = -32768s ;
+        short Retrieved_Ozone_Profile(fakeDim22, fakeDim23, fakeDim24) ;
+                Retrieved_Ozone_Profile:units = "g/kg" ;
+                Retrieved_Ozone_Profile:scale_factor = 0.001 ;
+                Retrieved_Ozone_Profile:add_offset = 0. ;
+                Retrieved_Ozone_Profile:valid_range = -32500s, 32500s ;
+                Retrieved_Ozone_Profile:_FillValue = -32768s ;
+        short Total_Ozone(fakeDim25, fakeDim26) ;
+                Total_Ozone:units = "Dobson" ;
+                Total_Ozone:scale_factor = 0.1 ;
+                Total_Ozone:add_offset = 0. ;
+                Total_Ozone:valid_range = 0s, 5000s ;
+                Total_Ozone:_FillValue = -32768s ;
+        short Total_Totals(fakeDim27, fakeDim28) ;
+                Total_Totals:units = "K" ;
+                Total_Totals:scale_factor = 0.01 ;
+                Total_Totals:add_offset = 0. ;
+                Total_Totals:valid_range = 0s, 8000s ;
+                Total_Totals:_FillValue = -32768s ;
+        short Lifted_Index(fakeDim29, fakeDim30) ;
+                Lifted_Index:units = "K" ;
+                Lifted_Index:scale_factor = 0.01 ;
+                Lifted_Index:add_offset = 0. ;
+                Lifted_Index:valid_range = -2000s, 4000s ;
+                Lifted_Index:_FillValue = -32768s ;
+        short K_Index(fakeDim31, fakeDim32) ;
+                K_Index:units = "K" ;
+                K_Index:scale_factor = 0.01 ;
+                K_Index:add_offset = -15000. ;
+                K_Index:valid_range = 11500s, 20000s ;
+                K_Index:_FillValue = -32768s ;
+        short Water_Vapor(fakeDim33, fakeDim34) ;
+                Water_Vapor:units = "cm" ;
+                Water_Vapor:scale_factor = 0.001 ;
+                Water_Vapor:add_offset = 0. ;
+                Water_Vapor:valid_range = 0s, 20000s ;
+                Water_Vapor:_FillValue = -9999s ;
+        short Water_Vapor_Direct(fakeDim35, fakeDim36) ;
+                Water_Vapor_Direct:units = "cm" ;
+                Water_Vapor_Direct:scale_factor = 0.001 ;
+                Water_Vapor_Direct:add_offset = 0. ;
+                Water_Vapor_Direct:valid_range = 0s, 20000s ;
+                Water_Vapor_Direct:_FillValue = -9999s ;
+        short Water_Vapor_Low(fakeDim37, fakeDim38) ;
+                Water_Vapor_Low:units = "cm" ;
+                Water_Vapor_Low:scale_factor = 0.001 ;
+                Water_Vapor_Low:add_offset = 0. ;
+                Water_Vapor_Low:valid_range = 0s, 20000s ;
+                Water_Vapor_Low:_FillValue = -9999s ;
+        short Water_Vapor_High(fakeDim39, fakeDim40) ;
+                Water_Vapor_High:units = "cm" ;
+                Water_Vapor_High:scale_factor = 0.001 ;
+                Water_Vapor_High:add_offset = 0. ;
+                Water_Vapor_High:valid_range = 0s, 20000s ;
+                Water_Vapor_High:_FillValue = -9999s ;
+
+// global attributes:
+                :ScaleFactor_AddOffset_Application =
+"Value=scale_factor*(stored integer - add_offset)" ;
+                :Pressure_Levels = "5, 10, 20, 30, 50, 70, 100, 150, 200, 250,
+300, 400, 500, 620, 700, 780, 850, 920, 950, 1000 hPa" ;
+}

@@ -1,0 +1,375 @@
+        Direct Broadcast Cloud Mask Output File Format
+        ----------------------------------------------
+
+  The IMAPP MODIS cloud mask software will create the MODIS
+  cloud mask 48 bit array for each pixel in a given scene.
+
+  For a description of the algorithm, please see:
+   Ackerman, S.A., Strabala, K.I., Menzel, W.P., Frey, R.A., Moeller,
+   C.C.  and L.A. Gumley, 1998: Discriminating clear sky from clouds
+   with MODIS. Journal of Geophysical Research, 103, 32141-32157.
+
+  The user can choose the output format type, either HDF or
+  binary.  If you are using the modis_level2.csh script,
+  you set the OUTPUT_TYPE environmental variable in the
+  imapp_modisl2/env scripts to:
+
+               1 = binary only
+               2 = hdf only
+               3 = binary and hdf
+
+---------------------------------------------------------------------
+     		Cloud Mask Output Product 48 Bit Description 
+       		 --------------------------------------------
+ 
+  Bit fields within each byte are numbered from the left:
+  7, 6, 5, 4, 3, 2, 1, 0.
+  The left-most bit (bit 7) is the most significant bit.
+  The right-most bit (bit 0) is the least significant bit.
+
+  *** NOTE:  To interpret individual test results correctly, **
+             (cloud mask bits 7-47:bytes 2-6) you must first
+             check the accompanying bits in the cloud mask
+             QA array (see description below) to see if the
+  *********  test was applied for the given pixel. ***********
+             
+ 
+  bit field	  Description				  Key
+  ---------	  -----------				  ---
+ 
+  0		  Cloud Mask Flag		       0 = Not determined
+ 						       1 = Determined
+ 
+  2, 1  	  Unobstructed FOV Quality Flag        00 = Cloudy
+ 						       01 = Uncertain
+ 						       10 = Probably Clear
+ 						       11 = Confident Clear
+ 		  PROCESSING PATH
+ 		  ---------------
+  3		  Day or Night Path		       0 = Night / 1 = Day
+  4		  Sunglint Path 		       0 = Yes   / 1 = No
+  5		  Snow/Ice Background Path	       0 = Yes   / 1 = No
+  7, 6  	  Land or Water Path		       00 = Water
+ 						       01 = Coastal
+ 						       10 = Desert
+ 						       11 = Land
+  ____ END BYTE 1 _________________________________________________________
+ 
+  bit field	  Description				  Key
+  ---------	  -----------				  ---
+ 
+ 		  ADDITIONAL INFORMATION
+ 		  ----------------------
+  0		  Non-cloud obstruction Flag		  0 = Yes / 1 = No
+  1		  Thin Cirrus Detected  (Solar) 	  0 = Yes / 1 = No
+  2		  Shadow Found  			  0 = Yes / 1 = No
+  3		  Thin Cirrus Detected  (Infrared)	  0 = Yes / 1 = No
+  4		  Adjacent Cloud Detected **		  0 = Yes / 1 = No
+ 		  ** Implemented Post Launch to
+ 		     Indicate cloud found within
+ 		     surrounding 1 km pixels *
+ 
+ 		  1-km CLOUD FLAGS
+ 		  ----------------
+  5		  Cloud Flag - IR Threshold		  0 = Yes / 1 = No
+  6		  High Cloud Flag - CO2 Test		  0 = Yes / 1 = No
+  7		  High Cloud Flag - 6.7 micron Test	  0 = Yes / 1 = No
+  ____ END BYTE 2 _________________________________________________________
+ 
+  bit field	  Description				  Key
+  ---------	  -----------				  ---
+ 
+  0		  High Cloud Flag - 1.38 micron Test	  0 = Yes / 1 = No
+  1		  High Cloud Flag - 3.7-12 micron Test    0 = Yes / 1 = No
+  2		  Cloud Flag - IR Temperature		  0 = Yes / 1 = No
+ 			       Difference
+  3		  Cloud Flag - 3.7-11 micron Test	  0 = Yes / 1 = No
+  4		  Cloud Flag - Visible Reflectance Test   0 = Yes / 1 = No
+  5		  Cloud Flag - Visible Reflectance	  0 = Yes / 1 = No
+ 			       Ratio Test
+  6		  Cloud Flag - NDVI Final Confidence	  0 = Yes / 1 = No
+ 			       Confirmation Test
+  7		  Cloud Flag - Night 7.3-11 micron Test  0 = Yes / 1 = No
+  ____ END BYTE 3 _________________________________________________________
+ 
+  bit field	  Description				  Key
+  ---------	  -----------				  ---
+ 
+ 		  ADDITIONAL TESTS
+ 		  ----------------
+  0		  Cloud Flag - Spare			  0 = Yes / 1 = No
+  1		  Cloud Flag - Spatial Variability	  0 = Yes / 1 = No
+  2		  Final Confidence Confirmation Test	  0 = Yes / 1 = No
+  3		  Cloud Flag - Night Water		  0 = Yes / 1 = No
+ 			       Spatial Variability
+  4		  Suspended Dust Flag			  0 = Yes / 1 = No
+ 
+  5-7		  Spares
+  ____ END BYTE 4 _________________________________________________________
+ 
+  bit field	  Description				  Key
+  ---------	  -----------				  ---
+ 
+ 		  250-m Cloud Flag - Visible Tests
+ 		  --------------------------------
+  0		  Element(1,1)  			  0 = Yes / 1 = No
+  1		  Element(1,2)  			  0 = Yes / 1 = No
+  2		  Element(1,3)  			  0 = Yes / 1 = No
+  3		  Element(1,4)  			  0 = Yes / 1 = No
+  4		  Element(2,1)  			  0 = Yes / 1 = No
+  5		  Element(2,2)  			  0 = Yes / 1 = No
+  6		  Element(2,3)  			  0 = Yes / 1 = No
+  7		  Element(2,4)  			  0 = Yes / 1 = No
+  ____ END BYTE 5 _________________________________________________________
+ 
+  bit field	  Description				  Key
+  ----------	  -----------				  ---
+ 
+  0		  Element(3,1)  			  0 = Yes / 1 = No
+  1		  Element(3,2)  			  0 = Yes / 1 = No
+  2		  Element(3,3)  			  0 = Yes / 1 = No
+  3		  Element(3,4)  			  0 = Yes / 1 = No
+  4		  Element(4,1)  			  0 = Yes / 1 = No
+  5		  Element(4,2)  			  0 = Yes / 1 = No
+  6		  Element(4,3)  			  0 = Yes / 1 = No
+  7		  Element(4,4)  			  0 = Yes / 1 = No
+  ____ END BYTE 6 _________________________________________________________
+
+
+ 		Quality Assurance 80 Bit Description
+
+ 	 Product Run Time QA Flags
+  QA Flag Name    Number of Bits  Bit Value   Description
+  -------------------------------------------------------------
+  Cloud Mask QA        1	     0       not useful
+    (1km)			     1       useful
+ 
+  Cloud Mask	       3	    0-7      8 confidence levels
+    Confidence QA
+    (1km)
+ 
+  Spares	       4
+   -------- ( 1 byte total ) --------------------------------
+ 
+  Optional run time QA flags - Individual test application
+ 
+  QA Flag Name    Number of Bits  Bit Value   Description
+  -------------------------------------------------------------
+  NCO test	       1	     0       Not Applied
+ 				     1       Applied
+ 
+  Thin Cirrus	       1	     0       Not Applied
+    test (Solar)		     1       Applied
+ 
+  Shadow Tests         1	     0       Not Applied
+ 				     1       Applied
+ 
+  Thin Cirrus	       1	     0       Not Applied
+    test(IR)			     1       Applied
+ 
+  Cloud Adjancency     1	     0       Not Applied
+    test(IR)			     1       Applied
+ 
+  IR Threshold         1	     0       Not Applied
+    test			     1       Applied
+ 
+  High Cloud	       1	     0       Not Applied
+    Test (CO2)  		     1       Applied
+ 
+  High Cloud	       1	     0       Not Applied
+    Test (6.7)  		     1       Applied
+ 
+  High Cloud	       1	     0       Not Applied
+    Test (1.38) 		     1       Applied
+ 
+  High Cloud	       1	     0       Not Applied
+    Test (3.7-12um)		     1       Applied
+ 
+  IR Temperature       1	     0       Not Applied
+    Difference Tests		     1       Applied
+ 
+  3.7-11um Test        1	     0       Not Applied
+ 				     1       Applied
+ 
+  .68 Reflectance      1	     0       Not Applied
+    Test			     1       Applied
+ 
+  Visible Ratio        1	     0       Not Applied
+    Test			     1       Applied
+ 
+  NDVI Final	       1	     0       Not Applied
+    Confidence  		     1       Applied
+    Confirmation
+ 
+  Night 7.3-11 micron  1	     0       Not Applied
+    Test                             1       Applied
+ 
+  Spare 	       1	     0       Not Applied
+ 				     1       Applied
+ 
+  Spatial	       1	     0       Not Applied
+    Variability Test		     1       Applied
+ 
+  Final Confidence     1	     0       Not Applied
+    Confirmation Test		     1       Applied
+ 
+  Night Water	       1	     0       Not Applied
+    Spatial Variability 	     1       Applied
+ 
+  Suspended Dust Test  1	     0       Not Applied
+ 				     1       Applied
+ 
+  Spares	       3
+ 
+  250 m Visible      1(16)	     0       Not Applied
+    Tests			     1       Applied
+    (16 times as (line1,element1),(line1, element2),...
+    (line4,element4))
+ 
+   -------- ( 5 bytes total ) --------------------------------
+ 
+  Optional run time QA flags - data information flags
+ 
+  QA Flag Name    Number of Bits  Bit Value   Description
+   -------------------------------------------------------------
+  Number of	       2	     0       None
+    bands used to		     1       1-7
+    generate			     2       8-14
+    cloud mask  		     3       15-21
+ 
+  Number of	       2	     0       None
+    spectral			     1       1-3
+    tests used to		     2       4-6
+    generate			     3       7-9
+    cloud mask
+ 
+  Spares	       4
+ 
+   -------- ( 1 byte total ) --------------------------------
+ 
+  Optional run time QA flags - data resource flags
+ 
+  QA Flag Name    Number of Bits  Bit Value   Description
+  -------------------------------------------------------------
+  Clear 	       2	     0       MOD35
+    Radiance			     1       Model forward calculation
+    Origin			     2       Other
+ 				     3       Not used
+ 
+  Surface	       2	     0       NCEP GDAS
+    Temperature 		     1       DAO
+    Over Land			     2       MOD11
+ 				     3       Other
+ 
+  Surface	       2	     0       Reynolds blended
+    Temperature 		     1       DAO
+    Over Ocean  		     2       MOD28
+ 				     3       Other
+ 
+  Surface Winds        2	     0       NCEP GDAS
+ 				     1       DAO
+ 				     2       Other
+ 				     3       Not used
+ 
+  Ecosystem Map        2	     0       Loveland NA 1km
+ 				     1       Olson Ecosystem
+ 				     2       MOD12
+ 				     3       Other
+ 
+  Snow mask	       2	     0       MOD33
+ 				     1       SSMI Product
+ 				     2       Other
+ 				     3       Not used
+ 
+  Ice cover	       2	     0       MOD42
+ 				     1       SSMI product
+ 				     2       Other
+ 				     3       Not used
+ 
+  Land/Sea Mask        2	     0       USGS 1 km 6 level
+ 				     1       USGS 1 km binary
+ 				     2       Other
+ 				     3       Not used
+ 
+  Digital	       1	     0       EOS DEM
+    Elevation			     1       Not used
+    Model
+ 
+  Precipitable         2	     0       NCEP GDAS
+    Water			     1       DAO
+ 				     2       MOD07
+ 				     3       Other
+ 
+  Spare 	       5
+ 
+   -------- ( 3 bytes total ) --------------------------------
+ 
+Binary Output
+-------------
+  The Direct Broadcast binary output file differs from the operational 
+  MOD35 output file in that:
+
+  1) It is a byte formatted flat binary file instead of HDF.
+
+  2) There are two .img and two .hdr files representing the operational
+     MOD35 HDF Cloud_Mask and Quality_Assurance SDS's.
+
+  3) There are no geolocation or solar and viewing geometry parameters
+     included as part of the Direct Broadcast product.
+
+--------------------------------------------------------------------------
+  The cloud mask output file product consists of two separate
+  .img files in flat binary byte seqential format, and accompanying
+  header files.
+
+  The mod35.img file is a 6 byte per 1km-pixel product with information
+  at the bit level.  Please see the 48 bit description below.
+  This corresponds to the DAAC Production HDF MOD35 product SDS
+  Cloud_Mask. The test output file that you create from the input test
+  data sets contains the nominal MODIS swath size 1354 elements
+  and 289 scans (2890 lines).  Therefore, the product mod35.img file
+  is 6 bytes, by 2890 lines, by 1354 elements. In FORTRAN, it would
+  be read as mask(1354,2890,6).  This would be reversed in
+  C - mask(6,2890,1354).
+
+  The mod35qa.img file is a 10 byte per pixel product with information
+  at the bit level.  Please see the 80 bit description below.
+  This corresponds to the DAAC Production HDF MOD35 product SDS
+  Quality_Assurance. It contains information on whether a given test
+  has been performed, as well as some ancillary data information.
+  The test output file that you create from the input test data sets
+  contains the nominal MODIS swath size 1354 elements and 289 scans
+  (2890 lines).  Therefore, product mod35qa.img file is 10 bytes,
+  by 2890 lines, by 1354 elements.  In FORTRAN, it would be read as
+  maskqa(1354,2890,10).  This would be reversed in C - maskqa(10,2890,1354).
+--------------------------------------------------------------------------
+
+
+HDF OUTPUT FILE
+---------------
+  The HDF output file (*mod35.hdf) contains 4 arrays.  Latitude, Longitude, the
+  Cloud Mask 48 bit array and the Cloud Mask 10 byte Quality Assurance
+  Array.
+
+  (Example ncdump -h for an IMAPP cloud mask hdf file) 
+
+dimensions:
+        Cell_Along_Swath_5km = 578 ;
+        Cell_Across_Swath_5km = 270 ;
+        Byte_Segment = 6 ;
+        Cell_Along_Swath_1km = 2890 ;
+        Cell_Across_Swath_1km = 1354 ;
+        QA_Dimension = 10 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        byte Cloud_Mask(Byte_Segment, Cell_Along_Swath_1km,
+Cell_Across_Swath_1km) ;
+                Cloud_Mask:_FillValue = '\0' ;
+        byte Quality_Assurance(Cell_Along_Swath_1km, Cell_Across_Swath_1km,
+QA_Dimension) ;
+                Quality_Assurance:_FillValue = '\0' ;
+

@@ -1,0 +1,461 @@
+   MODIS DB Cloud Optical Property Output Product Description
+   ----------------------------------------------------------
+   The MODIS IMAPP Cloud Optical Property software was created
+   by the NASA GSFC team led by Dr. Michael King and Dr. Steven
+   Platnick.  The output file is in HDF 4 format only, and requires
+   the cloud mask and cloud top properties algorithms to be run
+   prior to execution.  The cloud optical properties parameters
+   (ie., Cloud_Optical_Thickness, Cloud_Effective_Radius)
+   are added to the mod06 HDF file that is created by running
+   the cloud top properties software. The algorithm is only
+   executed for MODIS daytime scans.
+
+   For more information about the MODIS cloud optical properties
+   algorithm and product, please see:
+
+ Moody, E. G., M. D. King, C. B. Schaaf, and S. Platnick, 2008: 
+   MODIS-derived spatially complete surface albedo products: Spatial 
+   and temporal pixel distribution and zonal averages. J. Appl. 
+   Meteor. Climatol., 47, 2879-2894. 
+ Moody, E. G., M. D. King, C. B. Schaaf, D. K. Hall, and S. 
+   Platnick, 2007: Northern Hemisphere five-year average 
+   (2000-2004) spectral albedos of surfaces in the presence of 
+   snow: Statistics computed from Terra MODIS land products.
+   Remote Sens. Environ., 111, 337-345.
+ Yang, P., L. Zhang, G. Hong, S. L. Nasiri, B. A. Baum, H. 
+   L. Huang, M. D. King, and S. Platnick, 2007: Differences between 
+   collection 4 and 5 MODIS ice cloud optical/microphysical 
+   products and their impact on radiative forcing simulations. 
+   IEEE Trans. Geosci. Remote Sens., 45, 2886-2899. 
+ Platnick, S., M. D. King, S. A. Ackerman, W. P. Menzel, 
+   B. A. Baum, J. C. Riédi, and R. A. Frey, 2003: The MODIS 
+   cloud products: Algorithms and examples from Terra.  IEEE Trans. 
+   Geosci. Remote Sens., 41, 459–473.
+
+ There is wealth of information about the MODIS cloud product
+   available online at the MODIS atmosphere group web page:
+   http://modis-atmos.gsfc.nasa.gov/MOD06_L2/index.html .
+
+HDF OUTPUT FILE
+---------------
+  The HDF output file (*mod06.hdf) contains 29 arrays filled
+  by the cloud top properties processing software and 19 filled
+  during the cloud optical properties processing step. The
+  arrays are of different types with a variety of scale 
+  factors and offsets.  The cloud top properties arrays 
+  are at 5 km resolution.  The remaining cloud optical 
+  properties arrays are at 1 km spatial resolution.
+
+  (Example ncdump -h for an IMAPP cloud HDF (*mod06.hdf) file)
+dimensions:
+
+netcdf a1.09041.2030.mod06ct {
+dimensions:
+        fakeDim0 = 578 ;
+        fakeDim1 = 270 ;
+        fakeDim2 = 578 ;
+        fakeDim3 = 270 ;
+        fakeDim4 = 7 ;
+        fakeDim5 = 578 ;
+        fakeDim6 = 270 ;
+        fakeDim7 = 578 ;
+        fakeDim8 = 270 ;
+        fakeDim9 = 578 ;
+        fakeDim10 = 270 ;
+        fakeDim11 = 578 ;
+        fakeDim12 = 270 ;
+        fakeDim13 = 578 ;
+        fakeDim14 = 270 ;
+        fakeDim15 = 578 ;
+        fakeDim16 = 270 ;
+        fakeDim17 = 578 ;
+        fakeDim18 = 270 ;
+        fakeDim19 = 578 ;
+        fakeDim20 = 270 ;
+        fakeDim21 = 578 ;
+        fakeDim22 = 270 ;
+        fakeDim23 = 578 ;
+        fakeDim24 = 270 ;
+        fakeDim25 = 578 ;
+        fakeDim26 = 270 ;
+        fakeDim27 = 578 ;
+        fakeDim28 = 270 ;
+        fakeDim29 = 578 ;
+        fakeDim30 = 270 ;
+        fakeDim31 = 578 ;
+        fakeDim32 = 270 ;
+        fakeDim33 = 578 ;
+        fakeDim34 = 270 ;
+        fakeDim35 = 578 ;
+        fakeDim36 = 270 ;
+        fakeDim37 = 578 ;
+        fakeDim38 = 270 ;
+        fakeDim39 = 578 ;
+        fakeDim40 = 270 ;
+        fakeDim41 = 578 ;
+        fakeDim42 = 270 ;
+        fakeDim43 = 5 ;
+        fakeDim44 = 578 ;
+        fakeDim45 = 270 ;
+        fakeDim46 = 5 ;
+        fakeDim47 = 578 ;
+        fakeDim48 = 270 ;
+        fakeDim49 = 578 ;
+        fakeDim50 = 270 ;
+        fakeDim51 = 7 ;
+        fakeDim52 = 578 ;
+        fakeDim53 = 270 ;
+        fakeDim54 = 2 ;
+        fakeDim55 = 578 ;
+        fakeDim56 = 270 ;
+        fakeDim57 = 578 ;
+        fakeDim58 = 270 ;
+        fakeDim59 = 578 ;
+        fakeDim60 = 270 ;
+        fakeDim61 = 578 ;
+        fakeDim62 = 270 ;
+        fakeDim63 = 2890 ;
+        fakeDim64 = 1354 ;
+        fakeDim65 = 2890 ;
+        fakeDim66 = 1354 ;
+        fakeDim67 = 2890 ;
+        fakeDim68 = 1354 ;
+        fakeDim69 = 2890 ;
+        fakeDim70 = 1354 ;
+        fakeDim71 = 2 ;
+        fakeDim72 = 2890 ;
+        fakeDim73 = 1354 ;
+        fakeDim74 = 2890 ;
+        fakeDim75 = 1354 ;
+        fakeDim76 = 2890 ;
+        fakeDim77 = 1354 ;
+        fakeDim78 = 2890 ;
+        fakeDim79 = 1354 ;
+        fakeDim80 = 2890 ;
+        fakeDim81 = 1354 ;
+        fakeDim82 = 2890 ;
+        fakeDim83 = 1354 ;
+        fakeDim84 = 2890 ;
+        fakeDim85 = 1354 ;
+        fakeDim86 = 2890 ;
+        fakeDim87 = 1354 ;
+        fakeDim88 = 2890 ;
+        fakeDim89 = 1354 ;
+        fakeDim90 = 2890 ;
+        fakeDim91 = 1354 ;
+        fakeDim92 = 2890 ;
+        fakeDim93 = 1354 ;
+        fakeDim94 = 2890 ;
+        fakeDim95 = 1354 ;
+        fakeDim96 = 2890 ;
+        fakeDim97 = 1354 ;
+        fakeDim98 = 2890 ;
+        fakeDim99 = 1354 ;
+        fakeDim100 = 2 ;
+        fakeDim101 = 2890 ;
+        fakeDim102 = 1354 ;
+        fakeDim103 = 5 ;
+
+variables:
+
+## START OF CLOUD TOP PROPERTIES ARRAYS  -  5 KM RESOLUTION ####
+--------------------------------------------------------------------
+        float Latitude(fakeDim0, fakeDim1) ;
+        float Longitude(fakeDim2, fakeDim3) ;
+        short Brightness_Temperature(fakeDim4, fakeDim5, fakeDim6) ;
+                Brightness_Temperature:units = "K" ;
+                Brightness_Temperature:scale_factor = 0.01 ;
+                Brightness_Temperature:add_offset = -15000. ;
+                Brightness_Temperature:valid_range = 0s, 20000s ;
+                Brightness_Temperature:_FillValue = -32768s ;
+        short Surface_Temperature(fakeDim7, fakeDim8) ;
+                Surface_Temperature:units = "K" ;
+                Surface_Temperature:scale_factor = 0.01 ;
+                Surface_Temperature:add_offset = -15000. ;
+                Surface_Temperature:valid_range = 0s, 20000s ;
+                Surface_Temperature:_FillValue = -32768s ;
+        short Surface_Pressure(fakeDim9, fakeDim10) ;
+                Surface_Pressure:units = "hPa" ;
+                Surface_Pressure:scale_factor = 0.1 ;
+                Surface_Pressure:add_offset = 0. ;
+                Surface_Pressure:valid_range = 8000s, 11000s ;
+                Surface_Pressure:_FillValue = -32768s ;
+        byte Processing_Flag(fakeDim11, fakeDim12) ;
+                Processing_Flag:units = "none" ;
+                Processing_Flag:scale_factor = 1. ;
+                Processing_Flag:add_offset = 0. ;
+                Processing_Flag:valid_range = '\0', '\3' ;
+                Processing_Flag:_FillValue = '\177' ;
+        byte Cloud_Height_Method(fakeDim13, fakeDim14) ;
+                Cloud_Height_Method:units = "none" ;
+                Cloud_Height_Method:scale_factor = 1. ;
+                Cloud_Height_Method:add_offset = 0. ;
+                Cloud_Height_Method:valid_range = '\1', '\6' ;
+                Cloud_Height_Method:_FillValue = '\177' ;
+        short Cloud_Top_Pressure(fakeDim15, fakeDim16) ;
+                Cloud_Top_Pressure:units = "hPa" ;
+                Cloud_Top_Pressure:scale_factor = 0.1 ;
+                Cloud_Top_Pressure:add_offset = 0. ;
+                Cloud_Top_Pressure:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_Night(fakeDim17, fakeDim18) ;
+                Cloud_Top_Pressure_Night:units = "hPa" ;
+                Cloud_Top_Pressure_Night:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Night:add_offset = 0. ;
+                Cloud_Top_Pressure_Night:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Night:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_Day(fakeDim19, fakeDim20) ;
+                Cloud_Top_Pressure_Day:units = "hPa" ;
+                Cloud_Top_Pressure_Day:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Day:add_offset = 0. ;
+                Cloud_Top_Pressure_Day:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Day:_FillValue = -32768s ;
+        short Cloud_Top_Temperature(fakeDim21, fakeDim22) ;
+                Cloud_Top_Temperature:units = "K" ;
+                Cloud_Top_Temperature:scale_factor = 0.01 ;
+                Cloud_Top_Temperature:add_offset = -15000. ;
+                Cloud_Top_Temperature:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature:_FillValue = -32768s ;
+        short Cloud_Top_Temperature_Night(fakeDim23, fakeDim24) ;
+                Cloud_Top_Temperature_Night:units = "K" ;
+                Cloud_Top_Temperature_Night:scale_factor = 0.01 ;
+                Cloud_Top_Temperature_Night:add_offset = -15000. ;
+                Cloud_Top_Temperature_Night:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature_Night:_FillValue = 32768 ;
+        short Cloud_Top_Temperature_Day(fakeDim25, fakeDim26) ;
+                Cloud_Top_Temperature_Day:units = "hPa" ;
+                Cloud_Top_Temperature_Day:scale_factor = 0.01 ;
+                Cloud_Top_Temperature_Day:add_offset = -15000. ;
+                Cloud_Top_Temperature_Day:valid_range = 0s, 20000s ;
+                Cloud_Top_Temperature_Day:_FillValue = -32768s ;
+        short Tropopause_Height(fakeDim27, fakeDim28) ;
+                Tropopause_Height:units = "hPa" ;
+                Tropopause_Height:scale_factor = 0.1 ;
+                Tropopause_Height:add_offset = 0. ;
+                Tropopause_Height:valid_range = 10s, 11000s ;
+                Tropopause_Height:_FillValue = -32768s ;
+        byte Cloud_Fraction(fakeDim29, fakeDim30) ;
+                Cloud_Fraction:units = "none" ;
+                Cloud_Fraction:scale_factor = 0.01 ;
+                Cloud_Fraction:add_offset = 0. ;
+                Cloud_Fraction:valid_range = '\0', 'd' ;
+                Cloud_Fraction:_FillValue = '\177' ;
+        byte Cloud_Fraction_Night(fakeDim31, fakeDim32) ;
+                Cloud_Fraction_Night:units = "none" ;
+                Cloud_Fraction_Night:scale_factor = 0.01 ;
+                Cloud_Fraction_Night:add_offset = 0. ;
+                Cloud_Fraction_Night:valid_range = '\0', 'd' ;
+                Cloud_Fraction_Night:_FillValue = '\177' ;
+        byte Cloud_Fraction_Day(fakeDim33, fakeDim34) ;
+                Cloud_Fraction_Day:units = "none" ;
+                Cloud_Fraction_Day:scale_factor = 0.01 ;
+                Cloud_Fraction_Day:add_offset = 0. ;
+                Cloud_Fraction_Day:valid_range = '\0', 'd' ;
+                Cloud_Fraction_Day:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity(fakeDim35, fakeDim36) ;
+                Cloud_Effective_Emissivity:units = "none" ;
+                Cloud_Effective_Emissivity:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity:add_offset = 0. ;
+                Cloud_Effective_Emissivity:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity_Night(fakeDim37, fakeDim38) ;
+                Cloud_Effective_Emissivity_Night:units = "none" ;
+                Cloud_Effective_Emissivity_Night:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity_Night:add_offset = 0. ;
+                Cloud_Effective_Emissivity_Night:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity_Night:_FillValue = '\177' ;
+        byte Cloud_Effective_Emissivity_Day(fakeDim39, fakeDim40) ;
+                Cloud_Effective_Emissivity_Day:units = "none" ;
+                Cloud_Effective_Emissivity_Day:scale_factor = 0.01 ;
+                Cloud_Effective_Emissivity_Day:add_offset = 0. ;
+                Cloud_Effective_Emissivity_Day:valid_range = '\0', 'd' ;
+                Cloud_Effective_Emissivity_Day:_FillValue = '\177' ;
+        short Cloud_Top_Pressure_Infrared(fakeDim41, fakeDim42) ;
+                Cloud_Top_Pressure_Infrared:units = "hPa" ;
+                Cloud_Top_Pressure_Infrared:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_Infrared:add_offset = 0. ;
+                Cloud_Top_Pressure_Infrared:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_Infrared:_FillValue = -32768s ;
+        short Spectral_Cloud_Forcing(fakeDim43, fakeDim44, fakeDim45) ;
+                Spectral_Cloud_Forcing:units = "Watts/meter2/steradian/micron"
+;
+                Spectral_Cloud_Forcing:scale_factor = 0.01 ;
+                Spectral_Cloud_Forcing:add_offset = 0. ;
+                Spectral_Cloud_Forcing:valid_range = -2000s, 2000s ;
+                Spectral_Cloud_Forcing:_FillValue = -32768s ;
+        short Cloud_Top_Pressure_From_Ratios(fakeDim46, fakeDim47, fakeDim48)
+;
+                Cloud_Top_Pressure_From_Ratios:units = "hPa" ;
+                Cloud_Top_Pressure_From_Ratios:scale_factor = 0.1 ;
+                Cloud_Top_Pressure_From_Ratios:add_offset = 0. ;
+                Cloud_Top_Pressure_From_Ratios:valid_range = 10s, 11000s ;
+                Cloud_Top_Pressure_From_Ratios:_FillValue = -3277s ;
+        short Surface_Type(fakeDim49, fakeDim50) ;
+                Surface_Type:units = "none" ;
+                Surface_Type:scale_factor = 1. ;
+                Surface_Type:add_offset = 0. ;
+                Surface_Type:valid_range = 0s, 200s ;
+                Surface_Type:_FillValue = -32768s ;
+        short Radiance_Variance(fakeDim51, fakeDim52, fakeDim53) ;
+                Radiance_Variance:units = "Watts/meter2/steradian/micron" ;
+                Radiance_Variance:scale_factor = 0.01 ;
+                Radiance_Variance:add_offset = 0. ;
+                Radiance_Variance:valid_range = 0s, 20s ;
+                Radiance_Variance:_FillValue = -32768s ;
+        short Brightness_Temperature_Difference(fakeDim54, fakeDim55,
+fakeDim56) 
+;
+                Brightness_Temperature_Difference:units = "K" ;
+                Brightness_Temperature_Difference:scale_factor = 0.01 ;
+                Brightness_Temperature_Difference:add_offset = 0. ;
+                Brightness_Temperature_Difference:valid_range = -2000s, 30000s
+;
+                Brightness_Temperature_Difference:_FillValue = -32768s ;
+        byte Cloud_Phase_Infrared(fakeDim57, fakeDim58) ;
+                Cloud_Phase_Infrared:units = "none" ;
+                Cloud_Phase_Infrared:scale_factor = 1. ;
+                Cloud_Phase_Infrared:add_offset = 0. ;
+                Cloud_Phase_Infrared:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared:_FillValue = '\177' ;
+        byte Cloud_Phase_Infrared_Night(fakeDim59, fakeDim60) ;
+                Cloud_Phase_Infrared_Night:units = "none" ;
+                Cloud_Phase_Infrared_Night:scale_factor = 1. ;
+                Cloud_Phase_Infrared_Night:add_offset = 0. ;
+                Cloud_Phase_Infrared_Night:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared_Night:_FillValue = '\177' ;
+        byte Cloud_Phase_Infrared_Day(fakeDim61, fakeDim62) ;
+                Cloud_Phase_Infrared_Day:units = "none" ;
+                Cloud_Phase_Infrared_Day:scale_factor = 1. ;
+                Cloud_Phase_Infrared_Day:add_offset = 0. ;
+                Cloud_Phase_Infrared_Day:valid_range = '\0', '\6' ;
+                Cloud_Phase_Infrared_Day:_FillValue = '\177' ;
+
+## START OF CLOUD OPTICAL PROPERTIES ARRAYS  -  1 KM RESOLUTION ####
+--------------------------------------------------------------------
+        short Cloud_Effective_Radius(fakeDim63, fakeDim64) ;
+                Cloud_Effective_Radius:units = "micron" ;
+                Cloud_Effective_Radius:scale_factor = 0.01 ;
+                Cloud_Effective_Radius:add_offset = 0. ;
+                Cloud_Effective_Radius:valid_range = 0s, 10000s ;
+                Cloud_Effective_Radius:_FillValue = -9999s ;
+        short Cloud_Optical_Thickness(fakeDim65, fakeDim66) ;
+                Cloud_Optical_Thickness:units = "none" ;
+                Cloud_Optical_Thickness:scale_factor = 0.01 ;
+                Cloud_Optical_Thickness:add_offset = 0. ;
+                Cloud_Optical_Thickness:valid_range = 0s, 10000s ;
+                Cloud_Optical_Thickness:_FillValue = -9999s ;
+        short Cloud_Effective_Radius_1621(fakeDim67, fakeDim68) ;
+                Cloud_Effective_Radius_1621:units = "micron" ;
+                Cloud_Effective_Radius_1621:scale_factor = 0.01 ;
+                Cloud_Effective_Radius_1621:add_offset = 0. ;
+                Cloud_Effective_Radius_1621:valid_range = 0s, 10000s ;
+                Cloud_Effective_Radius_1621:_FillValue = -9999s ;
+        short Cloud_Optical_Thickness_1621(fakeDim69, fakeDim70) ;
+                Cloud_Optical_Thickness_1621:units = "none" ;
+                Cloud_Optical_Thickness_1621:scale_factor = 0.01 ;
+                Cloud_Optical_Thickness_1621:add_offset = 0. ;
+                Cloud_Optical_Thickness_1621:valid_range = 0s, 10000s ;
+                Cloud_Optical_Thickness_1621:_FillValue = -9999s ;
+        short Effective_Radius_Difference(fakeDim71, fakeDim72, fakeDim73) ;
+                Effective_Radius_Difference:units = "micron" ;
+                Effective_Radius_Difference:scale_factor = 0.01 ;
+                Effective_Radius_Difference:add_offset = 0. ;
+                Effective_Radius_Difference:valid_range = -10000s, 10000s ;
+                Effective_Radius_Difference:_FillValue = -9999s ;
+        short Cloud_Water_Path(fakeDim74, fakeDim75) ;
+                Cloud_Water_Path:units = "g/m^2" ;
+                Cloud_Water_Path:scale_factor = 1. ;
+                Cloud_Water_Path:add_offset = 0. ;
+                Cloud_Water_Path:valid_range = 0s, 10000s ;
+                Cloud_Water_Path:_FillValue = -9999s ;
+        short Cloud_Water_Path_1621(fakeDim76, fakeDim77) ;
+                Cloud_Water_Path_1621:units = "g/m^2" ;
+                Cloud_Water_Path_1621:scale_factor = 1. ;
+                Cloud_Water_Path_1621:add_offset = 0. ;
+                Cloud_Water_Path_1621:valid_range = 0s, 10000s ;
+                Cloud_Water_Path_1621:_FillValue = -9999s ;
+        short Cloud_Effective_Radius_Uncertainty(fakeDim78, fakeDim79) ;
+                Cloud_Effective_Radius_Uncertainty:units = "percent" ;
+                Cloud_Effective_Radius_Uncertainty:scale_factor = 0.01 ;
+                Cloud_Effective_Radius_Uncertainty:add_offset = 0. ;
+                Cloud_Effective_Radius_Uncertainty:valid_range = 0s, 20000s ;
+                Cloud_Effective_Radius_Uncertainty:_FillValue = -9999s ;
+        short Cloud_Optical_Thickness_Uncertainty(fakeDim80, fakeDim81) ;
+                Cloud_Optical_Thickness_Uncertainty:units = "percent" ;
+                Cloud_Optical_Thickness_Uncertainty:scale_factor = 0.01 ;
+                Cloud_Optical_Thickness_Uncertainty:add_offset = 0. ;
+                Cloud_Optical_Thickness_Uncertainty:valid_range = 0s, 20000s ;
+                Cloud_Optical_Thickness_Uncertainty:_FillValue = -9999s ;
+        short Cloud_Water_Path_Uncertainty(fakeDim82, fakeDim83) ;
+                Cloud_Water_Path_Uncertainty:units = "percent" ;
+                Cloud_Water_Path_Uncertainty:scale_factor = 1. ;
+                Cloud_Water_Path_Uncertainty:add_offset = 0. ;
+                Cloud_Water_Path_Uncertainty:valid_range = 0s, 20000s ;
+                Cloud_Water_Path_Uncertainty:_FillValue = -9999s ;
+        short Cloud_Effective_Radius_Uncertainty_1621(fakeDim84, fakeDim85) ;
+                Cloud_Effective_Radius_Uncertainty_1621:units = "percent" ;
+                Cloud_Effective_Radius_Uncertainty_1621:scale_factor = 0.01 ;
+                Cloud_Effective_Radius_Uncertainty_1621:add_offset = 0. ;
+                Cloud_Effective_Radius_Uncertainty_1621:valid_range = 0s,
+20000s 
+;
+                Cloud_Effective_Radius_Uncertainty_1621:_FillValue = -9999s ;
+        short Cloud_Optical_Thickness_Uncertainty_1621(fakeDim86, fakeDim87) ;
+                Cloud_Optical_Thickness_Uncertainty_1621:units = "percent" ;
+                Cloud_Optical_Thickness_Uncertainty_1621:scale_factor = 0.01 ;
+                Cloud_Optical_Thickness_Uncertainty_1621:add_offset = 0. ;
+                Cloud_Optical_Thickness_Uncertainty_1621:valid_range = 0s,
+20000s
+ ;
+                Cloud_Optical_Thickness_Uncertainty_1621:_FillValue = -9999s ;
+        short Cloud_Water_Path_Uncertainty_1621(fakeDim88, fakeDim89) ;
+                Cloud_Water_Path_Uncertainty_1621:units = "percent" ;
+                Cloud_Water_Path_Uncertainty_1621:scale_factor = 1. ;
+                Cloud_Water_Path_Uncertainty_1621:add_offset = 0. ;
+                Cloud_Water_Path_Uncertainty_1621:valid_range = 0s, 20000s ;
+                Cloud_Water_Path_Uncertainty_1621:_FillValue = -9999s ;
+        short Cloud_Phase_Optical_Properties(fakeDim90, fakeDim91) ;
+                Cloud_Phase_Optical_Properties:units = "none" ;
+                Cloud_Phase_Optical_Properties:scale_factor = 1. ;
+                Cloud_Phase_Optical_Properties:add_offset = 0. ;
+                Cloud_Phase_Optical_Properties:valid_range = 0s, 4s ;
+                Cloud_Phase_Optical_Properties:_FillValue = 0s ;
+        short Cloud_Multi_Layer_Flag(fakeDim92, fakeDim93) ;
+                Cloud_Multi_Layer_Flag:units = "none" ;
+                Cloud_Multi_Layer_Flag:scale_factor = 1. ;
+                Cloud_Multi_Layer_Flag:add_offset = 0. ;
+                Cloud_Multi_Layer_Flag:valid_range = 0s, 9s ;
+                Cloud_Multi_Layer_Flag:_FillValue = 0s ;
+        short Cirrus_Reflectance(fakeDim94, fakeDim95) ;
+                Cirrus_Reflectance:units = "percent" ;
+                Cirrus_Reflectance:scale_factor = 0.0001 ;
+                Cirrus_Reflectance:add_offset = 0. ;
+                Cirrus_Reflectance:valid_range = 0s, 8000s ;
+                Cirrus_Reflectance:_FillValue = -9999s ;
+        byte Cirrus_Reflectance_Flag(fakeDim96, fakeDim97) ;
+                Cirrus_Reflectance_Flag:units = "none" ;
+                Cirrus_Reflectance_Flag:scale_factor = 1. ;
+                Cirrus_Reflectance_Flag:add_offset = 0. ;
+                Cirrus_Reflectance_Flag:valid_range = '\0', '\3' ;
+                Cirrus_Reflectance_Flag:_FillValue = '\353' ;
+        byte Cloud_Mask_1km(fakeDim98, fakeDim99, fakeDim100) ;
+                Cloud_Mask_1km:units = "none" ;
+                Cloud_Mask_1km:scale_factor = 1. ;
+                Cloud_Mask_1km:add_offset = 0. ;
+                Cloud_Mask_1km:valid_range = '\0', '\377' ;
+                Cloud_Mask_1km:_FillValue = '\0' ;
+        byte Quality_Assurance_1km(fakeDim101, fakeDim102, fakeDim103) ;
+                Quality_Assurance_1km:units = "none" ;
+                Quality_Assurance_1km:scale_factor = 1. ;
+                Quality_Assurance_1km:add_offset = 0. ;
+                Quality_Assurance_1km:valid_range = '\0', '\377' ;
+                Quality_Assurance_1km:_FillValue = '\0' ;
+
+// global attributes:
+                :Clear_Sky_Restoral_Status = "y" ;
+                :Collection_4_Phase_Used = "n" ;
+                :Ice_Phase_Forced = "n" ;
+                :Water_Phase_Forced = "n" ;
+                :Eight_Point_Libraries_Used = "n" ;
+                :1KM_CO2_Slicing_Used = "n" ;
+}

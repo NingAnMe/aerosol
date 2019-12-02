@@ -1,0 +1,76 @@
+   IMAPP MODIS Direct Broadcast Ice Surface
+    Temperature (IST) Product Description
+  -------------------------------------------
+
+--------------------------------------------------------------------------
+
+  The IMAPP IST software produces retrievals of surface temperature
+  over ice covered surfaces and surrounding waters from MODIS 1 km 
+  resolution L1B files and the MODIS 1 km Cloud Mask file. The software 
+  was developed by Dr. Jeffrey Key, NOAA/NESDIS and integrated into 
+  IMAPP by Kathleen Strabala, kathy.strabala@ssec.wisc.edu.
+
+  For a description of the algorithm, please see:
+
+  Hall, D.K., J. Key, K.A. Casey, G.A. Riggs, and D.J. Cavalieri, 
+    2004, Sea ice surface temperature product from the Moderate 
+    Resolution Imaging Spectroradiometer (MODIS), IEEE Trans. 
+    Geosci. Remote Sensing, 42(5), 1076-1087.
+
+  Key, J., J. Collins, C. Fowler, and R. Stone, 1997. High-latitude 
+    surface temperature estimates from thermal satellite data. Remote 
+    Sensing Environ., 61, 302-309.
+
+  Output for this product is a flat binary file and an HDF4 file.
+
+------------------
+Binary Output File
+------------------
+  The *.ist.bin file consists of one band containing 2 byte integer values
+  scaled by 0.1 at 1 km resolution in degrees K.  The size of the file 
+  will depend upon the size of the pass that is being processed 
+  (1354 x number_of_lines x 2 bytes).
+
+   Example file name:  a1.11012.0430.ist.bin
+   Two byte integers
+   Scale factor:  0.1
+   1 parameter  -  Ice Surface Temperatures in Degrees K
+   1 km pixel resolution
+
+------------------
+HDF4 OUTPUT FILE
+------------------
+  The HDF4 output file (*ist.hdf) contains 3 arrays.  Latitude, Longitude, 
+  and the Ice Surface Temperature in degrees K at 1 km resolution. 
+  The Ice Surface Temperature array is stored as 2 Byte Integers, and can be 
+  converted to the actual temperature by applying the scale factor
+  of 0.1. 
+
+  The Latitude and Longitude arrays are stored as 4 byte float values
+  at 5 km resolution.
+  
+  Example filename:  a1.11012.0430.ist.hdf
+
+
+ (Example ncdump -h of an IMAPP IST HDF file)
+
+netcdf a1.11012.0430.ist.hdf {
+dimensions:
+        Cell_Along_Swath_5km = 406 ; (example)
+        Cell_Across_Swath_5km = 271 ;
+        Cell_Along_Swath_1km = 2030 ; (example)
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        short Ice_Surface_Temperature(Cell_Along_Swath_1km,Cell_Across_Swath_1k
+m) ;
+                Ice_Surface_Temperature:units = "K" ;
+                Ice_Surface_Temperature:scale_factor = 0.1 ;
+                Ice_Surface_Temperature:add_offset = 0. ;
+                Ice_Surface_Temperature:valid_range = 3000s, 1800s ;
+                Ice_Surface_Temperature:_FillValue = -10s ;
+}

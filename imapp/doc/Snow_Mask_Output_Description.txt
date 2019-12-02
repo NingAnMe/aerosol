@@ -1,0 +1,87 @@
+   IMAPP MODIS Direct Broadcast Snow Mask
+           Product Description
+  -------------------------------------------
+
+--------------------------------------------------------------------------
+
+  The IMAPP Snow Mask software produces a map of the location of snow
+  covered ground or snow covered frozen water bodies under cloud 
+  free conditions during the daytime.  The inputs to the software are
+  the MODIS 1 km resolution L1B files and the MODIS 1 km Cloud Mask file.
+  The software was developed by William Straka III, UW-Madison, Space
+  Science and Engineering Center (SSEC), and Dr. Jeffrey Key 
+  NOAA/NESDISand and integrated into IMAPP by Kathleen Strabala, 
+  kathy.strabala@ssec.wisc.edu.
+
+  The algorithm used to determine the Snow Mask, is the same technique
+  used by the MODIS cloud mask to determine surface snow cover, and is
+  described in:
+
+  Ackerman, S. A., K. I. Strabala, W. P. Menzel, R. A. Frey, C. C. 
+   Moeller, and L. E. Gumley, 1998: Discriminating clear-sky from 
+   clouds with MODIS. J.  Geophys. Res., 103, D24. 32141–32157.
+
+  Salomonson, V. V., & Appel, I. (2004). Estimating fractional 
+   snow cover from MODIS using the normalized difference snow index. 
+   Remote Sensing of Environment, 89(3), 351-360. 
+
+  NOTE: This algorithm is a very simple implementation, and may be 
+  replaced in the future by a more sophisticated technique.  The 
+  output has not been rigourously validated, and should be used 
+  with this in mind.
+
+  Output for this product is a flat binary file and an HDF4 file.
+
+------------------
+Binary Output File
+------------------
+  The *.snowmask.bin file consists of one band containing 2 byte integer 
+  values. The size of the file will depend upon the size of the pass that 
+  is being processed (1354 x number_of_lines x 2 bytes).
+
+  The values in the file are:
+
+  1000  -  Snow
+     9  -  Land or sea with no snow cover found
+ -1000  -  No retrieval (Clouds or missing data)
+
+   Example file name:  t1.11012.1633.snowmask.bin
+   2 byte integers
+   1 parameter  -  Snow Mask
+   1 km-pixel resolution
+
+------------------
+HDF4 OUTPUT FILE
+------------------
+  The HDF4 output file (*snowmask.hdf) contains 3 arrays.  Latitude, 
+  Longitude, and the Snow_Mask. The Snow_Mask array is stored as 2 Byte
+  Integers, with 1000 being snow found, -1000 meaning no retrieval
+  because of missing data and cloud, and 9 meaning land or sea with 
+  no snow found.
+
+  The Latitude and Longitude arrays are stored as 4 byte float values
+  at 5 km resolution.
+  
+  Example filename:  t1.11012.1633.snowmask.hdf
+
+
+ (Example ncdump -h of an IMAPP Snow Mask HDF file)
+
+netcdf t1.11012.1633.snowmask {
+dimensions:
+        Cell_Along_Swath_5km = 942 ; (example)
+        Cell_Across_Swath_5km = 271 ; 
+        Cell_Along_Swath_1km = 4710 ; (example)
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        short Snow_Mask(Cell_Along_Swath_1km, Cell_Across_Swath_1km) ;
+                Snow_Mask:scale_factor = 1. ;
+                Snow_Mask:add_offset = 0. ;
+                Snow_Mask:valid_range = -1000s, 1000s ;
+                Snow_Mask:_FillValue = -32768s ;
+}

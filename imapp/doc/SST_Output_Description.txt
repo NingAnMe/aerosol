@@ -1,0 +1,113 @@
+   IMAPP MODIS Direct Broadcast Sea Surface
+        Temperature Product Description
+  -------------------------------------------
+
+--------------------------------------------------------------------------
+
+  The IMAPP SST software produces retrievals at 1 km
+  resolution over all pixels.   If you wish to land
+  or cloud clear the image, it is left to the user to do it for
+  themselves.  It should be noted that this is not the algorithm
+  used in the official DAAC MOD28 sst product.  
+
+  For a description of the algorithm, please see:
+  IMAPP MODIS Sea Surface Temperature Algorithm, Dr. James E. Davies,
+  January 2004:
+  ftp://ftp.ssec.wisc.edu/pub/IMAPP/MODIS/Level-2/v2.0/references/SST.pdf
+
+  The user can choose the output format type, either HDF or
+  binary.  If you are using the modis_level2.csh script,
+  you set the OUTPUT_TYPE environmental variable in the 
+  imapp_modisl2/env scripts to:
+
+               1 = binary only 
+               2 = hdf only 
+               3 = binary and hdf 
+
+
+Binary Output File
+------------------
+  The sea surface temperature output product consists of a separate
+  .img file in flat binary format, and accompanying header file.
+
+  The mod28.img file is a 12 float band interleaved product at 1 km 
+  pixel resolution. Please see a list of these bands below.
+  The test output file that you create from the input aqua test data 
+  sets contains the nominal MODIS swath size 1354 elements and 
+  2890 lines.  In FORTRAN, it would be read as sst(1354,12,2890).
+  This would be reversed in C - sst(2890,12,1354).  
+
+--------------------------------------------------------------------------
+   MODIS Direct Broadcast Sea Surface Temperture 
+          Output Product Description
+   -------------------------------------------
+   Four byte float data
+   12 parameters
+   1 km-pixel resolution
+   Band Interleaved
+
+band names = {
+band  1: SST,
+band  2: SST4,
+band  3: Raw_Radiance_B20,
+band  4: Raw_Radiance_B22,
+band  5: Raw_Radiance_B23,
+band  6: Raw_Radiance_B31,
+band  7: Raw_Radiance_B32,
+band  8: Brightness_Temperature_B20,
+band  9: Brightness_Temperature_B22,
+band 10: Brightness_Temperature_B23,
+band 11: Brightness_Temperature_B31,
+band 12: Brightness_Temperature_B32
+}
+band units = {
+band  1: C,
+band  2: C,
+band  3: Rad,
+band  4: Rad,
+band  5: Rad,
+band  6: Rad,
+band  7: Rad,
+band  8: K,
+band  9: K,
+band 10: K,
+band 11: K,
+band 12: K
+}
+
+
+HDF OUTPUT FILE
+------------------
+  The HDF output file (*mod28.hdf) contains 4 arrays.  Latitude, Longitude, the
+  split-window 11-12 SST and the split window 4 micron SST output
+  in units of degrees Celcius.  The two SST arrays are stored
+  as short integers, and are scaled by a factor of .01. 
+
+
+ (Example ncdump -h of an IMAPP SST HDF file)
+
+dimensions:
+        Cell_Along_Swath_5km = 578 ;
+        Cell_Across_Swath_5km = 270 ;
+        Cell_Along_Swath_1km = 2890 ;
+        Cell_Across_Swath_1km = 1354 ;
+
+variables:
+        float Latitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Latitude:_FillValue = -999.98999f ;
+        float Longitude(Cell_Along_Swath_5km, Cell_Across_Swath_5km) ;
+                Longitude:_FillValue = -999.98999f ;
+        short Sea_Surface_Temperature(Cell_Along_Swath_1km,
+Cell_Across_Swath_1km) ;
+                Sea_Surface_Temperature:units = "C" ;
+                Sea_Surface_Temperature:scale_factor = 0.01 ;
+                Sea_Surface_Temperature:add_offset = 0. ;
+                Sea_Surface_Temperature:valid_range = -5000s, 5000s ;
+                Sea_Surface_Temperature:_FillValue = -32768s ;
+        short Sea_Surface_Temperature4(Cell_Along_Swath_1km,
+Cell_Across_Swath_1km) ;
+                Sea_Surface_Temperature4:units = "C" ;
+                Sea_Surface_Temperature4:scale_factor = 0.01 ;
+                Sea_Surface_Temperature4:add_offset = 0. ;
+                Sea_Surface_Temperature4:valid_range = -5000s, 5000s ;
+                Sea_Surface_Temperature4:_FillValue = -32768s ;
