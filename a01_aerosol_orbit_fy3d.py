@@ -3,7 +3,6 @@
 # @Time    : 2019/12/2 9:53
 # @Author  : NingAnMe <ninganme@qq.com>
 from datetime import datetime
-import os
 
 from .config import *
 from lib.path import get_aid_path
@@ -43,7 +42,7 @@ def aerosol_orbit_fy3d(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp,
     fy3d2modis_1km(l1_1000m, l1_1000m_envi, metadatas)
 
     l1_geo_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.geo.hdr'.format(**format_datetime))
-    fy3d2modis_geo(l1_1000m, l1_geo_envi, metadatas)
+    fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
 
     l1_met_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.met.hdr'.format(**format_datetime))
     fy3d2modis_met(l1_1000m, l1_met_envi, metadatas)

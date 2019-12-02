@@ -85,16 +85,17 @@ def fy3d2modis_1km(in_file, out_file, metadata_pickle):
     print('>>> {}'.format(out_file))
 
 
-def fy3d2modis_geo(in_file, out_file, metadata_pickle):
+def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     """
     缺少5通道和32通道
-    :param in_file:
+    :param l1_file:
+    :param geo_file:
     :param out_file:
     :param metadata_pickle:  hdr 头信息
     :return:
     """
     datas = np.zeros((2000, 2048, 8), dtype=np.float32)
-    data_loader = ReadMersiL1(in_file)
+    data_loader = ReadMersiL1(l1_file, geo_file=geo_file)
 
     data_map = {
         0: data_loader.get_latitude,
