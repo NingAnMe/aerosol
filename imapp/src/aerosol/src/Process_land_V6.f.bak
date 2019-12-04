@@ -4338,15 +4338,13 @@ C----------------------------------------------------
  	INTEGER AEROSOL_all(nlon,nlat,4)
         INTEGER ilat, ilon
         CHARACTER*3 MMMs(4), MMM
-        CHARACTER*1 ss
         DATA MMMs/'DJF','MAM','JJA','SON'/
-        ss=","
 
         DO iseason = 1, 4
          READ(HANDLE_LUTMAP,*) 
          DO ilat = 1, nlat
             READ(HANDLE_LUTMAP,99) 
-     &      (AEROSOL_all(ilon,ilat,iseason), ilon=1, nlon)
+     +      (AEROSOL_all(ilon,ilat,iseason), ilon=1, nlon)
          ENDDO
         ENDDO
 
@@ -4362,10 +4360,8 @@ C----------------------------------------------------
           ENDDO
         ENDDO
         
-        
-!99     FORMAT (i1,359(",",i1))
- 99     FORMAT (i1,359(ss,i1))
-
+ 99     FORMAT (i1,359(",",i1))
+  
         RETURN 
         END
 C********************************************************************

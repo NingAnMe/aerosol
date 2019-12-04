@@ -125,11 +125,11 @@ target:
 		     FL_FLAGS="${AIX_COMMON_FLAGS} -o" \
 		     ;; \
 	  "Linux" ) make $(TARGET)  \
-		     FC="gfortran" \
-		     FL="gfortran" \
+		     FC="g77" \
+		     FL="g77" \
 		     CC="gcc" \
 		     CC_FLAGS=" -c -O -D_POSIX_SOURCE " \
-		     FC_FLAGS=" -c -O -ffixed-line-length-132 -fno-automatic -std=legacy" \
+		     FC_FLAGS=" -c -O -ffixed-line-length-132 -fno-automatic " \
 		     FL_FLAGS=" -o" \
 		     ;; \
 	  "HP-UX" ) make $(TARGET)  \
