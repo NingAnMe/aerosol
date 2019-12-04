@@ -1,0 +1,39 @@
+#HDFLook template: Inversion_Depth
+
+clear_data
+
+set_projection_to_geometry  ProjectionTo=AZIMUTHAL PIXELSIZEXTO=3500 PIXELSIZEYTO=3500
+set_misc_options            AutoAdjust=yes
+set_image_background        Color=Black
+
+add_text                    x=10 y=10 ForegroundColor="White"  BackgroundColor="Black" \
+                            Border=0 FontName="Verdanab.ttf" SizeFactor=1.0 Rotation=0 \
+                            Text="INPUT_FILE"
+add_text                    x=10 y=35 ForegroundColor="White"  BackgroundColor="Black" \
+                            Border=0 FontName="Verdanab.ttf" SizeFactor=1.0 Rotation=0 \
+                            Text="INVERSION DEPTH (m)"
+
+set_input_hdf_file          "INPUT_FILE"
+select_SDS                  SDSname="Inversion_Depth"
+set_SDS_enhance             min=0 max=2000
+set_color_scale_name        "palette_inversion_depth.txt"
+
+add_scale_to_image          x=40 y=80 width=400 height=30 Rotation=90.0 \
+                            TickColor=White ForegroundColor="White" BackgroundColor="Black" \
+                            TextFormat="%.1f" FontName="Verdanab.ttf" SizeFactor=1.0 \
+                            UpLeftSide=Yes NoTicks=No
+
+add_maps                    Coastlines=Yes Boundaries=Yes CoastlineColor=Yellow BoundaryColor=White
+add_grids                   Color=White LatitudeMin=-90  LatitudeMax=90 LatitudeStep= 5 \
+                            LongitudeMin=-180 LongitudeMax=180 LongitudeStep=5
+add_latitude_labels         ForegroundColor="Black" BackgroundColor="White" \
+                            Border=0 FontName="Verdanab.ttf" \
+                            SizeFactor=1.0 Rotation=0. Format="%.1f" \
+                            LatitudeMin=-90  LatitudeMax=90 LatitudeStep=5
+add_longitude_labels        ForegroundColor="Black" BackgroundColor="White" \
+                            Border=0 FontName="Verdanab.ttf" \
+                            SizeFactor=1.0 Rotation=90. Format="%.1f" \
+                            LongitudeMin=-180 LongitudeMax=180 LongitudeStep=5
+
+create_MODIS_SDS_GEOTIFF_image FileName="OUTPUT_FILE.tif" Scaling="y=ax+b"
+create_MODIS_SDS_JPEG_image FileName="OUTPUT_FILE.jpg" Scaling="y=ax+b"
