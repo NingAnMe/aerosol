@@ -12,3 +12,4 @@
 *.tif filter=lfs diff=lfs merge=lfs -text
 *.pickle filter=lfs diff=lfs merge=lfs -text
 goge1_2_img filter=lfs diff=lfs merge=lfs -text
+HUMAN_DATAV2 filter=lfs diff=lfs merge=lfs -text
