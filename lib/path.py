@@ -5,12 +5,15 @@
 import os
 
 
-LIB_PATH = os.path.dirname(os.path.abspath(__name__))
+LIB_PATH = os.path.dirname(os.path.realpath(__file__))
+ROOT_PATH = os.path.dirname(LIB_PATH)
 
 
 def get_root_path():
-    return os.path.dirname(LIB_PATH)
+    return ROOT_PATH
 
 
 def get_aid_path():
     return os.path.join(get_root_path(), 'aid')
+
+print(get_aid_path())

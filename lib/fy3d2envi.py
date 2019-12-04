@@ -16,7 +16,7 @@ import numpy as np
 from .load_mersi import ReadMersiL1
 
 
-def fy3d2modis_1km(in_file, out_file, metadata_pickle):
+def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle):
     """
     缺少5通道和32通道
     :param in_file:
@@ -25,7 +25,7 @@ def fy3d2modis_1km(in_file, out_file, metadata_pickle):
     :return:
     """
     datas = np.zeros((2000, 2048, 36), dtype=np.float32)
-    data_loader = ReadMersiL1(in_file)
+    data_loader = ReadMersiL1(in_file, geo_file=geo_file)
 
     data_map = {
         1: 'CH_03',
@@ -122,16 +122,17 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     print('>>> {}'.format(out_file))
 
 
-def fy3d2modis_met(in_file, out_file, metadata_pickle):
+def fy3d2modis_met(l1_file, geo_file, out_file, metadata_pickle):
     """
     缺少5通道和32通道
-    :param in_file:
+    :param l1_file:
+    :param geo_file:
     :param out_file:
     :param metadata_pickle:  hdr 头信息
     :return:
     """
     datas = np.zeros((200, 2), dtype=np.uint8)
-    data_loader = ReadMersiL1(in_file)
+    data_loader = ReadMersiL1(l1_file, geo_file=geo_file)
 
     flag = data_loader.get_day_night_flag()
     flag[np.isnan(flag)] = 1
