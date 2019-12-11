@@ -1047,7 +1047,7 @@ class ReadMersiL1(ReadL1):
             if self.satellite in satellite_type1:
                 # s = self.data_shape  # FY3A数据不规整，存在 1810,2048 的数据，取 1800,2048
                 with h5py.File(self.in_file, 'r') as h5r:
-                    data_pre = h5r.get('/DEM')[:]
+                    data_pre = h5r.get('/Height')[:]
             elif self.satellite in satellite_type2:
                 geo_file = self.__get_geo_file()
                 with h5py.File(geo_file, 'r') as h5r:
@@ -1242,39 +1242,6 @@ class ReadMersiL1(ReadL1):
 
         return data
 
-    def get_hight(self):
-        """
-        return hight
-        """
-        if self.resolution == 1000:
-            satellite_type1 = ['FY3A', 'FY3B']
-            satellite_type2 = ['FY3C', 'FY3D']
-            if self.satellite in satellite_type1:
-                # s = self.data_shape  # FY3A数据不规整，存在 1810,2048 的数据，取 1800,2048
-                with h5py.File(self.in_file, 'r') as h5r:
-                    data_pre = h5r.get('/DEM')[:]
-
-                vmin = -400
-                vmax = 10000
-            elif self.satellite in satellite_type2:
-                geo_file = self.__get_geo_file()
-                with h5py.File(geo_file, 'r') as h5r:
-                    data_pre = h5r.get('/Geolocation/DEM')[:]
-
-                vmin = -400
-                vmax = 10000
-
-            else:
-                raise ValueError(
-                    'Cant read this satellite`s data.: {}'.format(self.satellite))
-
-            # 过滤无效值
-            invalid_index = np.logical_or(data_pre < vmin, data_pre > vmax)
-            data_pre = data_pre.astype(np.float32)
-            data_pre[invalid_index] = np.nan
-            data = data_pre
-            return data
-
     def get_day_night_flag(self):
         """
         Nadir Day(0) Night(1) or Mix(2) Flag
@@ -1309,10 +1276,14 @@ class ReadMersiL1(ReadL1):
         data = None
         if self.resolution == 1000:
             satellite_type1 = ['FY3A', 'FY3B']
-            satellite_type2 = ['FY3C', 'FY3D']
+            satellite_type2 = ['FY3C']
+            satellite_type3 = ['FY3D']
             if self.satellite in satellite_type1:
                 return
             elif self.satellite in satellite_type2:
+                with h5py.File(self.in_file, 'r') as h5r:
+                    data_pre = h5r.get('/Data/Kmirror_Side')[:]
+            elif self.satellite in satellite_type3:
                 with h5py.File(self.in_file, 'r') as h5r:
                     data_pre = h5r.get('/Calibration/Kmirror_Side')[:]
             else:
