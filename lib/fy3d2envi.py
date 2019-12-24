@@ -111,6 +111,9 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
 
     for channel in data_map:
         _data = data_map[channel]()
+        if channel == 3 or channel == 5:
+            index = _data > 180
+            _data[index] = _data[index] - 360
         _data[np.isnan(_data)] = -1
         datas[:, :, channel] = _data
 
