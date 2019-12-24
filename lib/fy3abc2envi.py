@@ -113,9 +113,13 @@ def fy3abc2modis_met(l1_file, geo_file, out_file, metadata_pickle):
     solar_zenith = data_loader.get_solar_zenith()
     sz_mean = np.nanmean(solar_zenith, axis=1)
     sz_mean.reshape(-1, 1)
-    flag = np.zeros_like(sz_mean, dtype=np.int8)
+
     # MODIS和FY3的白天晚上好像是反的，在MODIS中，1是白天，0是晚上
-    flag[sz_mean < 75] = 1
+    flag = np.zeros_like((200,), dtype=np.int8)
+    for i in range(0, 200):
+        sz_mean_ = np.nanmean(sz_mean[i*10:(i+1)*10])
+        if sz_mean_ < 75:
+            flag[i] = 1
 
     datas[:, 0] = flag
 
