@@ -15,5 +15,3 @@ def get_root_path():
 
 def get_aid_path():
     return os.path.join(get_root_path(), 'aid')
-
-print(get_aid_path())
