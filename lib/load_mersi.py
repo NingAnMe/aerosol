@@ -179,11 +179,8 @@ class ReadMersiL1(ReadL1):
         data = None
         clm_flag = np.full(self.data_shape, -999)
         if self.resolution == 1000:
-            satellite_type1 = ['FY3A', 'FY3B']
-            satellite_type2 = ['FY3C', 'FY3D']
+            satellite_type1 = ['FY3A', 'FY3B', 'FY3C', 'FY3D']
             if self.satellite in satellite_type1:
-                pass
-            elif self.satellite in satellite_type2:
                 in_file = self.__get_clm_file()
                 with h5py.File(in_file, 'r') as h5r:
                     data_pre = h5r.get('Cloud_Mask')[:]
