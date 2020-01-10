@@ -7,12 +7,15 @@
 
 # ######aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
 """
+import os
 import pickle
+from shutil import copyfile
 
 from spectral.io import envi
 import numpy as np
 
 from .load_mersi import ReadMersiL1
+from .path import get_aid_path
 
 
 def fy3abc2modis_1km(in_file, geo_file, out_file, metadata_pickle):
@@ -155,5 +158,9 @@ def fy3abc2modis_cloudmask_qa(in_file, out_file, metadata_pickle):
     :param metadata_pickle:  hdr 头信息
     :return:
     """
-    from lib.fy3d2envi import fy3d2modis_cloudmask_qa
-    fy3d2modis_cloudmask_qa(in_file, out_file, metadata_pickle)
+    if not os.path.isfile(out_file):
+        aid_path = get_aid_path()
+        hdr_file = os.path.join(aid_path, "fy3abcd.mod35qa.hdr")
+        img_file = os.path.join(aid_path, "fy3abcd.mod35qa.img")
+        copyfile(hdr_file, out_file)
+        copyfile(img_file, out_file.replace('hdr', 'img'))
