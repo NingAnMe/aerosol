@@ -118,10 +118,10 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     out_h5file = os.path.join(out_dir, '%s_MERSI_AOD_GRANULE_%s_%s.HDF5' % (satellite, yyyymmdd, hhmm))
 
     with h5py.File(out_h5file, 'w') as h5w:
-        h5w.create_dataset('Latitude', data = lats, compression = 'gzip', compression_opts = 5, shuffle = True)
-        h5w.create_dataset('Longitude', data = lons, compression = 'gzip', compression_opts = 5, shuffle = True)
-        h5w.create_dataset('Optical_Depth_Land_And_Ocean', data = aod_550, compression = 'gzip', compression_opts = 5,
-                           shuffle = True)
+        h5w.create_dataset('Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
+        h5w.create_dataset('Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
+        h5w.create_dataset('Optical_Depth_Land_And_Ocean', data=aod_550, compression='gzip', compression_opts=5,
+                           shuffle=True)
 
     out_fig = os.path.join(out_dir, '%s_MERSI_AOD_GRANULE_%s_%s.PNG' % (satellite, yyyymmdd, hhmm))
     aod_550 = np.ma.masked_where(aod_550 < 0, aod_550)
@@ -142,18 +142,18 @@ def plot_image_origin(r, out_file):
     width = col / 100.
     length = row / 100.
     dpi = 100
-    fig = plt.figure(figsize = (width, length), dpi = dpi)  # china
+    fig = plt.figure(figsize=(width, length), dpi=dpi)  # china
 
     #     rgb = np.stack([r, g, b], axis = 2)
     #     rgb = np.stack([r], axis = 2)
 
-    plt.imshow(r, cmap = 'jet')
+    plt.imshow(r, cmap='jet')
 
     plt.axis('off')
 
     plt.gca().xaxis.set_major_locator(plt.NullLocator())
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
+    plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
     plt.margins(0, 0)
 
     out_dir = os.path.dirname(out_file)
@@ -161,7 +161,7 @@ def plot_image_origin(r, out_file):
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
 
-    fig.savefig(out_file, dpi = dpi)
+    fig.savefig(out_file, dpi=dpi)
     fig.clear()
     plt.close()
     print('>>> {}'.format(out_file))
