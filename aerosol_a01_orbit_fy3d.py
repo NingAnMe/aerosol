@@ -23,7 +23,7 @@ metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 os.system('source ~/.bashrc')
 
 
-def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor):
+def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True):
     print("<<< l1_1000m      : {}".format(l1_1000m))
     print("<<< l1_cloudmask  : {}".format(l1_cloudmask))
     print("<<< l1_geo        : {}".format(l1_geo))
@@ -31,110 +31,147 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     print("<<< tmp_dir       : {}".format(dir_temp))
     print("<<< satellite     : {}".format(satellite))
     print("<<< sensor        : {}".format(sensor))
+    print("<<< rewrite        : {}".format(rewrite))
 
     datetime_temp = datetime.strptime(yyyymmddhhmmss, '%Y%m%d%H%M%S')
 
     yyyymmdd = datetime_temp.strftime('%Y%m%d')
     hhmm = datetime_temp.strftime('%H%M')
     yyjjj = yyyymmdd[2:4] + datetime_temp.strftime('%j')
-    if DEBUG:
-        print('yyyymmdd: ', yyyymmdd)
-        print('hhmm    : ', hhmm)
-        print('yyjjj   : ', yyjjj)
-
-    format_datetime = {
-        'yyjjj': yyjjj,
-        'hhmm': hhmm,
-    }
-    out_dir_temp = os.path.join(dir_temp, '{}/{}'.format(yyyymmdd, hhmm))
-    if not os.path.isdir(out_dir_temp):
-        os.makedirs(out_dir_temp)
-
-    l1_1000m_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.1000m.hdr'.format(**format_datetime))
-    l1_geo_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.geo.hdr'.format(**format_datetime))
-    l1_met_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.met.hdr'.format(**format_datetime))
-    l1_cloudmask_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35.hdr'.format(**format_datetime))
-    l1_cloudmask_qa_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35qa.hdr'.format(**format_datetime))
-
-    if sensor == "MERSI":
-        if satellite == "FY3D":
-            fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
-            fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
-            fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
-            fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
-            fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
-        elif satellite in ["FY3A", "FY3B", "FY3C"]:
-            fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
-            fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
-            fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
-            fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
-            fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
-        else:
-            raise ValueError(f"不支持的satellite：{satellite}")
-    else:
-        raise ValueError(f"不支持的sensor：{sensor}")
-
-    if DEBUG:
-        print('product :{}'.format(l1_1000m_envi))
-        print('product :{}'.format(l1_geo_envi))
-        print('product :{}'.format(l1_met_envi))
-        print('product :{}'.format(l1_cloudmask_envi))
-        print('product :{}'.format(l1_cloudmask_qa_envi))
-
-    for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
-        if not os.path.isfile(file_):
-            print('ERROR: file found error: {}'.format(file_))
-            return {
-                "data": {},
-                "status": ERROR,
-                "statusInfo": {
-                    "message": "程序错误",
-                    "detail": "程序错误，没有生成：{}".format(file_)
-                }
-            }
-
-    format_datetime['out_dir'] = out_dir_temp
-    cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
-        **format_datetime)
-
-    print('cmd :{}'.format(cmd))
-    os.system(cmd)
-    print('>>> success: {}'.format(out_dir_temp))
-
-    """
-    http://www.spectralpython.net/class_func_ref.html#spectral.io.envi
-    add envi format to hdf5
-    wangpeng 20191204
-    """
-    envi_hdr = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
-    envi_img = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
-    envi_data = envi.open(envi_hdr, envi_img)
-    lats = envi_data.read_band(0)
-    lons = envi_data.read_band(1)
-    aod_550 = envi_data.read_band(2)
-
-    #     dset_name = envi_data.metadata['band names']
 
     out_h5file = os.path.join(out_dir, '%s_MERSI_AOD_GRANULE_%s_%s.HDF5' % (satellite, yyyymmdd, hhmm))
+    if (not os.path.isfile(out_h5file)) or rewrite:
+        if DEBUG:
+            print('yyyymmdd: ', yyyymmdd)
+            print('hhmm    : ', hhmm)
+            print('yyjjj   : ', yyjjj)
 
-    with h5py.File(out_h5file, 'w') as h5w:
-        h5w.create_dataset('Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
-        h5w.create_dataset('Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
-        h5w.create_dataset('Optical_Depth_Land_And_Ocean', data=aod_550, compression='gzip', compression_opts=5,
-                           shuffle=True)
+        format_datetime = {
+            'yyjjj': yyjjj,
+            'hhmm': hhmm,
+        }
+        out_dir_temp = os.path.join(dir_temp, '{}/{}'.format(yyyymmdd, hhmm))
+        if not os.path.isdir(out_dir_temp):
+            os.makedirs(out_dir_temp)
 
-    out_fig = os.path.join(out_dir, '%s_MERSI_AOD_GRANULE_%s_%s.PNG' % (satellite, yyyymmdd, hhmm))
-    aod_550 = np.ma.masked_where(aod_550 < 0, aod_550)
-    r = normal255int8(aod_550)
-    plot_image_origin(r, out_fig)
+        l1_1000m_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.1000m.hdr'.format(**format_datetime))
+        l1_geo_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.geo.hdr'.format(**format_datetime))
+        l1_met_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.met.hdr'.format(**format_datetime))
+        l1_cloudmask_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35.hdr'.format(**format_datetime))
+        l1_cloudmask_qa_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35qa.hdr'.format(**format_datetime))
+
+        if sensor == "MERSI":
+            if satellite == "FY3D":
+                fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
+                fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+                fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
+                fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
+                fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
+            elif satellite in ["FY3A", "FY3B", "FY3C"]:
+                fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
+                fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+                fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
+                fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
+                fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
+            else:
+                raise ValueError(f"不支持的satellite：{satellite}")
+        else:
+            raise ValueError(f"不支持的sensor：{sensor}")
+
+        if DEBUG:
+            print('product :{}'.format(l1_1000m_envi))
+            print('product :{}'.format(l1_geo_envi))
+            print('product :{}'.format(l1_met_envi))
+            print('product :{}'.format(l1_cloudmask_envi))
+            print('product :{}'.format(l1_cloudmask_qa_envi))
+
+        for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
+            if not os.path.isfile(file_):
+                print('ERROR: file found error: {}'.format(file_))
+                return {
+                    "data": {},
+                    "status": ERROR,
+                    "statusInfo": {
+                        "message": "程序错误",
+                        "detail": "程序错误，没有生成：{}".format(file_)
+                    }
+                }
+
+        format_datetime['out_dir'] = out_dir_temp
+        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
+            **format_datetime)
+
+        print('cmd :{}'.format(cmd))
+        os.system(cmd)
+        print('>>> success: {}'.format(out_dir_temp))
+
+        """
+        http://www.spectralpython.net/class_func_ref.html#spectral.io.envi
+        add envi format to hdf5
+        wangpeng 20191204
+        """
+        envi_hdr = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
+        envi_img = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
+        envi_data = envi.open(envi_hdr, envi_img)
+        lats = envi_data.read_band(0)
+        lons = envi_data.read_band(1)
+        aod_550 = envi_data.read_band(2)
+
+        #     dset_name = envi_data.metadata['band names']
+
+        with h5py.File(out_h5file, 'w') as h5w:
+            h5w.create_dataset('Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('Optical_Depth_Land_And_Ocean', data=aod_550, compression='gzip', compression_opts=5,
+                               shuffle=True)
+            debug_data = False
+            if debug_data:
+                h5w.create_dataset('SDS_ratio_small_Land_Ocean', data=envi_data.read_band(3),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Corrected_Optical_Depth_Land_.47micron', data=envi_data.read_band(4),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Corrected_Optical_Depth_Land_.55micron', data=envi_data.read_band(5),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Corrected_Optical_Depth_Land_.66micron', data=envi_data.read_band(6),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_.47micron', data=envi_data.read_band(7),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_.55micron', data=envi_data.read_band(8),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_.66micron', data=envi_data.read_band(9),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_.86micron', data=envi_data.read_band(10),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_1.2micron', data=envi_data.read_band(11),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_1.6micron', data=envi_data.read_band(12),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+                h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_2.1micron', data=envi_data.read_band(13),
+                                   compression='gzip', compression_opts=5, shuffle=True)
+
+    else:
+        print("文件已存在，跳过")
+
+    print(">>> : {}".format(out_h5file))
     return {
-        "data": {"out_dir": [out_dir]},
+        "data": {"out_dir": [out_dir],
+                 "out_file": [out_h5file]},
         "status": SUCCESS,
         "statusInfo": {
             "message": "完成",
-            "detail": "结果目录:{}".format(out_dir_temp)
         }
     }
+
+
+def plot_aod_image(hdf_file):
+    with h5py.File(hdf_file, 'r') as hdf:
+        aod = hdf.get('Optical_Depth_Land_And_Ocean')
+        if aod:
+            aod_550 = aod[:]
+            aod_550 = np.ma.masked_where(aod_550 < 0, aod_550)
+            r = normal255int8(aod_550)
+            out_fig = hdf_file + ".PNG"
+            plot_image_origin(r, out_fig)
 
 
 def plot_image_origin(r, out_file):
@@ -194,6 +231,7 @@ class ReadInYaml:
         self.jobname = cfg['INFO']['job_name']
         self.ymd = cfg['INFO']['ymd']
         self.hms = cfg['INFO']['hms']
+        self.rewrite = cfg['INFO']['rewrite']
 
         self.ipath_l1b = cfg['PATH']['ipath_l1b']
         self.ipath_geo = cfg['PATH'].get('ipath_geo')
@@ -212,7 +250,10 @@ def main(in_file):
 
     ymdhms = in_cfg.ymd + in_cfg.hms
     satellite, sensor = in_cfg.jobname.split('_')
-    aerosol_orbit(l1b_file, clm_file, geo_file, ymdhms, outpath, outpath, satellite, sensor)
+    rewrite = in_cfg.rewrite
+    result = aerosol_orbit(l1b_file, clm_file, geo_file, ymdhms, outpath, outpath, satellite, sensor, rewrite=rewrite)
+    if result is not None and result['status'] == SUCCESS and rewrite:
+        plot_aod_image(result['data']['out_file'][0])
 
 
 if __name__ == '__main__':
