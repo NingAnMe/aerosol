@@ -196,88 +196,81 @@ C     -------------------------------------
 C     Read MODIS Cloud Mask 10 byte QA file
 C     -------------------------------------
 c ... Initialize output variables
-      data_size(1) = 0
-      data_size(2) = 0
-
-      bands_maskqa = Buf_cldmsk_QA
-      req_resolution = 1
-      req_bandunit = '  '
-      ElementSize = Buf_Size1
-      LineSize = Buf_Size2
-      error_mask = 0.0
-      bnames_maskqa(1) = 'byte 1'
-      bnames_maskqa(2) = 'byte 2'
-      bnames_maskqa(3) = 'byte 3'
-      bnames_maskqa(4) = 'byte 4'
-      bnames_maskqa(5) = 'byte 5'
-      bnames_maskqa(6) = 'byte 6'
-      bnames_maskqa(7) = 'byte 7'
-      bnames_maskqa(8) = 'byte 8'
-      bnames_maskqa(9) = 'byte 9'
-      bnames_maskqa(10) = 'byte 10'
-
-      bandunits_maskqa(1) = '  '
-      bandunits_maskqa(2) = '  '
-      bandunits_maskqa(3) = '  '
-      bandunits_maskqa(4) = '  '
-      bandunits_maskqa(5) = '  '
-      bandunits_maskqa(6) = '  '
-      bandunits_maskqa(7) = '  '
-      bandunits_maskqa(8) = '  '
-      bandunits_maskqa(9) = '  '
-      bandunits_maskqa(10) = '  '
-
-      do i = 1 , Buf_cldmsk_QA
-        write(req_bandname,*) i
-        req_band = 'byte ' // req_bandname(1:len(req_bandname))
-
-        do m = 1, Buf_Size1*Buf_Size2
-           maskqa_buf(m) = 0
-           maskqa_flag(m) = -1
-        enddo
-
-c ------Read a 1km scan cube-s worth of data out of the granule
-        status = db_read_mask_file(
-     &	                           cube,	 	
-     &				   req_resolution,
-     &				   req_band,
-     &				   req_bandunit,
-     &				   mask_qa_lun,
-     &				   datat_mask,
-     &				   interl_mask,
-     &				   resol_mask,
-     &                             error_mask,
-     &                             offset_mask,
-     &                             sampl_mask,
-     &                             lines_mask,
-     &                             bands_maskqa,
-     &                             bnames_maskqa,
-     &                             bandunits_maskqa,
-     &                             ElementSize,
-     &                             LineSize,
-     &                             maskqa_buf,
-     &                             maskqa_flag,
-     &                             data_size(1),
-     &                             data_size(2)
-     &                            )
-
-        if(status .lt.0 ) then
-          call message('mod04_get_mask',
-     &     'Failed to extract cloudmask QA data for band '//req_band
-     &       ,0, 3 )
-        endif
-
-c ----- Place the data into the mask holding array
-        k = 1
-        do ii = 1 , data_size(2)
-          do jj = 1 , data_size(1)
-            if (maskqa_flag(k) .eq. 0)
-     +          QA_Cloud(i,jj,ii) = maskqa_buf(k)
-            k = k+1
-          enddo
-        enddo
-c ... end cloud mask acquisition loop
-      enddo
+!     data_size(1) = 0
+!     data_size(2) = 0
+!!     bands_maskqa = Buf_cldmsk_QA
+!     req_resolution = 1
+!     req_bandunit = '  '
+!     ElementSize = Buf_Size1
+!     LineSize = Buf_Size2
+!     error_mask = 0.0
+!     bnames_maskqa(1) = 'byte 1'
+!     bnames_maskqa(2) = 'byte 2'
+!     bnames_maskqa(3) = 'byte 3'
+!     bnames_maskqa(4) = 'byte 4'
+!     bnames_maskqa(5) = 'byte 5'
+!     bnames_maskqa(6) = 'byte 6'
+!     bnames_maskqa(7) = 'byte 7'
+!     bnames_maskqa(8) = 'byte 8'
+!     bnames_maskqa(9) = 'byte 9'
+!     bnames_maskqa(10) = 'byte 10'
+!!     bandunits_maskqa(1) = '  '
+!     bandunits_maskqa(2) = '  '
+!     bandunits_maskqa(3) = '  '
+!     bandunits_maskqa(4) = '  '
+!     bandunits_maskqa(5) = '  '
+!     bandunits_maskqa(6) = '  '
+!     bandunits_maskqa(7) = '  '
+!     bandunits_maskqa(8) = '  '
+!     bandunits_maskqa(9) = '  '
+!     bandunits_maskqa(10) = '  '
+!!     do i = 1 , Buf_cldmsk_QA
+!       write(req_bandname,*) i
+!       req_band = 'byte ' // req_bandname(1:len(req_bandname))
+!!       do m = 1, Buf_Size1*Buf_Size2
+!          maskqa_buf(m) = 0
+!          maskqa_flag(m) = -1
+!       enddo
+!! ------Read a 1km scan cube-s worth of data out of the granule
+!       status = db_read_mask_file(
+!    &	                           cube,
+!    &				   req_resolution,
+!    &				   req_band,
+!    &				   req_bandunit,
+!    &				   mask_qa_lun,
+!    &				   datat_mask,
+!    &				   interl_mask,
+!    &				   resol_mask,
+!    &                             error_mask,
+!    &                             offset_mask,
+!    &                             sampl_mask,
+!    &                             lines_mask,
+!    &                             bands_maskqa,
+!    &                             bnames_maskqa,
+!    &                             bandunits_maskqa,
+!    &                             ElementSize,
+!    &                             LineSize,
+!    &                             maskqa_buf,
+!    &                             maskqa_flag,
+!    &                             data_size(1),
+!    &                             data_size(2)
+!    &                            )
+!!       if(status .lt.0 ) then
+!         call message('mod04_get_mask',
+!    &     'Failed to extract cloudmask QA data for band '//req_band
+!    &       ,0, 3 )
+!       endif
+!! ----- Place the data into the mask holding array
+!       k = 1
+!       do ii = 1 , data_size(2)
+!         do jj = 1 , data_size(1)
+!           if (maskqa_flag(k) .eq. 0)
+!    +          QA_Cloud(i,jj,ii) = maskqa_buf(k)
+!           k = k+1
+!         enddo
+!       enddo
+! ... end cloud mask acquisition loop
+!     enddo
 
 c ------------------------------------------------------------------
 
