@@ -35,7 +35,7 @@ def fy3abc2modis_1km(in_file, geo_file, out_file, metadata_pickle):
         2: 'CH_04',
         3: 'CH_01',
         4: 'CH_02',
-        5: 'CH_02',  # 没有5通道的对应通道，暂时使用CH_02
+        5: 'CH_02',
         6: 'CH_06',
         7: 'CH_07',
         8: 'CH_08',
@@ -97,8 +97,32 @@ def fy3abc2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     :param metadata_pickle:  hdr 头信息
     :return:
     """
-    from lib.fy3d2envi import fy3d2modis_geo
-    fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle)
+    datas = np.zeros((2000, 2048, 8), dtype=np.float32)
+    data_loader = ReadMersiL1(l1_file, geo_file=geo_file)
+
+    data_map = {
+        0: data_loader.get_latitude,
+        1: data_loader.get_longitude,
+        2: data_loader.get_sensor_zenith,
+        3: data_loader.get_sensor_azimuth,
+        4: data_loader.get_solar_zenith,
+        5: data_loader.get_solar_azimuth,
+        6: data_loader.get_height,
+        7: data_loader.get_land_sea_mask,
+    }
+
+    for channel in data_map:
+        _data = data_map[channel]()
+        _data[np.isnan(_data)] = -1
+        datas[:, :, channel] = _data
+
+    with open(metadata_pickle, 'rb') as f:
+        metadatas = pickle.load(f)
+    metadata = metadatas.get('geo')
+    _metadata = metadata.get('metadata')
+    _interleave = metadata.get('interleave')
+    envi.save_image(out_file, datas, metadata=_metadata, interleave=_interleave, force=True)
+    print('>>> {}'.format(out_file))
 
 
 def fy3abc2modis_met(l1_file, geo_file, out_file, metadata_pickle):
@@ -118,7 +142,7 @@ def fy3abc2modis_met(l1_file, geo_file, out_file, metadata_pickle):
     sz_mean.reshape(-1, 1)
 
     # MODIS和FY3的白天晚上好像是反的，在MODIS中，1是白天，0是晚上
-    flag = np.zeros_like((200,), dtype=np.int8)
+    flag = np.zeros((200,), dtype=np.int8)
     for i in range(0, 200):
         sz_mean_ = np.nanmean(sz_mean[i*10:(i+1)*10])
         if sz_mean_ < 75:
