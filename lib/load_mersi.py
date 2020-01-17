@@ -647,7 +647,7 @@ class ReadMersiL1(ReadL1):
                     if 'CH_05' in band:
                         continue
 
-                    if np.isclose(scales) == 10000.:
+                    if np.isclose(scales, 10000.):
                         channel_data = dn[band]
                     else:
                         channel_data = dn[band] ** 2 * k2[band] + dn[band] * \
