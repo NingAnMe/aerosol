@@ -1,10 +1,5 @@
 """
-1、aerosol的程序中，MODIS数据在使用的时候没有做日地距离修正，是否去除FY3D的日地距离修正（通过GSISC的MODIS读取类确认的这个问题）
-2、aerosol的程序中，需要使用MODIS的5通道和32通道，FY3D中没有对应的通道
-3、aerosol程序中使用了cloudmask，对于couldmask程序，没有MODIS的5通道22通道27通道32通道33通道35通道
-    如果使用FY3D的cloudmask，需要将FY3D的cloudmask转为MODIS的数据格式和数值
-4、aerosol程序中使用了DEM,需要对应FY3D的GEO文件中的DEM数据使用
-
+1、FY3A没有云数据，不能出结果
 # ######aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
 """
 import os
@@ -97,8 +92,15 @@ def fy3abc2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     :param metadata_pickle:  hdr 头信息
     :return:
     """
+    all_night = False
     datas = np.zeros((2000, 2048, 8), dtype=np.float32)
     data_loader = ReadMersiL1(l1_file, geo_file=geo_file)
+
+    sz = data_loader.get_solar_zenith()
+    sz = sz[np.isfinite(sz)]
+    if (sz >= 75).all():
+        all_night = True
+        return all_night
 
     data_map = {
         0: data_loader.get_latitude,
@@ -123,6 +125,7 @@ def fy3abc2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     _interleave = metadata.get('interleave')
     envi.save_image(out_file, datas, metadata=_metadata, interleave=_interleave, force=True)
     print('>>> {}'.format(out_file))
+    return all_night
 
 
 def fy3abc2modis_met(l1_file, geo_file, out_file, metadata_pickle):

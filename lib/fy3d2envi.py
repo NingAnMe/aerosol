@@ -95,6 +95,7 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     :param metadata_pickle:  hdr 头信息
     :return:
     """
+    all_night = False
     datas = np.zeros((2000, 2048, 8), dtype=np.float32)
     data_loader = ReadMersiL1(l1_file, geo_file=geo_file)
 
@@ -108,6 +109,12 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
         6: data_loader.get_height,
         7: data_loader.get_land_sea_mask,
     }
+
+    sz = data_loader.get_solar_zenith()
+    sz = sz[np.isfinite(sz)]
+    if (sz >= 75).all():
+        all_night = True
+        return all_night
 
     for channel in data_map:
         _data = data_map[channel]()
@@ -124,6 +131,7 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
     _interleave = metadata.get('interleave')
     envi.save_image(out_file, datas, metadata=_metadata, interleave=_interleave, force=True)
     print('>>> {}'.format(out_file))
+    return all_night
 
 
 def fy3d2modis_met(l1_file, geo_file, out_file, metadata_pickle):

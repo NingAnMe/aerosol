@@ -62,14 +62,20 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
 
         if sensor == "MERSI":
             if satellite == "FY3D":
+                all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+                if all_night:
+                    print("全部是夜晚数据")
+                    return
                 fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
-                fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
                 fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
             elif satellite in ["FY3A", "FY3B", "FY3C"]:
+                all_night = fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+                if all_night:
+                    print("全部是夜晚数据")
+                    return
                 fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
-                fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
                 fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
