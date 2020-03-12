@@ -23,7 +23,8 @@ metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 os.system('source ~/.bashrc')
 
 
-def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True):
+def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True,
+                  vis_file=None, ir_file=None):
     print("<<< l1_1000m      : {}".format(l1_1000m))
     print("<<< l1_cloudmask  : {}".format(l1_cloudmask))
     print("<<< l1_geo        : {}".format(l1_geo))
@@ -32,6 +33,8 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     print("<<< satellite     : {}".format(satellite))
     print("<<< sensor        : {}".format(sensor))
     print("<<< rewrite        : {}".format(rewrite))
+    print("<<< vis_file        : {}".format(vis_file))
+    print("<<< ir_file        : {}".format(ir_file))
 
     datetime_temp = datetime.strptime(yyyymmddhhmmss, '%Y%m%d%H%M%S')
 
@@ -60,13 +63,18 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         l1_cloudmask_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35.hdr'.format(**format_datetime))
         l1_cloudmask_qa_envi = os.path.join(out_dir_temp, 'a1.{yyjjj}.{hhmm}.mod35qa.hdr'.format(**format_datetime))
 
+        if vis_file is not None or ir_file is not None:
+            coef_txt_flag = True
+        else:
+            coef_txt_flag = False
+
         if sensor == "MERSI":
             if satellite == "FY3D":
                 all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 if all_night:
                     print("全部是夜晚数据")
                     return
-                fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
+                fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
                 fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
@@ -75,7 +83,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 if all_night:
                     print("全部是夜晚数据")
                     return
-                fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas)
+                fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
                 fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
@@ -234,6 +242,9 @@ class ReadInYaml:
         with open(in_file, 'r') as stream:
             cfg = yaml.load(stream)
 
+        self.ir_file = cfg['CALFILE']['irfile']
+        self.vis_file = cfg['CALFILE']['visfile']
+
         self.jobname = cfg['INFO']['job_name']
         self.ymd = cfg['INFO']['ymd']
         self.hms = cfg['INFO']['hms']
@@ -249,6 +260,9 @@ def main(in_file):
     # 01 ICFG = 输入配置文件类 ##########
     in_cfg = ReadInYaml(in_file)
 
+    vis_file = in_cfg.vis_file
+    ir_file = in_cfg.ir_file
+
     l1b_file = in_cfg.ipath_l1b
     clm_file = in_cfg.ipath_clm
     geo_file = in_cfg.ipath_geo
@@ -257,7 +271,8 @@ def main(in_file):
     ymdhms = in_cfg.ymd + in_cfg.hms
     satellite, sensor = in_cfg.jobname.split('_')
     rewrite = in_cfg.rewrite
-    result = aerosol_orbit(l1b_file, clm_file, geo_file, ymdhms, outpath, outpath, satellite, sensor, rewrite=rewrite)
+    result = aerosol_orbit(l1b_file, clm_file, geo_file, ymdhms, outpath, outpath, satellite, sensor, rewrite=rewrite,
+                           vis_file=vis_file, ir_file=ir_file)
     if result is not None and result['status'] == SUCCESS and rewrite:
         plot_aod_image(result['data']['out_file'][0])
 

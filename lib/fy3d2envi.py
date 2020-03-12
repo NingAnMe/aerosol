@@ -16,17 +16,21 @@ import numpy as np
 from .load_mersi import ReadMersiL1
 
 
-def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle):
+def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_file, coef_txt_flag):
     """
     缺少5通道和32通道
     :param in_file:
     :param geo_file:
     :param out_file:
     :param metadata_pickle:  hdr 头信息
+    :param vis_file:  定标文件
+    :param ir_file:  定标文件
+    :param coef_txt_flag:  是否使用外部定标
     :return:
     """
     datas = np.zeros((2000, 2048, 36), dtype=np.float32)
-    data_loader = ReadMersiL1(in_file, geo_file=geo_file)
+    data_loader = ReadMersiL1(in_file, geo_file=geo_file, vis_file=vis_file, ir_file=ir_file,
+                              coef_txt_flag=coef_txt_flag)
 
     data_map = {
         1: 'CH_03',
