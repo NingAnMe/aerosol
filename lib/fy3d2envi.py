@@ -1,6 +1,6 @@
 """
 1、aerosol的程序中，MODIS数据在使用的时候没有做日地距离修正，是否去除FY3D的日地距离修正（通过GSISC的MODIS读取类确认的这个问题）
-2、aerosol的程序中，需要使用MODIS的5通道和32通道，FY3D中没有对应的通道
+2、aerosol的程序中，需要使用MODIS的5通道，FY3D中没有对应的通道
 3、aerosol程序中使用了cloudmask，对于couldmask程序，没有MODIS的5通道22通道27通道32通道33通道35通道
     如果使用FY3D的cloudmask，需要将FY3D的cloudmask转为MODIS的数据格式和数值
 4、aerosol程序中使用了DEM,需要对应FY3D的GEO文件中的DEM数据使用
@@ -56,7 +56,7 @@ def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_fi
         28: 'CH_22',
         29: 'CH_23',
         31: 'CH_24',
-        32: 'CH_24',  # 没有32通道的对应通道，暂时使用CH_24
+        32: 'CH_25',
     }
 
     # 日地距离校正
@@ -69,6 +69,7 @@ def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_fi
         channel = data_map[k]
         if channel in refs:
             _data = refs[channel] / scale  # 日地距离校正
+            print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
             _data[np.isnan(_data)] = -1
             datas[:, :, index - 1] = _data
 
@@ -78,6 +79,7 @@ def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_fi
         channel = data_map[k]
         if channel in rads:
             _data = rads[channel]
+            print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
             _data[np.isnan(_data)] = -1
             datas[:, :, index - 1] = _data
 
@@ -125,6 +127,7 @@ def fy3d2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
         if channel == 3 or channel == 5:
             index = _data > 180
             _data[index] = _data[index] - 360
+        print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
         _data[np.isnan(_data)] = -1
         datas[:, :, channel] = _data
 
@@ -187,6 +190,7 @@ def fy3d2modis_cloudmask(in_file, out_file, metadata_pickle):
     with h5py.File(in_file, 'r') as hdf:
         for i in range(6):
             datas[:, :, i] = hdf.get('Cloud_Mask')[i, :, :]
+            print(i, np.nanmin(datas[:, :, i]), np.nanmax(datas[:, :, i]), np.nanmean(datas[:, :, i]))
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)

@@ -16,6 +16,8 @@ from lib.fy3abc2envi import (fy3abc2modis_1km, fy3abc2modis_cloudmask, fy3abc2mo
                              fy3abc2modis_geo, fy3abc2modis_met)
 from spectral.io import envi
 from datetime import datetime
+import matplotlib as mpl
+mpl.use('Agg')
 
 aid_dir = get_aid_path()
 metadatas = os.path.join(aid_dir, 'metadatas.pickle')
@@ -42,7 +44,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     hhmm = datetime_temp.strftime('%H%M')
     yyjjj = yyyymmdd[2:4] + datetime_temp.strftime('%j')
 
-    out_h5file = os.path.join(out_dir, '%s_MERSI_AOD_GRANULE_%s_%s.HDF5' % (satellite, yyyymmdd, hhmm))
+    out_h5file = os.path.join(out_dir, '%s_%s_AOD_GRANULE_%s_%s.HDF5' % (satellite, sensor, yyyymmdd, hhmm))
     if (not os.path.isfile(out_h5file)) or rewrite:
         if DEBUG:
             print('yyyymmdd: ', yyyymmdd)
@@ -162,11 +164,10 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                                    compression='gzip', compression_opts=5, shuffle=True)
                 h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_2.1micron', data=envi_data.read_band(13),
                                    compression='gzip', compression_opts=5, shuffle=True)
-
+            print(">>> : {}".format(out_h5file))
     else:
-        print("文件已存在，跳过")
+        print("文件已存在，跳过:{}".format(out_h5file))
 
-    print(">>> : {}".format(out_h5file))
     return {
         "data": {"out_dir": [out_dir],
                  "out_file": [out_h5file]},
@@ -177,15 +178,14 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     }
 
 
-def plot_aod_image(hdf_file):
+def plot_aod_image(hdf_file, out_image):
     with h5py.File(hdf_file, 'r') as hdf:
         aod = hdf.get('Optical_Depth_Land_And_Ocean')
         if aod:
             aod_550 = aod[:]
             aod_550 = np.ma.masked_where(aod_550 < 0, aod_550)
             r = normal255int8(aod_550)
-            out_fig = hdf_file + ".PNG"
-            plot_image_origin(r, out_fig)
+            plot_image_origin(r, out_image)
 
 
 def plot_image_origin(r, out_file):
@@ -273,8 +273,15 @@ def main(in_file):
     rewrite = in_cfg.rewrite
     result = aerosol_orbit(l1b_file, clm_file, geo_file, ymdhms, outpath, outpath, satellite, sensor, rewrite=rewrite,
                            vis_file=vis_file, ir_file=ir_file)
-    if result is not None and result['status'] == SUCCESS and rewrite:
-        plot_aod_image(result['data']['out_file'][0])
+    if result is not None and result['status'] == SUCCESS:
+        out_hdf = result['data']['out_file'][0]
+        if not os.path.isfile(out_hdf):
+            print('HDF文件不存在：{}'.format(out_hdf))
+        out_image = result['data']['out_file'][0] + '.png'
+        if (not os.path.isfile(out_image)) or rewrite:
+            plot_aod_image(out_hdf, out_image)
+        else:
+            print('文件已经存在，跳过:{}'.format(out_image))
 
 
 if __name__ == '__main__':

@@ -368,7 +368,7 @@ class ReadMersiL1(ReadL1):
 
         if self.ir_file is not None:
             k0_k1_ir_df = pd.read_table(self.ir_file, sep='\t')
-            k0_ir = k0_k1_ir_df.ilic[:, [0, 1]].to_numpy()
+            k0_ir = k0_k1_ir_df.iloc[:, [0, 1]].to_numpy()
 
         return k0_vis, k0_ir
 
@@ -380,7 +380,7 @@ class ReadMersiL1(ReadL1):
 
         if self.ir_file is not None:
             k0_k1_ir_df = pd.read_table(self.ir_file, sep='\t')
-            k1_ir = k0_k1_ir_df.ilic[:, [0, 2]].to_numpy()
+            k1_ir = k0_k1_ir_df.iloc[:, [0, 2]].to_numpy()
 
         return k1_vis, k1_ir
 
@@ -392,7 +392,7 @@ class ReadMersiL1(ReadL1):
 
         if self.ir_file is not None:
             k0_k1_ir_df = pd.read_table(self.ir_file, sep='\t')
-            k2_ir = k0_k1_ir_df.ilic[:, [0, 3]].to_numpy()
+            k2_ir = k0_k1_ir_df.iloc[:, [0, 3]].to_numpy()
 
         return k2_vis, k2_ir
 

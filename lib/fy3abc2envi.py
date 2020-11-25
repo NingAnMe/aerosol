@@ -1,5 +1,6 @@
 """
 1、FY3A没有云数据，不能出结果
+2、FY3ABC没有QA码，所以去除了QA
 # ######aerosol的程序中，是否需要将FY3D的Radiance转到MODIS的Radiance
 """
 import os
@@ -65,6 +66,7 @@ def fy3abc2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_
         index = k
         channel = data_map[k]
         if channel in refs:
+            # _data = refs[channel]
             _data = refs[channel] / scale  # 日地距离校正
             print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
             _data[np.isnan(_data)] = -1
@@ -76,6 +78,7 @@ def fy3abc2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_
         channel = data_map[k]
         if channel in rads:
             _data = rads[channel]
+            print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
             _data[np.isnan(_data)] = -1
             datas[:, :, index - 1] = _data
 
@@ -122,6 +125,7 @@ def fy3abc2modis_geo(l1_file, geo_file, out_file, metadata_pickle):
         _data = data_map[channel]()
         _data[np.isnan(_data)] = -1
         datas[:, :, channel] = _data
+        print(channel, np.nanmin(_data), np.nanmax(_data), np.nanmean(_data))
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)

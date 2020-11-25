@@ -6,6 +6,12 @@ import h5py
 import yaml
 import numpy as np
 from qiae_lib.dp_proj import prj_core
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import cartopy.crs as ccrs
+# import cartopy.feature as cfeature
+# from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 '''
 Created on 2019年12月20日
@@ -101,7 +107,7 @@ class ReadAodData():
 #         return data
 
 
-def main(yaml_file):
+def combine(yaml_file, outfile):
 
     # 读取接口文件
     yaml1 = ReadYaml(yaml_file)
@@ -149,7 +155,6 @@ def main(yaml_file):
         lats = data['lat']
         lut = pp.create_lut(lons, lats)
         proj_lut[infile] = lut
-    del h5data
 
     h5data = ReadAodData()
     for infile in proj_lut:
@@ -159,27 +164,82 @@ def main(yaml_file):
         pj = proj_lut[infile]['prj_j']
         aod = h5data.load_aod(infile)
         aod_550[pi, pj] = aod[di, dj]
-    del h5data
 
-    outpath = os.path.join(yaml1.opath, yaml1.ymd[:4],)
-    outname = '%s_AOD_DAILY_%s.HDF5' % (yaml1.job_name, yaml1.ymd)
-
-    if not os.path.isdir(outpath):
-        os.makedirs(outpath)
-
-    outpath = os.path.join(outpath, outname)
-    h5w = h5py.File(outpath, 'w')
+    h5w = h5py.File(outfile, 'w')
     h5w.create_dataset('Optical_Depth_Land_And_Ocean', data = aod_550, compression = 'gzip', compression_opts = 5, shuffle = True)
     h5w.close()
 
 
+def main(yaml_file):
+
+    # 读取接口文件
+    yaml1 = ReadYaml(yaml_file)
+
+    outpath = yaml1.opath
+    outname = '%s_AOD_DAILY_%s.HDF5' % (yaml1.job_name, yaml1.ymd)
+
+    sat, sensor = yaml1.job_name.split('_')
+    ymd = yaml1.ymd
+
+    if not os.path.isdir(outpath):
+        os.makedirs(outpath)
+
+    outfile = os.path.join(outpath, outname)
+    outpng = outfile + '.png'
+    ndsi = None
+    if not os.path.isfile(outfile):
+        ndsi = combine(yaml_file, outfile)
+    if not os.path.isfile(outpng):
+        if ndsi is not None:
+            plot_map(ndsi, outpng)
+        else:
+            h5w = h5py.File(outfile)
+            data = h5w.get('Optical_Depth_Land_And_Ocean')[:]
+            h5w.close()
+            plot_map(sat, sensor, ymd, data, outpng)
+
+
+def plot_map(sat, sensor, ymd, img, outfig):
+
+    fig = plt.figure(figsize = (10, 5))
+    ax = fig.add_subplot(111, projection = ccrs.PlateCarree())
+#     ax = plt.axes(projection = ccrs.PlateCarree(central_longitude = 0))
+#     ax.coastlines()
+    ax.coastlines(resolution = '50m', color = 'black', linewidth = 0.3)
+#     ax.stock_img()
+    ax.set_global()
+    print('start')
+    # w e n s
+#     img_extent = (-179.95, 179.95, -89.95, 89.95)
+    img_extent = (-180, 180, -90, 90)
+
+    # 设置色标的最大最小值
+    norm = mpl.colors.Normalize(vmin = 0, vmax = 1.2)
+    img = np.ma.masked_where(img < 0 , img)
+#     cb = ax.scatter(lon, lat, marker = '.', c = value, s = 0.4, cmap = 'jet', lw = 0, norm = norm)
+    im = ax.imshow(img, origin = 'upper', cmap = 'jet', norm = norm, extent = img_extent, transform = ccrs.PlateCarree())
+
+    plt.colorbar(im, fraction = 0.046, pad = 0.04)
+
+    # 标注坐标轴
+    ax.set_xticks([-180, -120, -60, 0, 60, 120, 180], crs = ccrs.PlateCarree())
+    ax.set_yticks([-90, -60, -30, 0, 30, 60, 90], crs = ccrs.PlateCarree())
+    # zero_direction_label用来设置经度的0度加不加E和W
+    lon_formatter = LongitudeFormatter(zero_direction_label = False)
+    lat_formatter = LatitudeFormatter()
+    ax.xaxis.set_major_formatter(lon_formatter)
+    ax.yaxis.set_major_formatter(lat_formatter)
+    ax.grid(linestyle = '--')
+
+    ax.set_title('%s/%s Daily Aod550 %s' % (sat, sensor, ymd))
+
+    # Save the plot by calling plt.savefig() BEFORE plt.show()
+#     plt.savefig('coastlines.pdf')
+    plt.savefig(outfig)
+    print('end')
+
+
 if __name__ == '__main__':
-#     infile = r'D:\data\aerosol\FY3D_MERSI_AOD_GRANULE_20191001_0020.HDF5'
-#     infile = r'D:\data\MERSI\FY3D_MERSI_GBAL_L1_20181001_0020_1000M_MS.HDF'
-#     h5 = ReadH5Data()
-#     data = h5.loads(infile)
-#
-#     print (data)
     args = sys.argv[1:]
     yaml_file = args[0]
     main(yaml_file)
