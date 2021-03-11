@@ -133,7 +133,8 @@ c --- check the interleave
       endif
 
 c --- initialize the record pointer
-      beg_record = ((iband-1)*fil_lines) + ((req_scan-1)*MAX_LINE) + 1
+!     beg_record = ((iband-1)*fil_lines) + ((req_scan-1)*MAX_LINE) + 1
+      beg_record = ((iband-1)*fil_lines) + ((req_scan-1)*1) + 1
       end_record = beg_record + (MAX_LINE-1)
 
       if( end_record.gt.(fil_lines*fil_bands) ) then

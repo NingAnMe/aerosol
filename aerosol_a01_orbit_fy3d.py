@@ -14,6 +14,7 @@ from lib.path import get_aid_path
 from lib.fy3d2envi import fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo, fy3d2modis_met
 from lib.fy3abc2envi import (fy3abc2modis_1km, fy3abc2modis_cloudmask, fy3abc2modis_cloudmask_qa,
                              fy3abc2modis_geo, fy3abc2modis_met)
+from lib.utils import format_data
 from spectral.io import envi
 from datetime import datetime
 import matplotlib as mpl
@@ -70,68 +71,72 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         else:
             coef_txt_flag = False
 
-        if sensor == "MERSI":
-            if satellite == "FY3D":
-                all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
-                if all_night:
-                    print("全部是夜晚数据")
-                    return
-                fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
-                fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
-                fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
-                fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
-            elif satellite in ["FY3A", "FY3B", "FY3C"]:
-                all_night = fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
-                if all_night:
-                    print("全部是夜晚数据")
-                    return
-                fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
-                fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
-                fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
-                fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
-            else:
-                raise ValueError(f"不支持的satellite：{satellite}")
-        else:
-            raise ValueError(f"不支持的sensor：{sensor}")
-
-        if DEBUG:
-            print('product :{}'.format(l1_1000m_envi))
-            print('product :{}'.format(l1_geo_envi))
-            print('product :{}'.format(l1_met_envi))
-            print('product :{}'.format(l1_cloudmask_envi))
-            print('product :{}'.format(l1_cloudmask_qa_envi))
-
-        for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
-            if not os.path.isfile(file_):
-                print('ERROR: file found error: {}'.format(file_))
-                return {
-                    "data": {},
-                    "status": ERROR,
-                    "statusInfo": {
-                        "message": "程序错误",
-                        "detail": "程序错误，没有生成：{}".format(file_)
-                    }
-                }
-
-        format_datetime['out_dir'] = out_dir_temp
-        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
-            **format_datetime)
-
-        print('cmd :{}'.format(cmd))
-        os.system(cmd)
-        print('>>> success: {}'.format(out_dir_temp))
+        # if sensor == "MERSI":
+        #     if satellite == "FY3D":
+        #         all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+        #         if all_night:
+        #             print("全部是夜晚数据")
+        #             return
+        #         fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
+        #         fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
+        #         fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
+        #         fy3d2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
+        #     elif satellite in ["FY3A", "FY3B", "FY3C"]:
+        #         all_night = fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
+        #         if all_night:
+        #             print("全部是夜晚数据")
+        #             return
+        #         fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
+        #         fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
+        #         fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
+        #         fy3abc2modis_cloudmask_qa(l1_cloudmask, l1_cloudmask_qa_envi, metadatas)
+        #     else:
+        #         raise ValueError(f"不支持的satellite：{satellite}")
+        # else:
+        #     raise ValueError(f"不支持的sensor：{sensor}")
+        #
+        # if DEBUG:
+        #     print('product :{}'.format(l1_1000m_envi))
+        #     print('product :{}'.format(l1_geo_envi))
+        #     print('product :{}'.format(l1_met_envi))
+        #     print('product :{}'.format(l1_cloudmask_envi))
+        #     print('product :{}'.format(l1_cloudmask_qa_envi))
+        #
+        # for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
+        #     if not os.path.isfile(file_):
+        #         print('ERROR: file found error: {}'.format(file_))
+        #         return {
+        #             "data": {},
+        #             "status": ERROR,
+        #             "statusInfo": {
+        #                 "message": "程序错误",
+        #                 "detail": "程序错误，没有生成：{}".format(file_)
+        #             }
+        #         }
+        #
+        # format_datetime['out_dir'] = out_dir_temp
+        # cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
+        #     **format_datetime)
+        #
+        # print('cmd :{}'.format(cmd))
+        # os.system(cmd)
+        # print('>>> success: {}'.format(out_dir_temp))
 
         """
         http://www.spectralpython.net/class_func_ref.html#spectral.io.envi
         add envi format to hdf5
         wangpeng 20191204
         """
-        envi_hdr = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
-        envi_img = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
+        envi_hdr = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
+        envi_img = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
         envi_data = envi.open(envi_hdr, envi_img)
         lats = envi_data.read_band(0)
         lons = envi_data.read_band(1)
         aod_550 = envi_data.read_band(2)
+        # from lib.utils import fill_points_2d_nan
+        # aod_550[np.logical_or(aod_550 == 0.001, aod_550 == 0)] = np.nan
+        # fill_points_2d_nan(aod_550)
+        # aod_550[np.isnan(aod_550)] = -327.68
 
         #     dset_name = envi_data.metadata['band names']
 
@@ -284,13 +289,31 @@ def main(in_file):
             print('文件已经存在，跳过:{}'.format(out_image))
 
 
+def t_aerosol_orbit():
+    fy3d_dir_in = os.path.join('TEST_DATA_FY3D_MERSI', 'in')
+    l1_1000m = os.path.join(fy3d_dir_in, 'FY3D_MERSI_GBAL_L1_20191001_0100_1000M_MS.HDF')
+    l1_cloudmask = os.path.join(fy3d_dir_in, 'FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_20191001_0100_1000M_MS.HDF')
+    l1_geo = os.path.join(fy3d_dir_in, 'FY3D_MERSI_GBAL_L1_20191001_0100_GEO1K_MS.HDF')
+    yyyymmddhhmmss = '20191001010000'
+    fy3d_dir_out = os.path.join('TEST_DATA_FY3D_MERSI', 'out')
+    dir_temp = fy3d_dir_out
+    out_dir = fy3d_dir_out
+    satellite = 'FY3D'
+    sensor = 'MERSI'
+
+    aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True,
+                  vis_file=None, ir_file=None)
+
+
 if __name__ == '__main__':
 
-    # 获取python输入参数，进行处理
-    args = sys.argv[1:]
-    if len(args) == 1:  # 跟参数，则处理输入的时段数据
-        IN_FILE = args[0]
-    else:
-        print('input args error exit')
-        sys.exit(-1)
-    main(IN_FILE)
+    t_aerosol_orbit()
+
+    # # 获取python输入参数，进行处理
+    # args = sys.argv[1:]
+    # if len(args) == 1:  # 跟参数，则处理输入的时段数据
+    #     IN_FILE = args[0]
+    # else:
+    #     print('input args error exit')
+    #     sys.exit(-1)
+    # main(IN_FILE)

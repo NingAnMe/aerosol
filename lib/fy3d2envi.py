@@ -168,6 +168,9 @@ def fy3d2modis_met(l1_file, geo_file, out_file, metadata_pickle):
     mirror = data_loader.get_mirror_side().reshape(-1).astype(np.int8)
     datas[:, 1] = mirror.reshape(-1)
 
+    datas = np.repeat(datas, 10, axis=0)
+    print(datas.shape)
+
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)
     metadata = metadatas.get('met')
