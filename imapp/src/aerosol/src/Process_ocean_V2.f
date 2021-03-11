@@ -300,7 +300,7 @@ c
      *  sd_W124,sd_W164, sd_W213,sd_W443o,sd_W551o,sd_W667o,sd_W869o,
      *  Ref_ray,MTHET0,WAVE,TOT_cldfree_number,GLINT_ANGLE,iscan,idata,
      *  Qcontrol_special, High_Cloud_Flag_500,W138_SYN,CLD_FRAC)
- 
+
 c       if(CLD_FRAC .GE.0)SDS_CLDFRC_ocean (IDATA)=CLD_FRAC*100.
 c Change from percent to fraction for output
 
@@ -1284,14 +1284,14 @@ C----------------------------------------------------------------------
      *     W213_SYN(2*ISWATH,2*ILINE),W138_SYN(ISWATH,ILINE),
      *     W443o_SYN(ISWATH,ILINE),W551o_SYN(ISWATH,ILINE),
      *     W667o_SYN(ISWATH,ILINE),W869o_SYN(ISWATH,ILINE)
-      real array(2*IGRIDX*2*IGRIDY),newarray(2*IGRIDX*2*IGRIDY)
-       REAL  ref_interm(NWAV,2*IGRIDX*2*IGRIDY)
-       REAL  array_interm(NWAV,2*IGRIDX*2*IGRIDY)
+      real array(4*IGRIDX*4*IGRIDY),newarray(4*IGRIDX*4*IGRIDY)
+       REAL  ref_interm(NWAV,4*IGRIDX*4*IGRIDY)
+       REAL  array_interm(NWAV,4*IGRIDX*4*IGRIDY)
        REAL sd_W659,sd_W865, sd_W470,sd_W550,sd_W124,sd_W164,
      *     sd_W213,sd_W443o,sd_W551o,sd_W667o,sd_W869o
       REAL  sd_allwav(NWAV),var_allwav(NWAV)
       REAL del_var_wav659,del_var_wav164,del_var_waV213,del_var_wav124
-      real WAVE(NWAV),array_new(2*IGRIDX*2*IGRIDY)
+      real WAVE(NWAV),array_new(4*IGRIDX*4*IGRIDY)
       real ref_val,sd_val
       INTEGER CLDMSK_syn(4*ISWATH,4*ILINE)
       INTEGER NCLDMSK_SYN(2*ISWATH,2*ILINE+1)

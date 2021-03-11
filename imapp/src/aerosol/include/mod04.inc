@@ -106,7 +106,7 @@ C
 C From metadata
 C
       INTEGER maxnum_scans,bsize
-      PARAMETER (maxnum_scans=500)
+      PARAMETER (maxnum_scans=2000)
       INTEGER Dead_detectors(490),EV_frames(maxnum_scans)
       REAL*8 Scan_Start_Time(maxnum_Scans)
       CHARACTER*4 Scan_Type(maxnum_scans)
@@ -128,7 +128,7 @@ C
       INTEGER OUT_BAND
       PARAMETER (OUT_BAND=14)
       INTEGER NUMCELLS,ISWATH,ILINE,TOTCASES,MAXDIM,MAX_SAMP_LINE
-      PARAMETER(NUMCELLS=210,ISWATH=2100,ILINE=10,MAX_SAMP_LINE=1,
+      PARAMETER(NUMCELLS=2100,ISWATH=2100,ILINE=10,MAX_SAMP_LINE=1,
      *TOTCASES=(NUMCASES* NUMCASEB),
      *MAXDIM=NUMCELLS*Lines_Per_Write*TOTCASES)
 C

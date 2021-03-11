@@ -1097,8 +1097,11 @@ c ---------- Place the data into the 1km holding arrays
                  k = k+1
                enddo
              enddo
+C anning NUMSQ控制行循环的次数，NUMSQ=(data_size(1)/IGRIDX)*(data_size(2)/IGRIDY)
+!            NUMSQ=(data_size(1)/IGRIDX)*(data_size(2)/IGRIDY)
+             NUMSQ = 2048
+!            print *, NUMSQ, data_size(1), IGRIDX, data_size(2), IGRIDY, 'NUMSQNUMSQNUMSQNUMSQNUMSQ'
 
-             NUMSQ=(data_size(1)/IGRIDX)*(data_size(2)/IGRIDY)
 
 c ------- debug statement
           if (debug .gt. 3) then

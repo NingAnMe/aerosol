@@ -107,6 +107,7 @@ c --- check if request band is contained in the file
       return
 10    continue
 
+C anning 设置最大的读取行数
 c ... Set max line = 10
       MAX_LINE = 10
 
@@ -117,6 +118,7 @@ c --- check the units
          if(req_bandunit(1:len_req).ne.
      &      fil_bandunits(iband)(1:len_fil) ) then
             db_read_flat_file = -2
+            print *, "db_read_flat_file ==", db_read_flat_file
             return
          endif
       endif
@@ -124,6 +126,7 @@ c --- check the units
 c --- check the resolution 
       if( req_resolution.ne.fil_resolution ) then
          db_read_flat_file = -3
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
       res = req_resolution
@@ -131,12 +134,14 @@ c --- check the resolution
 c --- check the data type
       if( fil_datatype.ne.4 ) then
          db_read_flat_file = -4
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
  
 c --- check the interleave
       if( fil_interleave.ne.'bil' ) then
          db_read_flat_file = -5
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
 
@@ -145,11 +150,17 @@ c --- Get the number of lines to read
       ires = int(res)
 
 c --- initialize the record pointer
-      beg_record = ((req_scan-1) * MAX_LINE * res * fil_bands) + iband
-      end_record = beg_record + (((MAX_LINE*res) - 1)  * fil_bands)
+!     print *, req_scan, MAX_LINE, res, fil_bands, iband
+!     beg_record = ((req_scan-1) * MAX_LINE * res * fil_bands) + iband
+      beg_record = ((req_scan-1) * 1 * res * fil_bands) + iband
+      end_record = beg_record + (((10*res) - 1)  * fil_bands)
+
+!     print *, beg_record, end_record
 
       if( end_record.gt.(fil_lines*fil_bands) ) then
          db_read_flat_file = -6
+         print *, end_record, fil_lines, fil_bands
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
 
@@ -174,6 +185,7 @@ c --- loop through the file
 c --- make sure that we have room for the line
       if( (eptr-bptr+1).gt. out_maxsamples ) then
          db_read_flat_file = -7
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
 
@@ -189,6 +201,7 @@ c --- increment the number of lines
       out_lines = out_lines+1
       if( out_lines.gt.out_maxlines ) then
          db_read_flat_file = -8
+         print *, "db_read_flat_file ==", db_read_flat_file
          return
       endif
 

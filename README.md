@@ -25,7 +25,12 @@ aerosol.exe a1.17299.1910.mod04.cfg aqua 10
 ```
 
 #### 开发编译
+要求:4.7 <= gfortran版本 < 8.0
+yum install gcc-gfortran
+apt-get install gfortran
+
 ```shell script
+source imapp/env/imapp_modisl2.bash_env
 cd imapp/src/aerosol/src
 make clean
 make

@@ -1198,7 +1198,7 @@ C-----------------------------------------------------------------------
      *     W213_SYN(2*ISWATH,2*ILINE),
      *     W443o_SYN(ISWATH,ILINE),W551o_SYN(ISWATH,ILINE),
      *     W667o_SYN(ISWATH,ILINE),W869o_SYN(ISWATH,ILINE)
-      REAL arefw659,arefw865,AVE,SDEV,array(2*IGRIDX*2*IGRIDY)
+      REAL arefw659,arefw865,AVE,SDEV,array(4*IGRIDX*4*IGRIDY)
       REAL ref_interm(3,2*IGRIDX*2*IGRIDY),SCAT_ANGLE_LAND
       REAL diff_full_half,final_diff_full_half(Land_Sol1)
       INTEGER CLDMSK_500(2*ISWATH,2*ILINE),Flag_full

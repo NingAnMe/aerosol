@@ -1017,7 +1017,8 @@ c ------ issue the OPEN request
      &         UNIT=MOD04_UNIT,
      &         STATUS=MOD04_STATUS,
      &         ACCESS=MOD04_ACCESS,
-     &         RECL= (l1b_1km_neles / 10) * 4,
+!    &         RECL= (l1b_1km_neles / 10) * 4,
+     &         RECL= (l1b_1km_neles / 1) * 4,
      &         IOSTAT=io_err,
      &         ERR=3050
      &       )
