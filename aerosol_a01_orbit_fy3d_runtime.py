@@ -59,11 +59,13 @@ def check_china(l1_file: str, geo_file: str):
     rd = ReadMersiL1(l1_file, geo_file=geo_file)
     lons = rd.get_longitude()
     lats = rd.get_latitude()
-    china = np.logical_and.reduce(lats > LAT_RANGE[0], lats < LAT_RANGE[1],
-                                  lons > LON_RANGE[0], lons < LON_RANGE[1])
-    print(np.sum(china))
+    china = np.logical_and.reduce((lats > LAT_RANGE[0], lats < LAT_RANGE[1],
+                                  lons > LON_RANGE[0], lons < LON_RANGE[1]))
+    print(f"{l1_file} {np.sum(china)}")
     if not np.any(china):
         return False
+    else:
+        return True
 
 
 def get_l1_geo_cloud(dt_now: datetime):
@@ -81,7 +83,7 @@ def get_l1_geo_cloud(dt_now: datetime):
         geo_file = geo_files[ymdhm]
         cloud_file = cloud_files[ymdhm]
         if not check_china(l1_file, geo_file):  # 检测是否经过中国区
-            db.put(ymdhm, 'notchina')
+            db.set(ymdhm, 'notchina')
             db.dump()
             continue
         else:
