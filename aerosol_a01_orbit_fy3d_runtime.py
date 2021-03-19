@@ -79,7 +79,7 @@ def get_l1_geo_cloud(dt_now: datetime):
             continue
         l1_file = l1_files[ymdhm]
         geo_file = geo_files[ymdhm]
-        cloud_file = cloud_file[ymdhm]
+        cloud_file = cloud_files[ymdhm]
         if not check_china(l1_file, geo_file):  # 检测是否经过中国区
             db.put(ymdhm, 'notchina')
             db.dump()
