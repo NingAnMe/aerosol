@@ -109,3 +109,4 @@ test_data/
 imapp/
 imapp.zip
 .history/
+.vscode/

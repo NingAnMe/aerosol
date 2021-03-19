@@ -69,25 +69,28 @@ class ReadMersiL1(ReadL1):
         :return:
         """
         file_name = os.path.basename(self.in_file)
-        pattern = r'([A-Z0-9]+)_%s.*' % self.sensor
-        m = re.match(pattern, file_name)
-        if m:
-            self.satellite = m.groups()[0]
-        else:
-            raise ValueError('Cant get the satellite name from file name.')
+        # pattern = r'([A-Z0-9]+)_%s.*' % self.sensor
+        # m = re.match(pattern, file_name)
+        # if m:
+        #     self.satellite = m.groups()[0]
+        # else:
+        #     raise ValueError('Cant get the satellite name from file name.')
+        if "FY3D" in file_name:
+            self.satellite = 'FY3D'
 
     def set_ymd_hms(self):
         """
         use filename  set self.ymd self.hms
         """
-        file_name = os.path.basename(self.in_file)
-        pat = '\w{4}_\w{5}_\w{4}_L1_(\d{8})_(\d{4})_\w{5}_MS.HDF$'
-        g = re.match(pat, file_name)
-        if g:
-            self.ymd = g.group(1)
-            self.hms = g.group(2) + '00'
-        else:
-            raise ValueError('Cant get the ymdhms from file name.')
+        # file_name = os.path.basename(self.in_file)
+        # pat = '\w{4}_\w{5}_\w{4}_L1_(\d{8})_(\d{4})_\w{5}_MS.HDF$'
+        # g = re.match(pat, file_name)
+        # if g:
+        #     self.ymd = g.group(1)
+        #     self.hms = g.group(2) + '00'
+        # else:
+        #     raise ValueError('Cant get the ymdhms from file name.')
+        pass
 
     def set_file_attr(self):
         """
