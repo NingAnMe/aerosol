@@ -91,9 +91,10 @@ def get_l1_geo_cloud(dt_now: datetime):
 def one_day(dt: datetime):
     satellite = 'FY3D'
     sensor = 'MERSI'
+    ymd = dt.strftime("%Y%m%d")
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = TMP_PATH
-        out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', 'ymd')
+        out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
         aerosol_orbit(l1_1000m,
                       l1_cloudmask,
                       l1_geo,
@@ -108,11 +109,19 @@ def one_day(dt: datetime):
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
     parser.add_argument('--date-start', help='start date  YYYYMMDD')
+    parser.add_argument('--port', default=54321, dehelp='bind port')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.bind(('127.0.0.1', args.port))
+    except OSError:
+        print(f"启动失败，端口被占用{args.port}")
+
     if args.date_start is not None:
         dt = datetime.strptime(args.date_start, "%Y%m%d")
         one_day(dt)
