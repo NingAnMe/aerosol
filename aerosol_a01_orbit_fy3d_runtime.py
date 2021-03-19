@@ -42,6 +42,8 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
         m = ymd[4:6]
         d = ymd[6:8]
         path_dt = os.path.join(data_path, y, m, d)
+        if not os.path.isdir(path_dt):
+            continue
         for filename in os.listdir(path_dt):
             hm = filename.split('_')[-3]
             ymdhm = ymd + hm
@@ -96,7 +98,7 @@ def one_day(dt: datetime):
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
     parser.add_argument('--date-start', help='start date  YYYYMMDD')
-
+    return parser.parse_args()
 
 def main():
     args = parse_args()
