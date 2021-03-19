@@ -94,14 +94,14 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 raise ValueError(f"不支持的satellite：{satellite}")
         else:
             raise ValueError(f"不支持的sensor：{sensor}")
-
+        
         if DEBUG:
             print('product :{}'.format(l1_1000m_envi))
             print('product :{}'.format(l1_geo_envi))
             print('product :{}'.format(l1_met_envi))
             print('product :{}'.format(l1_cloudmask_envi))
             print('product :{}'.format(l1_cloudmask_qa_envi))
-
+        
         for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
             if not os.path.isfile(file_):
                 print('ERROR: file found error: {}'.format(file_))
@@ -113,11 +113,11 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                         "detail": "程序错误，没有生成：{}".format(file_)
                     }
                 }
-
+        
         format_datetime['out_dir'] = out_dir_temp
         cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
             **format_datetime)
-
+        
         print('cmd :{}'.format(cmd))
         os.system(cmd)
         print('>>> success: {}'.format(out_dir_temp))
@@ -133,6 +133,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         lats = envi_data.read_band(0)
         lons = envi_data.read_band(1)
         aod_550 = envi_data.read_band(2)
+
         from lib.utils import fill_points_2d_nan
         aod_550[np.logical_or(aod_550 == 0.001, aod_550 == 0)] = np.nan
         fill_points_2d_nan(aod_550)
