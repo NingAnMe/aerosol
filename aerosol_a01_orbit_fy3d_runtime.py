@@ -29,7 +29,6 @@ NOT_CHINA_CACHE = 'db.db'
 # Z_SATE_C_BAWX_20210317025648_P_FY3D_MERSI_GBAL_L1_20210317_0240_GEO1K_MS.HDF
 # Z_SATE_C_BAWX_20210317004425_P_FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_20210317_0000_1000M_MS.HDF
 
-
 db = pickledb.load(NOT_CHINA_CACHE, False)
 
 
@@ -59,9 +58,8 @@ def check_china(l1_file: str, geo_file: str):
     rd = ReadMersiL1(l1_file, geo_file=geo_file)
     lons = rd.get_longitude()
     lats = rd.get_latitude()
-    china = np.logical_and.reduce(
-        lats > LAT_RANGE[0], lats < LAT_RANGE[1],
-        lons > LON_RANGE[0], lons < LON_RANGE[1])
+    china = np.logical_and.reduce(lats > LAT_RANGE[0], lats < LAT_RANGE[1],
+                                  lons > LON_RANGE[0], lons < LON_RANGE[1])
     if not np.any(china):
         return False
 
@@ -85,14 +83,22 @@ def get_l1_geo_cloud(dt_now: datetime):
         else:
             yield l1_file, geo_file, cloud_file, ymdhm
 
+
 def one_day(dt: datetime):
     satellite = 'FY3D'
     sensor = 'MERSI'
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', 'ymd')
-        aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, ymdhm + '00',
-                      dir_temp, out_dir, satellite, sensor, rewrite=False)
+        aerosol_orbit(l1_1000m,
+                      l1_cloudmask,
+                      l1_geo,
+                      ymdhm + '00',
+                      dir_temp,
+                      out_dir,
+                      satellite,
+                      sensor,
+                      rewrite=False)
 
 
 def parse_args():
@@ -100,14 +106,11 @@ def parse_args():
     parser.add_argument('--date-start', help='start date  YYYYMMDD')
     return parser.parse_args()
 
+
 def main():
     args = parse_args()
     if args.date_start is not None:
-        ymd = args.date_start
-        y = ymd[:4]
-        m = ymd[4:6]
-        d = ymd[6:8]
-        dt = datetime(y, m , d)
+        dt = datetime.strptime(args.date_start, "%Y%m%d")
         one_day(dt)
     else:
         dt = datetime.now()
@@ -116,4 +119,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
