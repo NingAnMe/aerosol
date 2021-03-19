@@ -96,7 +96,7 @@ def one_day(dt: datetime):
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
     parser.add_argument('--date-start', help='start date  YYYYMMDD')
-
+    return parser.parse_args()
 
 def main():
     args = parse_args()
