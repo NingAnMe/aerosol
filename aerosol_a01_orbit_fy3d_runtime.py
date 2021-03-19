@@ -60,6 +60,7 @@ def check_china(l1_file: str, geo_file: str):
     lats = rd.get_latitude()
     china = np.logical_and.reduce(lats > LAT_RANGE[0], lats < LAT_RANGE[1],
                                   lons > LON_RANGE[0], lons < LON_RANGE[1])
+    print(np.sum(china))
     if not np.any(china):
         return False
 
@@ -68,6 +69,7 @@ def get_l1_geo_cloud(dt_now: datetime):
     l1_files = get_files(dt_now, FY3D_L1_PATH, '1000M_MS')
     geo_files = get_files(dt_now, FY3D_GEO_PATH, 'GEO1K_MS')
     cloud_files = get_files(dt_now, FY3D_CLOUD_PATH, '1000M_MS')
+    print(f'{dt_now}: l1_files {len(l1_files)} geo_files {len(geo_files)} cloud_files {len(cloud_files)}')
     for ymdhm in l1_files.keys():
         if db.get(ymdhm) == 'notchina':  # 检测是否经过中国区
             continue
@@ -79,6 +81,7 @@ def get_l1_geo_cloud(dt_now: datetime):
         cloud_file = cloud_file[ymdhm]
         if not check_china(l1_file, geo_file):  # 检测是否经过中国区
             db.put(ymdhm, 'notchina')
+            db.dump()
             continue
         else:
             yield l1_file, geo_file, cloud_file, ymdhm
