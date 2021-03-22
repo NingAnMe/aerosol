@@ -15,3 +15,9 @@ def get_root_path():
 
 def get_aid_path():
     return os.path.join(get_root_path(), 'aid')
+
+
+def make_sure_path_exists(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+        print(f'创建文件夹：{path}')

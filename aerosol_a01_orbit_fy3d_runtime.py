@@ -12,13 +12,14 @@ import pickledb
 
 from aerosol_a01_orbit_fy3d import aerosol_orbit
 from lib.load_mersi import ReadMersiL1
+from aod_h01_combine import combine_fy3d_1km_daily
+from aod_p01_plot_map_combine import plot_map
 
 FY3D_L1_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
 FY3D_GEO_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
 FY3D_CLOUD_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L2'
 FY3D_AOD_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/FY3D_MERSI_1KM'
-
-TMP_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/TMP'
+FY3D_TMP_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/TMP'
 
 LAT_RANGE = (17, 54)
 LON_RANGE = (73, 136)
@@ -90,12 +91,31 @@ def get_l1_geo_cloud(dt_now: datetime):
             yield l1_file, geo_file, cloud_file, ymdhm
 
 
+def plot_china_map(dt_now: datetime):
+    dt_yes = dt_now - relativedelta(days=1)
+    for dt in (dt_now, dt_yes):
+        ymd = dt.strftime("%Y%m%d")
+        orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
+        orbit_files = [os.listdir(orbit_dir)]
+        daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
+        daily_filename = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
+        if (not os.path.isfile(daily_filename)) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
+            continue
+        combine_fy3d_1km_daily(
+            datetime_start=dt_now, datetime_end=dt_now + relativedelta(days=1) - relativedelta(minutes=1),
+            l1_dir=orbit_dir, geo_dir=None, out_dir=daily_dir)
+        plot_map(
+            dt_now, dt_now + relativedelta(days=1) - relativedelta(minutes=1),
+            data_dir=daily_dir, out_dir=daily_dir, data_type='FY3D_MERSI_1KM', date_type="Daily")
+        db.set(ymd, len(orbit_files))
+
+
 def one_day(dt: datetime):
     satellite = 'FY3D'
     sensor = 'MERSI'
     ymd = dt.strftime("%Y%m%d")
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
-        dir_temp = TMP_PATH
+        dir_temp = FY3D_TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
         aerosol_orbit(l1_1000m,
                       l1_cloudmask,
@@ -106,6 +126,7 @@ def one_day(dt: datetime):
                       satellite,
                       sensor,
                       rewrite=False)
+    plot_china_map(dt)
 
 
 def parse_args():

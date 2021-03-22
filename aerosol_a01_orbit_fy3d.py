@@ -45,7 +45,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     hhmm = datetime_temp.strftime('%H%M')
     yyjjj = yyyymmdd[2:4] + datetime_temp.strftime('%j')
 
-    out_h5file = os.path.join(out_dir, '%s_%s_AOD_GRANULE_%s_%s.HDF5' % (satellite, sensor, yyyymmdd, hhmm))
+    out_h5file = os.path.join(out_dir, '%s_%s_ORBT_L2_AOD_MLT_NUL_%s_%s_1000M_MS.HDF' % (satellite, sensor, yyyymmdd, hhmm))
     if (not os.path.isfile(out_h5file)) or rewrite:
         if DEBUG:
             print('yyyymmdd: ', yyyymmdd)
@@ -142,9 +142,9 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         #     dset_name = envi_data.metadata['band names']
 
         with h5py.File(out_h5file, 'w') as h5w:
-            h5w.create_dataset('Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('Optical_Depth_Land_And_Ocean', data=aod_550, compression='gzip', compression_opts=5,
+            h5w.create_dataset('/Geolocation/Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('/Geolocation/Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('AOT_Land', data=aod_550, compression='gzip', compression_opts=5,
                                shuffle=True)
             debug_data = False
             if debug_data:
