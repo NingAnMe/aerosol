@@ -1,0 +1,40 @@
+# style for dark theme
+
+# color
+figure.facecolor: 1c1e1f
+figure.edgecolor: 1c1e1f
+savefig.facecolor: 1c1e1f
+savefig.edgecolor: 1c1e1f
+
+grid.color: white
+lines.color: white
+patch.edgecolor: white
+xtick.color: white
+ytick.color: white
+# word color
+text.color: white
+
+# legend
+legend.frameon: False
+legend.numpoints: 1
+legend.scatterpoints: 1
+
+# axes
+axes.facecolor: 1c1e1f
+axes.edgecolor: white
+axes.labelcolor: white
+axes.axisbelow: True
+axes.grid: True
+axes.linewidth: 0.6
+
+# line
+grid.linestyle: -
+lines.solid_capstyle: butt
+
+# xtick, ytick
+xtick.direction: out
+ytick.direction: out
+xtick.major.size: 4
+xtick.minor.size: 2
+ytick.major.size: 4
+ytick.minor.size: 2
