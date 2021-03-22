@@ -1,0 +1,30 @@
+# style for GSICS plot
+
+# color
+figure.facecolor: black
+figure.edgecolor: black
+savefig.facecolor: black
+savefig.edgecolor: black
+
+grid.color: white
+lines.color: white
+patch.edgecolor: white
+xtick.color: white
+ytick.color: white
+# word color
+text.color: white
+
+# legend
+legend.frameon: False
+legend.numpoints: 1
+legend.scatterpoints: 1
+
+# axes
+axes.facecolor: black
+axes.edgecolor: white
+axes.labelcolor: white
+axes.axisbelow: True
+axes.grid: True
+axes.linewidth: 0.5
+
+

@@ -1,0 +1,51 @@
+# style for GSICS plot
+
+# color
+# .15 = dark_gray
+# .8 = light_gray
+figure.facecolor: white
+grid.color: 0.8
+
+# word color
+text.color: 191e1f
+axes.labelcolor: 191e1f
+
+# legend
+legend.frameon: False
+legend.numpoints: 1
+legend.scatterpoints: 1
+
+# xtick, ytick
+xtick.direction: out
+ytick.direction: out
+#xtick.color: .15
+#ytick.color: .15
+xtick.major.size: 6
+xtick.major.width: 0.7
+xtick.minor.size: 3
+ytick.major.size: 6
+ytick.minor.size: 3
+xtick.bottom: True
+xtick.top: False
+ytick.left: True
+ytick.right: False
+
+# font
+#font.family: sans-serif
+#font.sans-serif: Arial, Liberation Sans, Bitstream Vera Sans, sans-serif
+#font.size:8.0
+
+# line
+grid.linestyle: -
+#lines.solid_capstyle: round
+lines.solid_capstyle: butt
+
+# axes
+axes.axisbelow: True
+#axes.grid: True
+axes.linewidth: 0.6
+#axes.facecolor: eaeaf2
+#axes.edgecolor: white
+#axes.spines.right: False
+#axes.spines.top: False
+
