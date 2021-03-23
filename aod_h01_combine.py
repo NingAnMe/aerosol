@@ -136,9 +136,9 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
         filename_out = 'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{}_POAD_1000M_MS.HDF'.format(d_)
 
         file_out = os.path.join(out_dir, filename_out)
-        if os.path.isfile(file_out):
-            print('already exist {}'.format(file_out))
-            continue
+        # if os.path.isfile(file_out):
+        #     print('already exist {}'.format(file_out))
+        #     continue
 
         print('<<< {}'.format(d_))
         for file_ in files:
