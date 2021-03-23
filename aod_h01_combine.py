@@ -144,7 +144,7 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
         for file_ in files:
             print('<<< {}'.format(file_))
 
-            file_loader = AodFy3d1km(file_, geo_file==file_)
+            file_loader = AodFy3d1km(file_, geo_file=file_)
             aod = file_loader.get_aod()
             lons, lats = file_loader.get_lon_lat()
             print(np.nanmin(aod), np.nanmax(aod), np.nanmean(aod))
