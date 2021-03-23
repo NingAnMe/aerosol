@@ -132,7 +132,7 @@ def one_day(dt: datetime):
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
     parser.add_argument('--date', help='date  YYYYMMDD')
-    parser.add_argument('--port', default=54321, dehelp='bind port')
+    parser.add_argument('--port', default=54321, help='bind port')
     return parser.parse_args()
 
 
