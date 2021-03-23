@@ -106,8 +106,8 @@ def plot_china_map(dt_now: datetime):
             print(f'Warning：没有数据 {orbit_files}')
 
         daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
-        combine_fy3d_1km_daily(datetime_start=dt_now,
-                               datetime_end=dt_now + relativedelta(days=1) - relativedelta(minutes=1),
+        combine_fy3d_1km_daily(datetime_start=dt,
+                               datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
                                l1_dir=orbit_dir,
                                geo_dir=None,
                                out_dir=daily_dir)
