@@ -99,15 +99,16 @@ def plot_china_map(dt_now: datetime):
         ymd = dt.strftime("%Y%m%d")
         orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
         if not os.path.isdir(orbit_dir):
-            print(f'Warning: 路径不存在 {orbit_dir}')
+            print(f'WARNING: 路径不存在 {orbit_dir}')
             continue
         orbit_files = os.listdir(orbit_dir)
         if len(orbit_files) <= 0:
-            print(f'Warning：没有数据 {orbit_files}')
+            print(f'WARNING {orbit_files}')
 
         daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
         daily_file = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
         if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
+            print(f'INFO: 已经绘图，且无数据变化')
             continue
         combine_fy3d_1km_daily(datetime_start=dt,
                                datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
@@ -156,7 +157,7 @@ def main():
     try:
         s.bind(('127.0.0.1', args.port))
     except OSError:
-        print(f"启动失败，端口被占用{args.port}")
+        print(f"ERROR: 启动失败，端口被占用{args.port}")
 
     if args.date is not None:
         dt = datetime.strptime(args.date, "%Y%m%d")
