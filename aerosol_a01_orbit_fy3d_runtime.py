@@ -145,8 +145,8 @@ def main():
     except OSError:
         print(f"启动失败，端口被占用{args.port}")
 
-    if args.date_start is not None:
-        dt = datetime.strptime(args.date_start, "%Y%m%d")
+    if args.date is not None:
+        dt = datetime.strptime(args.date, "%Y%m%d")
         one_day(dt)
     else:
         dt = datetime.now()
