@@ -42,7 +42,7 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
         m = ymd[4:6]
         d = ymd[6:8]
         path_dt = os.path.join(data_path, y, m, d)
-        print(f'INFO: path_dt: {path_dt}')
+        print(f'INFO: get {key_word} path_dt: {path_dt}')
         if not os.path.isdir(path_dt):
             continue
         for filename in os.listdir(path_dt):

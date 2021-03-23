@@ -119,7 +119,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             **format_datetime)
         
         print('cmd :{}'.format(cmd))
-        os.system(cmd)
+        # os.system(cmd)
         print('>>> success: {}'.format(out_dir_temp))
 
         """
@@ -140,6 +140,9 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         aod_550[np.isnan(aod_550)] = -327.68
 
         #     dset_name = envi_data.metadata['band names']
+
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
 
         with h5py.File(out_h5file, 'w') as h5w:
             h5w.create_dataset('/Geolocation/Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
