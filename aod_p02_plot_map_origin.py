@@ -72,10 +72,6 @@ def plot_map_picture(value, longitude, latitude, title='', vmin=-np.inf, vmax=np
     p.colormap = plt.get_cmap('jet')  # mpl.cm.rainbow, summer, jet, bwr
     # p.colorbar_extend = "max"
 
-    if '江苏省' in areas:
-        print('set lines')
-        p.lw_boundray = 0
-
     # plot
     p.easyplot(latitude, longitude, value, vmin=vmin, vmax=vmax, box=box, markersize=mksize, ptype=ptype)
 
