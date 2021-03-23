@@ -159,6 +159,7 @@ def main():
         s.bind(('127.0.0.1', args.port))
     except OSError:
         print(f"ERROR: 启动失败，端口被占用 {args.port}")
+        exit(-1)
 
     if args.date is not None:
         dt = datetime.strptime(args.date, "%Y%m%d")
