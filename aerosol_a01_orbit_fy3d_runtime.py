@@ -97,18 +97,19 @@ def plot_china_map(dt_now: datetime):
     dt_yes = dt_now - relativedelta(days=1)
     for dt in (dt_now, dt_yes):
         ymd = dt.strftime("%Y%m%d")
+        print(f'INFO：开始绘制 {ymd} 的数据')
         orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
         if not os.path.isdir(orbit_dir):
-            print(f'WARNING: 路径不存在 {orbit_dir}')
+            print(f'WARNING: 路径不存在，跳过 {orbit_dir}')
             continue
         orbit_files = os.listdir(orbit_dir)
         if len(orbit_files) <= 0:
-            print(f'WARNING {orbit_files}')
+            print(f'WARNING：数据数量为0，跳过 {orbit_dir}')
 
         daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
         daily_file = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
         if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
-            print(f'INFO: 已经绘图，且无数据变化')
+            print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
             continue
         combine_fy3d_1km_daily(datetime_start=dt,
                                datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
@@ -157,7 +158,7 @@ def main():
     try:
         s.bind(('127.0.0.1', args.port))
     except OSError:
-        print(f"ERROR: 启动失败，端口被占用{args.port}")
+        print(f"ERROR: 启动失败，端口被占用 {args.port}")
 
     if args.date is not None:
         dt = datetime.strptime(args.date, "%Y%m%d")
