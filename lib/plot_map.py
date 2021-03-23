@@ -113,6 +113,8 @@ def plot_shanghai(latitude,
     p.valmax = vmax
     p.colormap = plt.get_cmap('jet')  # mpl.cm.rainbow, summer
     # p.colorbar_extend = "max"
+    if AREA:
+        p.lw_boundray = 0
 
     # plot
     p.easyplot(latitude, longitude, value, box=box, markersize=markersize, ptype="pcolormesh")
