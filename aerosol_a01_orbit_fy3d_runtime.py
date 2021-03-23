@@ -98,14 +98,18 @@ def plot_china_map(dt_now: datetime):
         orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
         if not os.path.isdir(orbit_dir):
             print(f'Warning: 路径不存在 {orbit_dir}')
-        orbit_files = [os.listdir(orbit_dir)]
-        daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
-        daily_filename = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
-        if (not os.path.isfile(daily_filename)) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
             continue
+        orbit_files = os.listdir(orbit_dir)
+        if len(orbit_files) <= 0:
+            print(f'Warning：没有数据 {orbit_files}')
+
+        daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
         combine_fy3d_1km_daily(
             datetime_start=dt_now, datetime_end=dt_now + relativedelta(days=1) - relativedelta(minutes=1),
             l1_dir=orbit_dir, geo_dir=None, out_dir=daily_dir)
+        daily_filename = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
+        if (not os.path.isfile(daily_filename)) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
+            continue
         plot_map(
             dt_now, dt_now + relativedelta(days=1) - relativedelta(minutes=1),
             data_dir=daily_dir, out_dir=daily_dir, data_type='FY3D_MERSI_1KM', date_type="Daily")
