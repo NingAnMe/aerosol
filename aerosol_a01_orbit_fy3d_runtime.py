@@ -96,6 +96,8 @@ def plot_china_map(dt_now: datetime):
     for dt in (dt_now, dt_yes):
         ymd = dt.strftime("%Y%m%d")
         orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
+        if not os.path.isdir(orbit_dir):
+            print(f'Warning: 路径不存在 {orbit_dir}')
         orbit_files = [os.listdir(orbit_dir)]
         daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
         daily_filename = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
