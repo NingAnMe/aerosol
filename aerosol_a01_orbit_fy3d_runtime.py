@@ -119,10 +119,9 @@ def plot_china_map(dt_now: datetime):
 def one_day(dt: datetime):
     satellite = 'FY3D'
     sensor = 'MERSI'
-    ymd = dt.strftime("%Y%m%d")
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = FY3D_TMP_PATH
-        out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
+        out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymdhm[:8])
         aerosol_orbit(l1_1000m,
                       l1_cloudmask,
                       l1_geo,
