@@ -119,7 +119,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             **format_datetime)
         
         print('cmd :{}'.format(cmd))
-        # os.system(cmd)
+        os.system(cmd)
         print('>>> success: {}'.format(out_dir_temp))
 
         """
