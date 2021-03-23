@@ -115,8 +115,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 }
         
         format_datetime['out_dir'] = out_dir_temp
-        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
-            **format_datetime)
+        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(**format_datetime)
         
         print('cmd :{}'.format(cmd))
         os.system(cmd)

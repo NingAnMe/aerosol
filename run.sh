@@ -1,2 +1,2 @@
 cd /home/aodo3/FY3D_AEROSOL/aod
-python3 aerosol_a01_orbit_fy3d_runtime.py
+~/miniconda3/bin/python3 aerosol_a01_orbit_fy3d_runtime.py
