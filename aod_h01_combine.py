@@ -13,7 +13,7 @@ from collections import defaultdict
 import numpy as np
 
 from lib.path import make_sure_path_exists
-from lib.aod import AodFy3d1km, AodCombine, AodFy3d5km, AodModis
+from lib.aod import AodFy3d1km, AodCombine, AodFy3d5km, AodModis, AodImapp1km
 from lib.hdf5 import write_hdf5_and_compress
 from lib.proj import ProjCore
 
@@ -144,7 +144,7 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
         for file_ in files:
             print('<<< {}'.format(file_))
 
-            file_loader = AodFy3d1km(file_, geo_file=file_)
+            file_loader = AodImapp1km(file_, geo_file=file_)
             aod = file_loader.get_aod()
             lons, lats = file_loader.get_lon_lat()
             print(np.nanmin(aod), np.nanmax(aod), np.nanmean(aod))

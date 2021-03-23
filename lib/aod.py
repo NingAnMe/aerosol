@@ -13,8 +13,8 @@ from pyhdf.SD import SD, SDC
 import numpy as np
 
 
-class AodFy3d1km:
-
+class AodImapp1km:
+    
     def __init__(self, in_file, geo_file=None, geo_path=None):
         self.in_file = in_file  # FY3D_MERSI_ORBT_L2_AOD_MLT_NUL_20190916_0910_1000M_MS.HDF
         self.filename = os.path.basename(in_file)
@@ -57,7 +57,55 @@ class AodFy3d1km:
         return lons, lats
 
     def get_aod(self):
-        return self.get_hdf5_data(self.in_file, 'AOT_Land', 0.001, 0, (0, 1500))
+        return self.get_hdf5_data(self.in_file, 'AOT_Land', 1, 0, (0, 1500))
+
+
+
+class AodFy3d1km:
+    
+    def __init__(self, in_file, geo_file=None, geo_path=None):
+        self.in_file = in_file  # FY3D_MERSI_ORBT_L2_AOD_MLT_NUL_20190916_0910_1000M_MS.HDF
+        self.filename = os.path.basename(in_file)
+        self.geo_file = self.get_geo_file(geo_file, geo_path)  # FY3D_MERSI_GBAL_L1_20190916_0910_GEO1K_MS.HDF
+        ymd = self.filename.split('_')[7]
+        hm = self.filename.split('_')[8]
+        self.dt = datetime.strptime(ymd+hm, '%Y%m%d%H%M')
+
+    @classmethod
+    def get_hdf5_data(cls, hdf5_file, data_name, slope=None, intercept=None, valid_range=None):
+        with h5py.File(hdf5_file, 'r') as hdf:
+            dataset = hdf.get(data_name)
+            if slope is None:
+                slope = dataset.attrs['Slope']
+            if intercept is None:
+                intercept = dataset.attrs['Intercept']
+            if valid_range is None:
+                valid_range = dataset.attrs['valid_range']
+            data = dataset[:].astype(np.float)
+            valid_index = np.logical_or(data < valid_range[0], data > valid_range[1])
+            data = data * slope + intercept
+            data[valid_index] = -999
+            return data
+
+    def get_geo_file(self, geo_file=None, geo_path=None):
+        # FY3D_MERSI_ORBT_L2_AOD_MLT_NUL_20190916_0910_1000M_MS.HDF
+        if geo_file is not None:
+            return geo_file
+        elif geo_path is not None:
+            namesplit = self.filename.split('_')
+            geo_fy3d_name = 'FY3D_MERSI_GBAL_L1_{}_{}_GEO1K_MS.HDF'.format(namesplit[7], namesplit[8])
+            return os.path.join(geo_path, geo_fy3d_name)
+        else:
+            return None
+
+    def get_lon_lat(self):
+        assert self.geo_file is not None, "没有有效的GEO文件"
+        lons = self.get_hdf5_data(self.geo_file, '/Geolocation/Longitude')
+        lats = self.get_hdf5_data(self.geo_file, '/Geolocation/Latitude')
+        return lons, lats
+
+    def get_aod(self):
+        return self.get_hdf5_data(self.in_file, 'AOT_Land', 0.001, 0, (0, 1500))[1]
 
 
 class AodFy3d5km:
