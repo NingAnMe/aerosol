@@ -117,8 +117,8 @@ def plot_china_map(dt_now: datetime):
         if (not os.path.isfile(daily_filename)
             ) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
             continue
-        plot_map(dt_now,
-                 dt_now + relativedelta(days=1) - relativedelta(minutes=1),
+        plot_map(dt,
+                 dt + relativedelta(days=1) - relativedelta(minutes=1),
                  data_dir=daily_dir,
                  out_dir=daily_dir,
                  data_type='FY3D_MERSI_1KM',
