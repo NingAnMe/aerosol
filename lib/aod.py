@@ -5,7 +5,10 @@
 import os
 from datetime import datetime
 import h5py
-import gdal
+try:
+    import gdal
+except ImportError:
+    from osgeo import gdal
 from pyhdf.SD import SD, SDC
 import numpy as np
 
