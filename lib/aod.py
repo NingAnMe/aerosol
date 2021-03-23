@@ -52,12 +52,12 @@ class AodFy3d1km:
 
     def get_lon_lat(self):
         assert self.geo_file is not None, "没有有效的GEO文件"
-        lons = self.get_hdf5_data(self.geo_file, '/Geolocation/Longitude')
-        lats = self.get_hdf5_data(self.geo_file, '/Geolocation/Latitude')
+        lons = self.get_hdf5_data(self.geo_file, '/Geolocation/Longitude', 1, 0, (-180, 180))
+        lats = self.get_hdf5_data(self.geo_file, '/Geolocation/Latitude', 1, 0, (-90, 90))
         return lons, lats
 
     def get_aod(self):
-        return self.get_hdf5_data(self.in_file, 'AOT_Land', 0.001, 0, (0, 1500))[1]
+        return self.get_hdf5_data(self.in_file, 'AOT_Land', 0.001, 0, (0, 1500))
 
 
 class AodFy3d5km:
