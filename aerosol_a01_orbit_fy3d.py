@@ -179,6 +179,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_2.1micron', data=envi_data.read_band(13),
                                    compression='gzip', compression_opts=5, shuffle=True)
             print(">>> : {}".format(out_h5file))
+            clear_tmp(out_dir_temp)
     else:
         print("文件已存在，跳过:{}".format(out_h5file))
 
