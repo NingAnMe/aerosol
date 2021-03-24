@@ -146,7 +146,8 @@ def one_day(dt: datetime):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
-    parser.add_argument('--date', help='date  YYYYMMDD')
+    parser.add_argument('--date_start', help='date  YYYYMMDD')
+    parser.add_argument('--date_end', help='date  YYYYMMDD')
     parser.add_argument('--port', default=54321, help='bind port')
     return parser.parse_args()
 
@@ -162,10 +163,13 @@ def main():
         print(f"ERROR: 启动失败，端口被占用 {args.port}")
         exit(-1)
 
-    if args.date is not None:
-        dt = datetime.strptime(args.date, "%Y%m%d")
-        one_day(dt)
-        plot_china_map(dt)
+    if args.date_start is not None or args.date_end is not None:
+        dt_start = datetime.strptime(args.date_start, "%Y%m%d")
+        dt_end = datetime.strptime(args.date_end, "%Y%m%d")
+        while dt_start <= dt_end:
+            one_day(dt_start)
+            plot_china_map(dt_start)
+            dt_start += relativedelta(days=1)
     else:
         dt = datetime.now()
         one_day(dt)
