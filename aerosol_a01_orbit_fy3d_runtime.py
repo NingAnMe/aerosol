@@ -155,6 +155,7 @@ def main():
     args = parse_args()
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    args.port = int(args.port)
     try:
         s.bind(('127.0.0.1', args.port))
     except OSError:
