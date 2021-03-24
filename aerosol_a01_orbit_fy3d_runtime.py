@@ -111,6 +111,7 @@ def plot_china_map(dt_now: datetime):
         if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
             print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
             continue
+        print(dt, dt + relativedelta(days=1) - relativedelta(minutes=1), orbit_dir)
         combine_fy3d_1km_daily(datetime_start=dt,
                                datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
                                l1_dir=orbit_dir,
