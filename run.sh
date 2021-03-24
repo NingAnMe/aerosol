@@ -2,7 +2,7 @@
 # 添加crontab应该source 一下环境变量：*/20 * * * * source /home/aodo3/.bashrc && bash /home/aodo3/FY3D_AEROSOL/aod/run.sh >& /home/aodo3/FY3D_AEROSOL/aod/run.log
 cd /home/aodo3/FY3D_AEROSOL/aod
 ~/miniconda3/bin/python3 aerosol_a01_orbit_fy3d_runtime.py
-if [ $? -eq 0 ]
-    then  
-        rm -r /home/aodo3/FY3D_AEROSOL_DATA/TMP/*
-fi
+# if [ $? -eq 0 ]
+#     then  
+#         rm -r /home/aodo3/FY3D_AEROSOL_DATA/TMP/*
+# fi

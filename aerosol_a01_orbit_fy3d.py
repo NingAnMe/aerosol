@@ -26,6 +26,12 @@ metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 os.system('source ~/.bashrc')
 
 
+def clear_tmp(tmp_path):
+    if os.path.isdir(tmp_path):
+        os.removedirs(tmp_path)
+        print(f'INFO: remove tmp path {tmp_path}')
+
+
 def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True,
                   vis_file=None, ir_file=None):
     print("<<< l1_1000m      : {}".format(l1_1000m))
