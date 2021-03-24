@@ -5,6 +5,7 @@
 
 import sys
 import os
+import shutil
 import yaml
 import h5py
 import matplotlib.pyplot as plt
@@ -28,7 +29,7 @@ os.system('source ~/.bashrc')
 
 def clear_tmp(tmp_path):
     if os.path.isdir(tmp_path):
-        os.removedirs(tmp_path)
+        shutil.rmtree(tmp_path)
         print(f'INFO: remove tmp path {tmp_path}')
 
 
