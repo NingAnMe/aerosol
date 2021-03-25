@@ -76,16 +76,20 @@ def get_l1_geo_cloud(dt_now: datetime):
         f'{dt_now}: l1_files {len(l1_files)} geo_files {len(geo_files)} cloud_files {len(cloud_files)}'
     )
     for ymdhm in l1_files.keys():
-        if db.get(ymdhm) == 'notchina':  # 检测是否经过中国区
+        if db.get(ymdhm + 'notchina') == True:  # 检测是否经过中国区
+            print(f'INFO：不经过中国区，跳过 {ymdhm}')
+            continue
+        if db.get(ymdhm + 'allnight') == True:    # 检测是否经过中国区
+            print(f'INFO：全部是夜晚数据，跳过 {ymdhm} ')
             continue
         if ymdhm not in geo_files or ymdhm not in cloud_files:  # 检测三个源文件是否同时存在
-            print(f'Warning: {ymdhm} 这个时刻，1000m geo cloud 文件不同时存在')
+            print(f'Warning: 1000m geo cloud 文件不同时存在，跳过 {ymdhm}')
             continue
         l1_file = l1_files[ymdhm]
         geo_file = geo_files[ymdhm]
         cloud_file = cloud_files[ymdhm]
         if not check_china(l1_file, geo_file):  # 检测是否经过中国区
-            db.set(ymdhm, 'notchina')
+            db.set(ymdhm + 'notchina', True)
             db.dump()
             continue
         else:
@@ -133,10 +137,6 @@ def one_day(dt: datetime):
         dir_temp = FY3D_TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymdhm[:8])
 
-        ymdhms_night = ymdhm + '00' + 'night'
-        if db.get(ymdhms_night) == True:
-            print(f'INFO：全部是夜晚数据 {ymdhm} ')
-            continue
         result = aerosol_orbit(l1_1000m,
                       l1_cloudmask,
                       l1_geo,
@@ -146,8 +146,8 @@ def one_day(dt: datetime):
                       satellite,
                       sensor,
                       rewrite=False)
-        if result == 'night':
-            db.set(ymdhms_night, True)
+        if result == 'allnight':
+            db.set(ymdhm + 'allnight', True)
             db.dump()
 
 
