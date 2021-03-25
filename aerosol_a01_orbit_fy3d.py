@@ -83,7 +83,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 if all_night:
                     print("全部是夜晚数据")
-                    return
+                    return 'night'
                 fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
@@ -92,7 +92,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 all_night = fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 if all_night:
                     print("全部是夜晚数据")
-                    return
+                    return 'night'
                 fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)

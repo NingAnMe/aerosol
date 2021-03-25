@@ -132,7 +132,12 @@ def one_day(dt: datetime):
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = FY3D_TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymdhm[:8])
-        aerosol_orbit(l1_1000m,
+
+        ymdhms_night = ymdhm + '00' + 'night'
+        if db.get(ymdhms_night) == True:
+            print(f'INFO：全部是夜晚数据 {ymdhm} ')
+            continue
+        result = aerosol_orbit(l1_1000m,
                       l1_cloudmask,
                       l1_geo,
                       ymdhm + '00',
@@ -141,6 +146,8 @@ def one_day(dt: datetime):
                       satellite,
                       sensor,
                       rewrite=False)
+        if result == 'night':
+            db.set(ymdhms_night, True)
 
 
 def parse_args():
