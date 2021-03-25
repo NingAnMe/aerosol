@@ -148,6 +148,7 @@ def one_day(dt: datetime):
                       rewrite=False)
         if result == 'night':
             db.set(ymdhms_night, True)
+            db.dump()
 
 
 def parse_args():
