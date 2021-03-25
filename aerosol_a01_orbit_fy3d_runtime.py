@@ -35,21 +35,20 @@ db = pickledb.load(NOT_CHINA_CACHE, False)
 
 def get_files(dt_now: datetime, data_path: str, key_word: str):
     files = dict()
-    dt_yes = dt_now - relativedelta(days=1)
-    for dt in (dt_now, dt_yes):
-        ymd = dt.strftime("%Y%m%d")
-        y = ymd[:4]
-        m = ymd[4:6]
-        d = ymd[6:8]
-        path_dt = os.path.join(data_path, y, m, d)
-        print(f'INFO: get {key_word} path_dt: {path_dt}')
-        if not os.path.isdir(path_dt):
-            continue
-        for filename in os.listdir(path_dt):
-            hm = filename.split('_')[-3]
-            ymdhm = ymd + hm
-            if key_word in filename:
-                files[ymdhm] = os.path.join(path_dt, filename)
+    dt = dt_now
+    ymd = dt.strftime("%Y%m%d")
+    y = ymd[:4]
+    m = ymd[4:6]
+    d = ymd[6:8]
+    path_dt = os.path.join(data_path, y, m, d)
+    print(f'INFO: get {key_word} path_dt: {path_dt}')
+    if not os.path.isdir(path_dt):
+        return files
+    for filename in os.listdir(path_dt):
+        hm = filename.split('_')[-3]
+        ymdhm = ymd + hm
+        if key_word in filename:
+            files[ymdhm] = os.path.join(path_dt, filename)
     return files
 
 
@@ -94,38 +93,37 @@ def get_l1_geo_cloud(dt_now: datetime):
 
 
 def plot_china_map(dt_now: datetime):
-    dt_yes = dt_now - relativedelta(days=1)
-    for dt in (dt_now, dt_yes):
-        ymd = dt.strftime("%Y%m%d")
-        print(f'INFO：开始绘制 {ymd} 的数据')
-        orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
-        if not os.path.isdir(orbit_dir):
-            print(f'WARNING: 路径不存在，跳过 {orbit_dir}')
-            continue
-        orbit_files = os.listdir(orbit_dir)
-        if len(orbit_files) <= 0:
-            print(f'WARNING：数据数量为0，跳过 {orbit_dir}')
+    dt = dt_now
+    ymd = dt.strftime("%Y%m%d")
+    print(f'INFO：开始绘制 {ymd} 的数据')
+    orbit_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymd)
+    if not os.path.isdir(orbit_dir):
+        print(f'WARNING: 路径不存在，跳过 {orbit_dir}')
+        return
+    orbit_files = os.listdir(orbit_dir)
+    if len(orbit_files) <= 0:
+        print(f'WARNING：数据数量为0，跳过 {orbit_dir}')
 
-        daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
-        daily_file = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
-        if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
-            print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
-            continue
-        print(dt, dt + relativedelta(days=1) - relativedelta(minutes=1), orbit_dir)
-        combine_fy3d_1km_daily(datetime_start=dt,
-                               datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
-                               l1_dir=orbit_dir,
-                               geo_dir=None,
-                               out_dir=daily_dir)
+    daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
+    daily_file = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
+    if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
+        print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
+        return
+    print(dt, dt + relativedelta(days=1) - relativedelta(minutes=1), orbit_dir)
+    combine_fy3d_1km_daily(datetime_start=dt,
+                            datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
+                            l1_dir=orbit_dir,
+                            geo_dir=None,
+                            out_dir=daily_dir)
 
-        plot_map(dt,
-                 dt + relativedelta(days=1) - relativedelta(minutes=1),
-                 data_dir=daily_dir,
-                 out_dir=daily_dir,
-                 data_type='FY3D_MERSI_1KM',
-                 date_type="Daily")
-        db.set(ymd, len(orbit_files))
-        db.dump()
+    plot_map(dt,
+                dt + relativedelta(days=1) - relativedelta(minutes=1),
+                data_dir=daily_dir,
+                out_dir=daily_dir,
+                data_type='FY3D_MERSI_1KM',
+                date_type="Daily")
+    db.set(ymd, len(orbit_files))
+    db.dump()
 
 
 def one_day(dt: datetime):
@@ -172,9 +170,12 @@ def main():
             plot_china_map(dt_start)
             dt_start += relativedelta(days=1)
     else:
-        dt = datetime.now()
-        one_day(dt)
-        plot_china_map(dt)
+        dt_str = datetime.now().strftime('%Y%m%d')
+        dt_now = datetime.strptime(dt_str, '%Y%m%d')
+        dt_yes = dt_now - relativedelta(days=1)
+        for dt in [dt_now, dt_yes]:
+            one_day(dt)
+            plot_china_map(dt)
 
 
 if __name__ == '__main__':
