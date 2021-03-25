@@ -95,7 +95,7 @@ def get_l1_geo_cloud(dt_now: datetime):
         if check_china(l1_file, geo_file, ymdhm):  # 检测是否经过中国区
             yield l1_file, geo_file, cloud_file, ymdhm
         else:
-            print(f'INFO：没有中国区数据，跳过  {ymdgm}')
+            print(f'INFO：没有中国区数据，跳过  {ymdhm}')
 
 
 def plot_china_map(dt_now: datetime):
