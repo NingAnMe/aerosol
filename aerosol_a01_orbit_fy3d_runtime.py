@@ -52,10 +52,12 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
     return files
 
 
-def check_china(l1_file: str, geo_file: str):
+def check_china(l1_file: str, geo_file: str, ymdhm: str):
     """
     检查数据是否经过中国区
     """
+    if db.get(ymdhm + 'china') is not None:
+        return db.get(ymdhm + 'china')
     rd = ReadMersiL1(l1_file, geo_file=geo_file)
     lons = rd.get_longitude()
     lats = rd.get_latitude()
@@ -63,8 +65,12 @@ def check_china(l1_file: str, geo_file: str):
                                    lons > LON_RANGE[0], lons < LON_RANGE[1]))
     print(f"{l1_file} {np.sum(china)}")
     if not np.any(china):
+        db.set(ymdhm + 'china', False)
+        db.dump()
         return False
     else:
+        db.set(ymdhm + 'china', True)
+        db.dump()
         return True
 
 
@@ -76,10 +82,8 @@ def get_l1_geo_cloud(dt_now: datetime):
         f'{dt_now}: l1_files {len(l1_files)} geo_files {len(geo_files)} cloud_files {len(cloud_files)}'
     )
     for ymdhm in l1_files.keys():
-        if db.get(ymdhm + 'notchina') == True:  # 检测是否经过中国区
-            print(f'INFO：不经过中国区，跳过 {ymdhm}')
-            continue
-        if db.get(ymdhm + 'allnight') == True:    # 检测是否经过中国区
+
+        if db.get(ymdhm + 'allnight') == True:    # 检测是否夜晚数据
             print(f'INFO：全部是夜晚数据，跳过 {ymdhm} ')
             continue
         if ymdhm not in geo_files or ymdhm not in cloud_files:  # 检测三个源文件是否同时存在
@@ -88,11 +92,7 @@ def get_l1_geo_cloud(dt_now: datetime):
         l1_file = l1_files[ymdhm]
         geo_file = geo_files[ymdhm]
         cloud_file = cloud_files[ymdhm]
-        if not check_china(l1_file, geo_file):  # 检测是否经过中国区
-            db.set(ymdhm + 'notchina', True)
-            db.dump()
-            continue
-        else:
+        if check_china(l1_file, geo_file, ymdhm):  # 检测是否经过中国区
             yield l1_file, geo_file, cloud_file, ymdhm
 
 
