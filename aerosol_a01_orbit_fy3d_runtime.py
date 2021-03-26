@@ -183,7 +183,7 @@ def main():
         dt_str = datetime.now().strftime('%Y%m%d')
         dt_now = datetime.strptime(dt_str, '%Y%m%d')
         dt_yes = dt_now - relativedelta(days=1)
-        for dt in [dt_now, dt_yes]:
+        for dt in [dt_yes, dt_now]:
             one_day(dt)
             plot_china_map(dt)
 
