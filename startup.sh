@@ -1,0 +1,1 @@
+curlftpfs -o ro,uid=1004,gid=1004,allow_other,umask=007 ftp://cloud:cloud@10.228.13.135:21 /home/aodo3/CIMISS_DATA
