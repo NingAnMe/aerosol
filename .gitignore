@@ -99,12 +99,14 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-.idea
-/test_data/
+.idea/
+test_data/
 
 # fortran
 .o
 
 # imapp
-imapp
+imapp/
 imapp.zip
+.history/
+.vscode/

@@ -102,29 +102,33 @@ c ... data statements
       data init /.true./
       data remove_all /.false./
       
-
+!     print * , req_samples, req_lines, out_maxsamples, out_maxlines, out_samples, out_lines
 
 c --- check datatype
       if( fil_datatype.ne.4 ) then
          db_mod04_write_flat_file = -1
+         print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
          return
       endif
 
 c --- check interleave
       if( fil_interleave(1:3).ne.'bil' ) then
          db_mod04_write_flat_file = -2
+         print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
          return
       endif
 
 c --- check resolution
       if( fil_resolution.ne.10 ) then
          db_mod04_write_flat_file = -3
+         print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
          return
       endif
 
 c --- check offset (currently can't do this)
       if( fil_offset.gt.0 ) then
          db_mod04_write_flat_file = -4
+         print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
          return
       endif
 
@@ -193,6 +197,7 @@ c --- initialize the buffer pointers
 c --- make sure we are not running off element bounds
       if( eptr.gt.out_maxsamples ) then
          db_mod04_write_flat_file = -5
+         print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
          return
       endif
 
@@ -209,6 +214,7 @@ c --- initialize the record pointer
       end_record = beg_record + ((MAX_SAMP_LINE-1) * fil_bands)
 
 c --- loop through the file
+!     print *, beg_record, end_record, fil_bands
       do record = beg_record, end_record, fil_bands
 
 c ---   write a record (line) to the file
@@ -224,6 +230,7 @@ c ---   increment the number of lines
         out_lines = out_lines+1
         if( out_lines.gt.out_maxlines ) then
            db_mod04_write_flat_file = -6
+           print *, "db_mod04_write_flat_file", db_mod04_write_flat_file, out_lines, out_maxlines
            return
         endif
 
@@ -241,6 +248,7 @@ c --- SUCCESS: all records for band were written
 c --- FAILED: did not write all records 
 9999  continue
       db_mod04_write_flat_file = -7
+      print *, "db_mod04_write_flat_file", db_mod04_write_flat_file
       return
 
       end

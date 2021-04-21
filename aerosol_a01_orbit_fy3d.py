@@ -4,16 +4,18 @@
 # @Author  : NingAnMe <ninganme@qq.com>
 
 import sys
-import os
+import shutil
 import yaml
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
 from config import *
 from lib.path import get_aid_path
-from lib.fy3d2envi import fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo, fy3d2modis_met
+from lib.fy3d2envi import (fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo,
+                           fy3d2modis_met, get_lons_lats)
 from lib.fy3abc2envi import (fy3abc2modis_1km, fy3abc2modis_cloudmask, fy3abc2modis_cloudmask_qa,
                              fy3abc2modis_geo, fy3abc2modis_met)
+from lib.utils import format_data
 from spectral.io import envi
 from datetime import datetime
 import matplotlib as mpl
@@ -23,6 +25,12 @@ aid_dir = get_aid_path()
 metadatas = os.path.join(aid_dir, 'metadatas.pickle')
 
 os.system('source ~/.bashrc')
+
+
+def clear_tmp(tmp_path):
+    if os.path.isdir(tmp_path):
+        shutil.rmtree(tmp_path)
+        print(f'INFO: remove tmp path {tmp_path}')
 
 
 def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True,
@@ -44,7 +52,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
     hhmm = datetime_temp.strftime('%H%M')
     yyjjj = yyyymmdd[2:4] + datetime_temp.strftime('%j')
 
-    out_h5file = os.path.join(out_dir, '%s_%s_AOD_GRANULE_%s_%s.HDF5' % (satellite, sensor, yyyymmdd, hhmm))
+    out_h5file = os.path.join(out_dir, '%s_%s_ORBT_L2_AOD_MLT_NUL_%s_%s_1000M_MS.HDF' % (satellite, sensor, yyyymmdd, hhmm))
     if (not os.path.isfile(out_h5file)) or rewrite:
         if DEBUG:
             print('yyyymmdd: ', yyyymmdd)
@@ -75,7 +83,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 all_night = fy3d2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 if all_night:
                     print("全部是夜晚数据")
-                    return
+                    return 'allnight'
                 fy3d2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3d2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3d2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
@@ -84,7 +92,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 all_night = fy3abc2modis_geo(l1_1000m, l1_geo, l1_geo_envi, metadatas)
                 if all_night:
                     print("全部是夜晚数据")
-                    return
+                    return 'allnight'
                 fy3abc2modis_1km(l1_1000m, l1_geo, l1_1000m_envi, metadatas, vis_file, ir_file, coef_txt_flag)
                 fy3abc2modis_met(l1_1000m, l1_geo, l1_met_envi, metadatas)
                 fy3abc2modis_cloudmask(l1_cloudmask, l1_cloudmask_envi, metadatas)
@@ -93,14 +101,14 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 raise ValueError(f"不支持的satellite：{satellite}")
         else:
             raise ValueError(f"不支持的sensor：{sensor}")
-
+        
         if DEBUG:
             print('product :{}'.format(l1_1000m_envi))
             print('product :{}'.format(l1_geo_envi))
             print('product :{}'.format(l1_met_envi))
             print('product :{}'.format(l1_cloudmask_envi))
             print('product :{}'.format(l1_cloudmask_qa_envi))
-
+        
         for file_ in [l1_1000m_envi, l1_geo_envi, l1_met_envi, l1_cloudmask_envi, l1_cloudmask_qa_envi]:
             if not os.path.isfile(file_):
                 print('ERROR: file found error: {}'.format(file_))
@@ -112,11 +120,10 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                         "detail": "程序错误，没有生成：{}".format(file_)
                     }
                 }
-
+        
         format_datetime['out_dir'] = out_dir_temp
-        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(
-            **format_datetime)
-
+        cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(**format_datetime)
+        
         print('cmd :{}'.format(cmd))
         os.system(cmd)
         print('>>> success: {}'.format(out_dir_temp))
@@ -126,19 +133,30 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         add envi format to hdf5
         wangpeng 20191204
         """
-        envi_hdr = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
-        envi_img = os.path.join(dir_temp, yyyymmdd, hhmm, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
-        envi_data = envi.open(envi_hdr, envi_img)
-        lats = envi_data.read_band(0)
-        lons = envi_data.read_band(1)
-        aod_550 = envi_data.read_band(2)
+        try:
+            envi_hdr = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
+            envi_img = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
+            envi_data = envi.open(envi_hdr, envi_img)
+            lons, lats = get_lons_lats(in_file=l1_1000m, geo_file=l1_geo)
+            # lats = envi_data.read_band(0)
+            # lons = envi_data.read_band(1)
+            aod_550 = envi_data.read_band(2)
+        except EOFError as e:
+            print('read ERROR ：{}'.format(e))
+            return
+
+        # aod_550[np.logical_or(aod_550 == 0.001, aod_550 == 0)] = np.nan
+        aod_550 = format_data(aod_550)
 
         #     dset_name = envi_data.metadata['band names']
 
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
+
         with h5py.File(out_h5file, 'w') as h5w:
-            h5w.create_dataset('Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('Optical_Depth_Land_And_Ocean', data=aod_550, compression='gzip', compression_opts=5,
+            h5w.create_dataset('/Geolocation/Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('/Geolocation/Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('AOT_Land', data=aod_550, compression='gzip', compression_opts=5,
                                shuffle=True)
             debug_data = False
             if debug_data:
@@ -165,6 +183,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
                 h5w.create_dataset('Effective_Optical_Depth_Average_Ocean_2.1micron', data=envi_data.read_band(13),
                                    compression='gzip', compression_opts=5, shuffle=True)
             print(">>> : {}".format(out_h5file))
+            clear_tmp(out_dir_temp)
     else:
         print("文件已存在，跳过:{}".format(out_h5file))
 
@@ -284,13 +303,31 @@ def main(in_file):
             print('文件已经存在，跳过:{}'.format(out_image))
 
 
+def t_aerosol_orbit():
+    fy3d_dir_in = os.path.join('TEST_DATA_FY3D_MERSI', 'in')
+    l1_1000m = os.path.join(fy3d_dir_in, 'FY3D_MERSI_GBAL_L1_20191001_0100_1000M_MS.HDF')
+    l1_cloudmask = os.path.join(fy3d_dir_in, 'FY3D_MERSI_ORBT_L2_CLM_MLT_NUL_20191001_0100_1000M_MS.HDF')
+    l1_geo = os.path.join(fy3d_dir_in, 'FY3D_MERSI_GBAL_L1_20191001_0100_GEO1K_MS.HDF')
+    yyyymmddhhmmss = '20191001010000'
+    fy3d_dir_out = os.path.join('TEST_DATA_FY3D_MERSI', 'out')
+    dir_temp = fy3d_dir_out
+    out_dir = fy3d_dir_out
+    satellite = 'FY3D'
+    sensor = 'MERSI'
+
+    aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_dir, satellite, sensor, rewrite=True,
+                  vis_file=None, ir_file=None)
+
+
 if __name__ == '__main__':
 
-    # 获取python输入参数，进行处理
-    args = sys.argv[1:]
-    if len(args) == 1:  # 跟参数，则处理输入的时段数据
-        IN_FILE = args[0]
-    else:
-        print('input args error exit')
-        sys.exit(-1)
-    main(IN_FILE)
+    t_aerosol_orbit()
+
+    # # 获取python输入参数，进行处理
+    # args = sys.argv[1:]
+    # if len(args) == 1:  # 跟参数，则处理输入的时段数据
+    #     IN_FILE = args[0]
+    # else:
+    #     print('input args error exit')
+    #     sys.exit(-1)
+    # main(IN_FILE)

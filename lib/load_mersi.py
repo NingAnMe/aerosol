@@ -69,42 +69,46 @@ class ReadMersiL1(ReadL1):
         :return:
         """
         file_name = os.path.basename(self.in_file)
-        pattern = r'([A-Z0-9]+)_%s.*' % self.sensor
-        m = re.match(pattern, file_name)
-        if m:
-            self.satellite = m.groups()[0]
-        else:
-            raise ValueError('Cant get the satellite name from file name.')
+        # pattern = r'([A-Z0-9]+)_%s.*' % self.sensor
+        # m = re.match(pattern, file_name)
+        # if m:
+        #     self.satellite = m.groups()[0]
+        # else:
+        #     raise ValueError('Cant get the satellite name from file name.')
+        if "FY3D" in file_name:
+            self.satellite = 'FY3D'
 
     def set_ymd_hms(self):
         """
         use filename  set self.ymd self.hms
         """
-        file_name = os.path.basename(self.in_file)
-        pat = '\w{4}_\w{5}_\w{4}_L1_(\d{8})_(\d{4})_\w{5}_MS.HDF$'
-        g = re.match(pat, file_name)
-        if g:
-            self.ymd = g.group(1)
-            self.hms = g.group(2) + '00'
-        else:
-            raise ValueError('Cant get the ymdhms from file name.')
+        # file_name = os.path.basename(self.in_file)
+        # pat = '\w{4}_\w{5}_\w{4}_L1_(\d{8})_(\d{4})_\w{5}_MS.HDF$'
+        # g = re.match(pat, file_name)
+        # if g:
+        #     self.ymd = g.group(1)
+        #     self.hms = g.group(2) + '00'
+        # else:
+        #     raise ValueError('Cant get the ymdhms from file name.')
+        pass
 
     def set_file_attr(self):
         """
         get hdf5 file attrs self.file_attr
         :return:
         """
-        if self.resolution == 1000:
-            satellite_type1 = ['FY3A', 'FY3B', 'FY3C', 'FY3D']
-            if self.satellite in satellite_type1:
-                with h5py.File(self.in_file, 'r') as h5r:
-                    self.file_attr = attrs2dict(h5r.attrs)
-            else:
-                raise ValueError(
-                    'Cant read this satellite`s data.: {}'.format(self.satellite))
-        else:
-            raise ValueError(
-                "Cant handle this resolution: ".format(self.resolution))
+        # if self.resolution == 1000:
+        #     satellite_type1 = ['FY3A', 'FY3B', 'FY3C', 'FY3D']
+        #     if self.satellite in satellite_type1:
+        #         with h5py.File(self.in_file, 'r') as h5r:
+        #             self.file_attr = attrs2dict(h5r.attrs)
+        #     else:
+        #         raise ValueError(
+        #             'Cant read this satellite`s data.: {}'.format(self.satellite))
+        # else:
+        #     raise ValueError(
+        #         "Cant handle this resolution: ".format(self.resolution))
+        pass
 
     def set_data_shape(self):
         """

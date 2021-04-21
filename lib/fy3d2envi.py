@@ -16,6 +16,11 @@ import numpy as np
 from .load_mersi import ReadMersiL1
 
 
+def get_lons_lats(in_file, geo_file):
+    data_loader = ReadMersiL1(in_file, geo_file=geo_file)
+    return data_loader.get_longitude(), data_loader.get_latitude()
+
+
 def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_file, coef_txt_flag):
     """
     缺少5通道和32通道
@@ -167,6 +172,9 @@ def fy3d2modis_met(l1_file, geo_file, out_file, metadata_pickle):
 
     mirror = data_loader.get_mirror_side().reshape(-1).astype(np.int8)
     datas[:, 1] = mirror.reshape(-1)
+
+    datas = np.repeat(datas, 10, axis=0)
+    print(datas.shape)
 
     with open(metadata_pickle, 'rb') as f:
         metadatas = pickle.load(f)

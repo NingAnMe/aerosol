@@ -32,7 +32,7 @@ C  and size parameters estimates derived on a 10x10 (1-km) pixel spatial
 C  array.  The measured radiances in a wide spectral range (0.47-2.13
 C  microns) are inverted assuming a bi-lognormal size distribution.
 C  The volume and the mean particle size for each log-normal mode are
-C  determined. 
+C  determined.
 C
 C    This is the main program for the Direct Broadcast
 C    version of the MODIS Aerosol product (MODIS product MOD04).
@@ -118,7 +118,7 @@ c ... local arrays
       character*132 cfgname
       character*255 l1b_1km_hdr, l1b_hkm_hdr, l1b_qkm_hdr, l1b_geo_hdr, 
      +              mask_qa_hdr, mask_hdr
-      integer imonth(MAXNUM_SCANS), Data_Size(2)
+      integer imonth(MAXNUM_SCANS), Data_Size(2)  ! 最大SCANS设置为row
       character*80 bandnames_1km(INBAND),bnames_mask(NMASK),
      +             bandunits_1km(INBAND)
 
@@ -306,6 +306,7 @@ c ... Initialize return variables
       Success_Ret_Ocean=0
       Fail_Ret_Ocean=0
       NO_Ret_Ocean=0
+C anning NUMSQ控制循环的次数，NUMSQ=(data_size(1)/IGRIDX)*(data_size(2)/IGRIDY)
       NUMSQ = -1
       RTN_NCEP = -1
 
@@ -353,10 +354,12 @@ c ... Write out platform name
       print '('' For Satellite Platform '', a)',
      +              platform_name(1: len(platform_name))
 
+      print *, 0, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
 c ... Get debug value and processing interval information
       call db_mod04_get_rp(cfgname,debug,l1b_1km_hdr,l1b_hkm_hdr,
      +                     l1b_qkm_hdr,l1b_geo_hdr,mask_hdr,mask_qa_hdr,
      +                     beg_lin,nlins,beg_ele,neles)
+      print *, 1, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
 
 c ... Open needed files
       call db_mod04_file_open(cfgname,choice_flag,neles,l1b_1km_lun,
@@ -367,22 +370,26 @@ c ... Open needed files
      +                        handle_LUTMAP,handle_INSCI,handle_S,
      +                        handle_L,mod04_lun,hdr_lun,h_output,
      +                        RTN_NCEP)
+      print *, 2, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
 
-c ... Get file metadata information out of the header files
+c ... Get file metadata information out of the header files, nscans变为 200
       call db_mod04_Get_Metadata(l1b_1km_hdr,mask_hdr,
      +     nscans,npixels,datatype_1km,datat_mask,interleave_1km,
      +     interl_mask,resolution_1km,resol_mask,offset_1km,
      +     offset_mask,samples_1km,sampl_mask,lines_1km,lines_mask,
      +     error_1km,bands_1km,bands_mask,bandnames_1km,
      +     bnames_mask,bandunits_1km)
+      print *, 3, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
 
       call db_mod04_chk_input(nscans,npixels,beg_lin,nlins,beg_ele,
      +                        neles,beg_scan,ibes,out_lines_10km,
      +                        out_elements_10km)
+      print *, 4, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
 
 
 c ... NUMSCAN gives number of scans of a granule
-      numscan = nscans
+      !numscan = nscans
+       numscan = 1990
 
 c ... Fill in month array
       do i = 1, numscan
@@ -392,13 +399,15 @@ c ... Fill in month array
       Buf_Size1 = ISWATH
       Buf_Size2 = ILINE
 
+      print *, nscans,npixels,beg_lin,nlins,beg_ele, neles,beg_scan,ibes,out_lines_10km, out_elements_10km
+
 c ... Set_Counter_Ocean is set to read the table once as first entry
 c ...  into ocean algorithm
 
       Set_Counter_Ocean=0
       Set_Counter_Land=0
     
-      DO 9999 Iscan = 1,NUMSCAN
+      DO 9999 Iscan = 1,numscan
       
 c ...   Write debug info
         write( *, '(''Processing scan # '',i4)' ) Iscan
@@ -415,8 +424,7 @@ c ...   Get the swath metadata
         endif
 
 c ....  Only implement the code if day scan
-        print*, 'scan_flag'
-        print*, scan_flag
+        print*, 'scan_flag === ', scan_flag
         IF (scan_flag .eq. 1) THEN
 
 c        Set_Counter_Ocean_cloud is set to make cloud mask once for
@@ -450,7 +458,6 @@ C ...    Vanderlie  Cloud mask...........
 
 
          DO 9000 IDATA = 1,NUMSQ
-
            SDS_Tau_Land_Ocean_img(IDATA)=-9999
            SDS_Tau_Land_Ocean(IDATA)=-9999
 
@@ -518,7 +525,6 @@ c ...
            Qcontrol=-1
            IF(water.ge.100 .or. land.gt. 0) THEN
              IF(WATER .GE. 100) THEN
-
               Set_Counter_Ocean=Set_Counter_Ocean+1
               Set_Counter_Ocean_cloud=Set_Counter_Ocean_cloud+1
               call PROCESS_ocean(HANDLE_S,HANDLE_L,
@@ -685,7 +691,6 @@ c ...        endif for water at ocean
 
 c ...      endif for clouds
            ELSE
-
              NO_Ret_Land=NO_Ret_Land+1
              SDS_CLDFRC_land(IDATA)=-99
 
@@ -833,7 +838,7 @@ c!END
 C----------------------------------------------------------------------
 
       IMPLICIT  NONE
-
+C anning这个位置控制了每次反演跳过的步长
       INTEGER START_500,END_500,START_250,END_250,IDATA,START_1KM
       INTEGER END_1KM
       IF( IDATA .EQ.1) THEN
@@ -848,8 +853,9 @@ C----------------------------------------------------------------------
         END_500=END_500+20
         START_250=START_250+40
         END_250=END_250+40
-        START_1KM=START_1KM+10
-        END_1KM=END_1KM+10
+!       START_1KM=START_1KM+10
+        START_1KM=START_1KM+1
+        END_1KM=START_1KM+10
       ENDIF
 
       RETURN
