@@ -4,7 +4,6 @@
 # @Author  : NingAnMe <ninganme@qq.com>
 
 import sys
-import os
 import shutil
 import yaml
 import h5py
@@ -12,7 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from config import *
 from lib.path import get_aid_path
-from lib.fy3d2envi import fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo, fy3d2modis_met
+from lib.fy3d2envi import (fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_cloudmask_qa, fy3d2modis_geo,
+                           fy3d2modis_met, get_lons_lats)
 from lib.fy3abc2envi import (fy3abc2modis_1km, fy3abc2modis_cloudmask, fy3abc2modis_cloudmask_qa,
                              fy3abc2modis_geo, fy3abc2modis_met)
 from lib.utils import format_data
@@ -133,17 +133,20 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         add envi format to hdf5
         wangpeng 20191204
         """
-        envi_hdr = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
-        envi_img = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
-        envi_data = envi.open(envi_hdr, envi_img)
-        lats = envi_data.read_band(0)
-        lons = envi_data.read_band(1)
-        aod_550 = envi_data.read_band(2)
+        try:
+            envi_hdr = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.hdr' % (yyjjj, hhmm))
+            envi_img = os.path.join(out_dir_temp, 'a1.%s.%s.mod04.img' % (yyjjj, hhmm))
+            envi_data = envi.open(envi_hdr, envi_img)
+            lons, lats = get_lons_lats(in_file=l1_1000m, geo_file=l1_geo)
+            # lats = envi_data.read_band(0)
+            # lons = envi_data.read_band(1)
+            aod_550 = envi_data.read_band(2)
+        except EOFError as e:
+            print('read ERROR ：{}'.format(e))
+            return
 
-        from lib.utils import fill_points_2d_nan
-        aod_550[np.logical_or(aod_550 == 0.001, aod_550 == 0)] = np.nan
-        fill_points_2d_nan(aod_550)
-        aod_550[np.isnan(aod_550)] = -327.68
+        # aod_550[np.logical_or(aod_550 == 0.001, aod_550 == 0)] = np.nan
+        aod_550 = format_data(aod_550)
 
         #     dset_name = envi_data.metadata['band names']
 

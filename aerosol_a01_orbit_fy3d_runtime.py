@@ -15,11 +15,16 @@ from lib.load_mersi import ReadMersiL1
 from aod_h01_combine import combine_fy3d_1km_daily
 from aod_p01_plot_map_combine import plot_map
 
-FY3D_L1_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
-FY3D_GEO_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
-FY3D_CLOUD_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L2'
-FY3D_AOD_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/FY3D_MERSI_1KM'
-FY3D_TMP_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/TMP'
+# FY3D_L1_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
+# FY3D_GEO_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
+# FY3D_CLOUD_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L2'
+# FY3D_AOD_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/FY3D_MERSI_1KM'
+# FY3D_TMP_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/TMP'
+FY3D_L1_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/1000M'
+FY3D_GEO_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/GEO1K'
+FY3D_CLOUD_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/CLM'
+FY3D_AOD_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/IMP_MERSI_1KM'
+FY3D_TMP_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/TMP'
 
 LAT_RANGE = (17, 54)
 LON_RANGE = (73, 136)
@@ -40,14 +45,15 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
     y = ymd[:4]
     m = ymd[4:6]
     d = ymd[6:8]
-    path_dt = os.path.join(data_path, y, m, d)
+    # path_dt = os.path.join(data_path, y, m, d)  # 上海气象局归档路径格式
+    path_dt = os.path.join(data_path, y, ymd)  # 北京气象局归档路径格式
     print(f'INFO: get {key_word} path_dt: {path_dt}')
     if not os.path.isdir(path_dt):
         return files
     for filename in os.listdir(path_dt):
         hm = filename.split('_')[-3]
         ymdhm = ymd + hm
-        if key_word in filename:
+        if key_word in filename and filename[-3:].lower() == 'hdf':
             files[ymdhm] = os.path.join(path_dt, filename)
     return files
 
@@ -85,7 +91,7 @@ def get_l1_geo_cloud(dt_now: datetime):
     )
     for ymdhm in l1_files.keys():
 
-        if db.get(ymdhm + 'allnight') == 'True':    # 检测是否夜晚数据
+        if db.get(ymdhm + 'allnight') == 'True':  # 检测是否夜晚数据
             print(f'INFO：全部是夜晚数据，跳过 {ymdhm} ')
             continue
         if ymdhm not in geo_files or ymdhm not in cloud_files:  # 检测三个源文件是否同时存在
@@ -114,22 +120,22 @@ def plot_china_map(dt_now: datetime):
 
     daily_dir = os.path.join(FY3D_AOD_PATH, 'Daily', ymd)
     daily_file = os.path.join(daily_dir, f'FY3D_MERSI_GBAL_L2_AOD_MLT_GLL_{ymd}_POAD_1000M_MS.HDF')
-    if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
-        print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
-        return
+    # if os.path.isfile(daily_file) and db.get(ymd) == len(orbit_files):  # 已经绘图，切无变化
+    #     print(f'INFO: 已经绘图，且无数据变化，跳过 {ymd}')
+    #     return
     print(dt, dt + relativedelta(days=1) - relativedelta(minutes=1), orbit_dir)
     combine_fy3d_1km_daily(datetime_start=dt,
-                            datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
-                            l1_dir=orbit_dir,
-                            geo_dir=None,
-                            out_dir=daily_dir)
+                           datetime_end=dt + relativedelta(days=1) - relativedelta(minutes=1),
+                           l1_dir=orbit_dir,
+                           geo_dir=None,
+                           out_dir=daily_dir)
 
     plot_map(dt,
-                dt + relativedelta(days=1) - relativedelta(minutes=1),
-                data_dir=daily_dir,
-                out_dir=daily_dir,
-                data_type='FY3D_MERSI_1KM',
-                date_type="Daily")
+             dt + relativedelta(days=1) - relativedelta(minutes=1),
+             data_dir=daily_dir,
+             out_dir=daily_dir,
+             data_type='FY3D_MERSI_1KM',
+             date_type="Daily")
     db.set(ymd, len(orbit_files))
     db.dump()
 
@@ -140,16 +146,15 @@ def one_day(dt: datetime):
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = FY3D_TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymdhm[:8])
-
         result = aerosol_orbit(l1_1000m,
-                      l1_cloudmask,
-                      l1_geo,
-                      ymdhm + '00',
-                      dir_temp,
-                      out_dir,
-                      satellite,
-                      sensor,
-                      rewrite=False)
+                               l1_cloudmask,
+                               l1_geo,
+                               ymdhm + '00',
+                               dir_temp,
+                               out_dir,
+                               satellite,
+                               sensor,
+                               rewrite=False)
         if result == 'allnight':
             db.set(ymdhm + 'allnight', 'True')
             db.dump()

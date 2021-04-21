@@ -7,6 +7,8 @@ from datetime import datetime
 import argparse
 
 import numpy as np
+# import cv2
+# import scipy.signal as signal
 
 from lib.aod import AodCombine
 from lib.province_mask import get_province_mask
@@ -60,11 +62,11 @@ def plot_map(datetime_start, datetime_end, data_dir=None, out_dir=None, data_loa
             ticks = np.arange(0, 1.51, 0.3)
 
             if area_type == 'China':
+                mksize = 1
                 nanhai = True
             else:
+                mksize = 2
                 nanhai = False
-
-            mksize = 5
 
             areas = get_areas(area_type)
             mask = get_province_mask(areas)

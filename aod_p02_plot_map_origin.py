@@ -12,7 +12,7 @@ from pylab import subplots_adjust
 from DV.dv_map import dv_map
 
 from lib.path import make_sure_path_exists
-from lib.aod import AodFy3d1km, AodFy3d5km, AodModis
+from lib.aod import AodFy3d1km, AodFy3d5km, AodModis, AodImapp1km
 from lib.proj_aod import proj_china
 from lib.proj import fill_points_2d
 from lib.province_mask import get_province_mask
@@ -111,7 +111,8 @@ def plot_map_picture(value, longitude, latitude, title='', vmin=-np.inf, vmax=np
 
 
 def main(data_type, in_path, out_path, geo_path):
-    assert data_type in {'FY3D_MERSI_1KM', 'FY3D_MERSI_5KM', 'AQUA_MODIS_3KM', 'AQUA_MODIS_10KM'}, "{} 输入错误".format(data_type)
+    assert data_type in {'FY3D_MERSI_1KM', 'FY3D_MERSI_5KM', 'AQUA_MODIS_3KM', 'AQUA_MODIS_10KM',
+                         'IMP_MERSI_1KM'}, "{} 输入错误".format(data_type)
     if os.path.isfile(in_path):
         filelist = [in_path]
     elif os.path.isdir(in_path):
@@ -131,6 +132,8 @@ def main(data_type, in_path, out_path, geo_path):
         data_loader = AodFy3d1km
     elif data_type in {'FY3D_MERSI_5KM'}:
         data_loader = AodFy3d5km
+    elif data_type in {'IMP_MERSI_1KM'}:
+        data_loader = AodImapp1km
     elif data_type in {'AQUA_MODIS_3KM', 'AQUA_MODIS_10KM'}:
         data_loader = AodModis
     else:
@@ -165,17 +168,16 @@ def main(data_type, in_path, out_path, geo_path):
             ticks = np.arange(0, 1.51, 0.3)
 
             if area_type == 'China':
+                mksize = 1  # 改为1
                 nanhai = True
             else:
+                mksize = 2  # 改为1
                 nanhai = False
-
-            mksize = 5
 
             areas = get_areas(area_type)
             mask = get_province_mask(areas)
 
             valid = np.logical_and.reduce((data > vmin, data < vmax, mask))
-
             data_mask = data[valid]
             lons_mask = lons[valid]
             lats_mask = lats[valid]
@@ -185,7 +187,6 @@ def main(data_type, in_path, out_path, geo_path):
 
             longitude_range, latitude_range = get_area_range(area_type)
             box = [latitude_range[1], latitude_range[0], longitude_range[0], longitude_range[1]]
-
             plot_map_picture(data_mask, lons_mask, lats_mask, title=title, vmin=vmin, vmax=vmax,
                              areas=areas, box=box, ticks=ticks, file_out=out_file,
                              mksize=mksize, nanhai=nanhai)

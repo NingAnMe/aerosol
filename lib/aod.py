@@ -18,7 +18,7 @@ class AodImapp1km:
     def __init__(self, in_file, geo_file=None, geo_path=None):
         self.in_file = in_file  # FY3D_MERSI_ORBT_L2_AOD_MLT_NUL_20190916_0910_1000M_MS.HDF
         self.filename = os.path.basename(in_file)
-        self.geo_file = self.get_geo_file(geo_file, geo_path)  # FY3D_MERSI_GBAL_L1_20190916_0910_GEO1K_MS.HDF
+        self.geo_file = in_file
         ymd = self.filename.split('_')[7]
         hm = self.filename.split('_')[8]
         self.dt = datetime.strptime(ymd+hm, '%Y%m%d%H%M')
@@ -57,8 +57,7 @@ class AodImapp1km:
         return lons, lats
 
     def get_aod(self):
-        return self.get_hdf5_data(self.in_file, 'AOT_Land', 1, 0, (0, 1500))
-
+        return self.get_hdf5_data(self.in_file, 'AOT_Land', 1, 0, (0, 1.5))
 
 
 class AodFy3d1km:

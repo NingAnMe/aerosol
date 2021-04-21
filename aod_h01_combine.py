@@ -146,7 +146,10 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
 
             file_loader = AodImapp1km(file_, geo_file=file_)
             aod = file_loader.get_aod()
+
             lons, lats = file_loader.get_lon_lat()
+            print('lons', np.min(lons), np.max(lons), np.mean(lons))
+            print('lats', np.min(lats), np.max(lats), np.mean(lats))
             print(np.nanmin(aod), np.nanmax(aod), np.nanmean(aod))
             if aod is None:
                 print('aod 为 None: {}'.format(file_))
@@ -157,7 +160,7 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
             ii, jj = proj.lonslats2ij(lons, lats)
             valid = np.logical_and.reduce((ii >= 0, ii < proj.row,
                                            jj >= 0, jj < proj.col,
-                                           aod > 0, aod < 1.5,
+                                           aod > 0, aod < 2.0,
                                            ))
             if valid.sum() == 0:
                 print('valid.size == 0, continue')

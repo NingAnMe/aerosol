@@ -6,6 +6,7 @@ import inspect
 from scipy.interpolate import griddata
 from lib.load_mersi import ReadMersiL1
 import numpy as np
+from PIL import Image
 
 
 def get_function_name():
@@ -13,28 +14,19 @@ def get_function_name():
     return inspect.stack()[1][3]
 
 
-def format_data(data, lons, lats, l1_1000m, l1_geo):
+def format_data(data):
     """
     变为网格数据，无效值填充为0
     :param data:
-    :param lons:
-    :param lats:
-    :param l1_1000m:
-    :param l1_geo:
     :return:
     """
-    loader = ReadMersiL1(l1_1000m, geo_file=l1_geo)
-    lons_new = loader.get_longitude()
-    lats_new = loader.get_latitude()
+    print(data.shape)
+    image = Image.fromarray(data)
+    image = image.resize((2048, 2000), resample=Image.NEAREST)
+    data = np.array(image)
+    print(data.shape)
 
-    data = data.reshape(-1)
-    lons = lons.reshape(-1, 1)
-    lats = lats.reshape(-1, 1)
-    points = np.concatenate((lons, lats), axis=0)
-
-    data_grid = griddata(points, data, (lons_new, lats_new), fill_value=0)
-
-    return data_grid, lons_new, lats_new
+    return data
 
 
 def fill_2d(array2d, mask, use_from):

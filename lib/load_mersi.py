@@ -97,17 +97,18 @@ class ReadMersiL1(ReadL1):
         get hdf5 file attrs self.file_attr
         :return:
         """
-        if self.resolution == 1000:
-            satellite_type1 = ['FY3A', 'FY3B', 'FY3C', 'FY3D']
-            if self.satellite in satellite_type1:
-                with h5py.File(self.in_file, 'r') as h5r:
-                    self.file_attr = attrs2dict(h5r.attrs)
-            else:
-                raise ValueError(
-                    'Cant read this satellite`s data.: {}'.format(self.satellite))
-        else:
-            raise ValueError(
-                "Cant handle this resolution: ".format(self.resolution))
+        # if self.resolution == 1000:
+        #     satellite_type1 = ['FY3A', 'FY3B', 'FY3C', 'FY3D']
+        #     if self.satellite in satellite_type1:
+        #         with h5py.File(self.in_file, 'r') as h5r:
+        #             self.file_attr = attrs2dict(h5r.attrs)
+        #     else:
+        #         raise ValueError(
+        #             'Cant read this satellite`s data.: {}'.format(self.satellite))
+        # else:
+        #     raise ValueError(
+        #         "Cant handle this resolution: ".format(self.resolution))
+        pass
 
     def set_data_shape(self):
         """

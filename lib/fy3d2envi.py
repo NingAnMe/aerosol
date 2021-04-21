@@ -16,6 +16,11 @@ import numpy as np
 from .load_mersi import ReadMersiL1
 
 
+def get_lons_lats(in_file, geo_file):
+    data_loader = ReadMersiL1(in_file, geo_file=geo_file)
+    return data_loader.get_longitude(), data_loader.get_latitude()
+
+
 def fy3d2modis_1km(in_file, geo_file, out_file, metadata_pickle, vis_file, ir_file, coef_txt_flag):
     """
     缺少5通道和32通道
