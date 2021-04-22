@@ -65,9 +65,13 @@ def check_china(l1_file: str, geo_file: str, ymdhm: str):
     cache = db.get(ymdhm + 'china')
     if cache:
         return cache
-    rd = ReadMersiL1(l1_file, geo_file=geo_file)
-    lons = rd.get_longitude()
-    lats = rd.get_latitude()
+    try:
+        rd = ReadMersiL1(l1_file, geo_file=geo_file)
+        lons = rd.get_longitude()
+        lats = rd.get_latitude()
+    except OSError as why:
+        print(why)
+        return 'False'
     china = np.logical_and.reduce((lats > LAT_RANGE[0], lats < LAT_RANGE[1],
                                    lons > LON_RANGE[0], lons < LON_RANGE[1]))
     china_sum = np.sum(china)
