@@ -1,4 +1,4 @@
-export MODIS_L2_HOME=/home/shanghai_test/aerosol/imapp
+export MODIS_L2_HOME=/home/aodo3/FY3D_AEROSOL/aod/imapp
 #export MODIS_L2_HOME=/home/kts_project_v1/shanghai/aerosol/imapp
 export HDF_HOME=${MODIS_L2_HOME}/hdf
 export LOCAL_ANC_DIR=${MODIS_L2_HOME}/ancillary
