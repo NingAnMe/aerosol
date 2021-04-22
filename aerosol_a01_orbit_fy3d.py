@@ -141,7 +141,7 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             # lats = envi_data.read_band(0)
             # lons = envi_data.read_band(1)
             aod_550 = envi_data.read_band(2)
-        except EOFError as e:
+        except Exception as e:
             print('read ERROR ：{}'.format(e))
             return
 
