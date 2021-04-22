@@ -24,7 +24,7 @@ warnings.filterwarnings('ignore')
 
 
 def plot_map(datetime_start, datetime_end, data_dir=None, out_dir=None, data_loader=AodCombine,
-             data_type=None, date_type=None):
+             data_type=None, date_type=None, deploy=False):
     print("plot_map")
     print("datetime_start === {}".format(datetime_start))
     print("datetime_end === {}".format(datetime_end))
@@ -48,7 +48,17 @@ def plot_map(datetime_start, datetime_end, data_dir=None, out_dir=None, data_loa
         for area_type in ["China", "YRD"]:
             loader = data_loader(in_file)
             title = get_title(data_type, date_type, loader.dt, area_type)
-            filename = "_".join(title.split()) + '.png'
+            title_split = title.split()
+            if deploy:
+                # obs_satfy3_aod_yrd_x_YYYYMMDDHHmmss_000_x_x_l2.jpg
+                # obs_satfy3_aod_CHN_x_YYYYMMDDHHmmss_000_x_x_l2.jpg
+                # 20210112_FY3D_MERSI_AOD(550nm)_over_YRD (6)
+                if area_type == "China":
+                    filename = 'obs_satfy3_aod_CHN_x_{}000000_000_x_x_l2.jpg'.format(title_split[0])
+                else:
+                    filename = 'obs_satfy3_aod_yrd_x_{}000000_000_x_x_l2.jpg'.format(title_split[0])
+            else:
+                filename = "_".join(title_split) + '.png'
             out_file = os.path.join(out_dir, filename)
 
             data = loader.get_aod()
