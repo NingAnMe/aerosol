@@ -50,40 +50,60 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
     print(f'INFO: get {key_word} path_dt: {path_dt}')
     if not os.path.isdir(path_dt):
         return files
-    for filename in os.listdir(path_dt):
-        hm = filename.split('_')[-3]
+    filenames = os.listdir(path_dt)
+    filenames.sort()
+    for filename in filenames:
+        hm = str(filename.split('_')[-3])
         ymdhm = ymd + hm
         if key_word in filename and filename[-3:].lower() == 'hdf':
             files[ymdhm] = os.path.join(path_dt, filename)
     return files
 
 
-def check_china(l1_file: str, geo_file: str, ymdhm: str):
+def check_china_day(l1_file: str, geo_file: str, ymdhm: str):
     """
-    检查数据是否经过中国区
+    检查数据是否有经过中国区的白天数据
     """
-    cache = db.get(ymdhm + 'china')
+    cache = db.get(ymdhm + 'china_day')
     if cache:
         return cache
     try:
         rd = ReadMersiL1(l1_file, geo_file=geo_file)
         lons = rd.get_longitude()
         lats = rd.get_latitude()
+        sz = rd.get_solar_zenith()
+
+        china_day = np.logical_and.reduce((lats > LAT_RANGE[0], lats < LAT_RANGE[1],
+                                           lons > LON_RANGE[0], lons < LON_RANGE[1],
+                                           sz > 0, sz < 75,))
+        china_day_sum = np.sum(china_day)
+        print(f"{l1_file} china_day： {china_day_sum}")
+        if china_day_sum == 0:
+            db.set(ymdhm + 'china_day', 'False')
+            db.dump()
+            return 'False'
+        else:
+            db.set(ymdhm + 'china_day', 'True')
+            db.dump()
+
+            # 判断是否经过长三角
+            yrd_day = np.logical_and.reduce((lats > 26, lats < 36,
+                                             lons > 114, lons < 123,
+                                             sz > 0, sz < 75,))
+            yrd_day_sum = np.sum(yrd_day)
+            print(f"{l1_file} yrd_day {yrd_day_sum}")
+            if china_day_sum == 0:
+                db.set(ymdhm + 'yrd_day', 'False')
+                db.dump()
+            else:
+                db.set(ymdhm + 'yrd_day', 'True')
+                db.dump()
+
+            return 'True'
+
     except OSError as why:
         print(why)
         return 'False'
-    china = np.logical_and.reduce((lats > LAT_RANGE[0], lats < LAT_RANGE[1],
-                                   lons > LON_RANGE[0], lons < LON_RANGE[1]))
-    china_sum = np.sum(china)
-    print(f"{l1_file} {china_sum}")
-    if china_sum == 0:
-        db.set(ymdhm + 'china', 'False')
-        db.dump()
-        return 'False'
-    else:
-        db.set(ymdhm + 'china', 'True')
-        db.dump()
-        return 'True'
 
 
 def get_l1_geo_cloud(dt_now: datetime):
@@ -94,20 +114,17 @@ def get_l1_geo_cloud(dt_now: datetime):
         f'{dt_now}: l1_files {len(l1_files)} geo_files {len(geo_files)} cloud_files {len(cloud_files)}'
     )
     for ymdhm in l1_files.keys():
-
-        if db.get(ymdhm + 'allnight') == 'True':  # 检测是否夜晚数据
-            print(f'INFO：全部是夜晚数据，跳过 {ymdhm} ')
-            continue
         if ymdhm not in geo_files or ymdhm not in cloud_files:  # 检测三个源文件是否同时存在
             print(f'Warning: 1000m geo cloud 文件不同时存在，跳过 {ymdhm}')
             continue
         l1_file = l1_files[ymdhm]
         geo_file = geo_files[ymdhm]
         cloud_file = cloud_files[ymdhm]
-        if check_china(l1_file, geo_file, ymdhm) == 'True':  # 检测是否经过中国区
+
+        if check_china_day(l1_file, geo_file, ymdhm) == 'True':  # 检测是否经过中国区的白天数据
             yield l1_file, geo_file, cloud_file, ymdhm
         else:
-            print(f'INFO：没有中国区数据，跳过  {ymdhm}')
+            print(f'INFO：没有经过中国区的白天数据，跳过  {ymdhm}')
 
 
 def plot_china_map(dt_now: datetime):
@@ -150,18 +167,24 @@ def one_day(dt: datetime):
     for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
         dir_temp = FY3D_TMP_PATH
         out_dir = os.path.join(FY3D_AOD_PATH, 'Orbit', ymdhm[:8])
-        result = aerosol_orbit(l1_1000m,
-                               l1_cloudmask,
-                               l1_geo,
-                               ymdhm + '00',
-                               dir_temp,
-                               out_dir,
-                               satellite,
-                               sensor,
-                               rewrite=False)
-        if result == 'allnight':
-            db.set(ymdhm + 'allnight', 'True')
-            db.dump()
+        aerosol_orbit(l1_1000m,
+                      l1_cloudmask,
+                      l1_geo,
+                      ymdhm + '00',
+                      dir_temp,
+                      out_dir,
+                      satellite,
+                      sensor,
+                      rewrite=False)
+
+
+def fy3d_statistic(dt: datetime):
+    with open('statistic_china.txt', 'w') as f_china:
+        with open('statistics_yrd.txt', 'w') as f_yrd:
+            for l1_1000m, l1_geo, l1_cloudmask, ymdhm in get_l1_geo_cloud(dt):
+                f_china.write('{}\n'.format(ymdhm))
+                if db.get(ymdhm + 'yrd_day') == 'True':
+                    f_yrd.write('{}\n'.format(ymdhm))
 
 
 def parse_args():
@@ -169,6 +192,7 @@ def parse_args():
     parser.add_argument('--date_start', help='date  YYYYMMDD')
     parser.add_argument('--date_end', help='date  YYYYMMDD')
     parser.add_argument('--port', default=54321, help='bind port')
+    parser.add_argument('--statistic', default=False, type=bool, help='statistic')
     return parser.parse_args()
 
 
@@ -182,6 +206,14 @@ def main():
     except OSError:
         print(f"ERROR: 启动失败，端口被占用 {args.port}")
         exit(-1)
+
+    if args.statistic:
+        dt_start = datetime.strptime(args.date_start, "%Y%m%d")
+        dt_end = datetime.strptime(args.date_end, "%Y%m%d")
+        while dt_start <= dt_end:
+            fy3d_statistic(dt_start)
+            dt_start += relativedelta(days=1)
+        exit(0)
 
     if args.date_start is not None or args.date_end is not None:
         dt_start = datetime.strptime(args.date_start, "%Y%m%d")
