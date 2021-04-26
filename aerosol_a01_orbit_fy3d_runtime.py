@@ -156,7 +156,8 @@ def plot_china_map(dt_now: datetime):
              data_dir=daily_dir,
              out_dir=daily_dir,
              data_type='FY3D_MERSI_1KM',
-             date_type="Daily")
+             date_type="Daily",
+             deploy=True)
     db.set(ymd, len(orbit_files))
     db.dump()
 
