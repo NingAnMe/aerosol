@@ -17,7 +17,7 @@ def _idw(data_grid, lons_grid, lats_grid, lons_origin, lats_origin):
     index_valid = np.logical_and(data_grid > 0, data_grid < 1.5)
     valid_count = index_valid[0].sum()
     print(f'valid count: {valid_count}')
-    if valid_count >= 21:
+    if valid_count >= 15:
         value = data_grid[index_valid]
         lons = lons_origin[index_valid]
         lats = lats_origin[index_valid]
@@ -31,7 +31,7 @@ def _idw(data_grid, lons_grid, lats_grid, lons_origin, lats_origin):
         lons_grid = lons_grid.reshape(-1, 1)
         lats_grid = lats_grid.reshape(-1, 1)
         lons_lats = np.concatenate((lons_grid, lats_grid), axis=1)
-        values = idw_tree(lons_lats, 21)
+        values = idw_tree(lons_lats, 15)
         values = values.reshape(shape)
         return values
 
