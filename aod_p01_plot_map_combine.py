@@ -72,7 +72,7 @@ def plot_map(datetime_start, datetime_end, data_dir=None, out_dir=None, data_loa
             ticks = np.arange(0, 1.51, 0.3)
 
             if area_type == 'China':
-                mksize = 1
+                mksize = 0.5
                 nanhai = True
             else:
                 mksize = 2
