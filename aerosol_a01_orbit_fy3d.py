@@ -148,12 +148,12 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             lons, lats = get_lons_lats(in_file=l1_1000m, geo_file=l1_geo)
             lats_o = envi_data.read_band(0)
             lons_o = envi_data.read_band(1)
-            aod_550 = envi_data.read_band(2)
+            aod_550_o = envi_data.read_band(2)
         except Exception as e:
             print('read ERROR ：{}'.format(e))
             return
 
-        aod_550 = format_data(aod_550, lons, lats, lons_o, lats_o)
+        aod_550 = format_data(aod_550_o, lons, lats, lons_o, lats_o)
 
         #     dset_name = envi_data.metadata['band names']
 
