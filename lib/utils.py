@@ -46,22 +46,25 @@ def format_data(data, lons_grid, lats_grid, lons_origin, lats_origin):
     :param lats_origin:
     :return:
     """
-    data_new = _idw(data, lons_grid, lats_grid, lons_origin, lats_origin)
+    try:
+        data_new = _idw(data, lons_grid, lats_grid, lons_origin, lats_origin)
 
-    image = Image.fromarray(data)
-    image = image.resize((2048, 2000), resample=Image.NEAREST)
-    data = np.array(image)
-    print(data.shape)
+        image = Image.fromarray(data)
+        image = image.resize((2048, 2000), resample=Image.NEAREST)
+        data = np.array(image)
+        print(data.shape)
 
-    if data_new is not None:
-        index_invalid = np.logical_or(data < 0, data > 1.5)
-        data[index_invalid] = np.nan
-        index_valid = np.logical_and(data > 0, data < 1.5)
-        data[index_valid] = data_new[index_valid]
-    else:
+        if data_new is not None:
+            index_invalid = np.logical_or(data < 0, data > 1.5)
+            data[index_invalid] = np.nan
+            index_valid = np.logical_and(data > 0, data < 1.5)
+            data[index_valid] = data_new[index_valid]
+        else:
+            data[:] = -327.68
+
+        data[np.isnan(data)] = -327.68
+    except:
         data[:] = -327.68
-
-    data[np.isnan(data)] = -327.68
 
     return data
 
