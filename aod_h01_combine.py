@@ -183,7 +183,7 @@ def combine_fy3d_1km_daily(datetime_start=None, datetime_end=None,
         # 新的网格的经纬度
         lons_grid, lats_grid = proj.grid_lonslats()
         make_sure_path_exists(out_dir)
-        print((aod_mean != -999).sum())
+        print(f"data to hdf: {(aod_mean != -999).sum()}")
         data_write = {
             'Optical_Depth_Land_And_Ocean': aod_mean,
             'Longitude': lons_grid,
@@ -261,7 +261,7 @@ def combine(frequency='Monthly', datetime_start=None, datetime_end=None,
             continue
 
         make_sure_path_exists(out_dir)
-        print((aod_mean != -999).sum())
+        print(f"data to hdf: {(aod_mean != -999).sum()}")
         data_write = {
             'Optical_Depth_Land_And_Ocean': aod_mean,
             'Longitude': lons,

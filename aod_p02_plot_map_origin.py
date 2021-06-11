@@ -105,7 +105,10 @@ def plot_map_picture(value, longitude, latitude, title='', vmin=-np.inf, vmax=np
     p.w_title = p.suptitle(title, fontsize=14, y=0.97)
 
     # save
-    p.savefig(file_out, dpi=200)
+    if nanhai:
+        p.savefig(file_out, dpi=200)
+    else:
+        p.savefig(file_out, dpi=100)
     print(">>> {}".format(file_out))
     p.clean()
 

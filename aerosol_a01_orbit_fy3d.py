@@ -15,7 +15,7 @@ from lib.fy3d2envi import (fy3d2modis_1km, fy3d2modis_cloudmask, fy3d2modis_clou
                            fy3d2modis_met, get_lons_lats)
 from lib.fy3abc2envi import (fy3abc2modis_1km, fy3abc2modis_cloudmask, fy3abc2modis_cloudmask_qa,
                              fy3abc2modis_geo, fy3abc2modis_met)
-from lib.utils import format_data
+from lib.utils import format_data, run_cmd
 from spectral.io import envi
 from datetime import datetime
 import matplotlib as mpl
@@ -133,7 +133,10 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
         cmd = 'cd {out_dir} && run_mersi_aerosol.csh aqua 1 a1.{yyjjj}.{hhmm}.1000m.hdf {out_dir}'.format(**format_datetime)
         
         print('cmd :{}'.format(cmd))
-        os.system(cmd)
+
+        code, msg = run_cmd(cmd_string=cmd, timeout=40)
+        print(code, msg)
+        # os.system(cmd)
         print('>>> success: {}'.format(out_dir_temp))
 
         """
@@ -149,11 +152,14 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             lats_o = envi_data.read_band(0)
             lons_o = envi_data.read_band(1)
             aod_550_o = envi_data.read_band(2)
+            if np.sum(aod_550_o > 0) <= 0:  # TODO 临时代码，需要删除
+                print(f'AOD有效数据不足1个：{l1_1000m}')
+                return
         except Exception as e:
             print('read ERROR ：{}'.format(e))
             return
 
-        aod_550 = format_data(aod_550_o, lons, lats, lons_o, lats_o)
+        # aod_550 = format_data(aod_550_o, lons, lats, lons_o, lats_o)
 
         #     dset_name = envi_data.metadata['band names']
 
@@ -161,9 +167,9 @@ def aerosol_orbit(l1_1000m, l1_cloudmask, l1_geo, yyyymmddhhmmss, dir_temp, out_
             os.makedirs(out_dir)
 
         with h5py.File(out_h5file, 'w') as h5w:
-            h5w.create_dataset('/Geolocation/Latitude', data=lats, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('/Geolocation/Longitude', data=lons, compression='gzip', compression_opts=5, shuffle=True)
-            h5w.create_dataset('AOT_Land', data=aod_550, compression='gzip', compression_opts=5,
+            h5w.create_dataset('/Geolocation/Latitude', data=lats_o, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('/Geolocation/Longitude', data=lons_o, compression='gzip', compression_opts=5, shuffle=True)
+            h5w.create_dataset('AOT_Land', data=aod_550_o, compression='gzip', compression_opts=5,
                                shuffle=True)
             debug_data = False
             if debug_data:

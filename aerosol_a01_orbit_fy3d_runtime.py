@@ -10,12 +10,12 @@ import argparse
 import numpy as np
 import pickledb
 
-from aerosol_a01_orbit_fy3d import aerosol_orbit
+from aerosol_a01_orbit_fy3d_csj import aerosol_orbit
 from lib.load_mersi import ReadMersiL1
 from aod_h01_combine import combine_fy3d_1km_daily
 from aod_p01_plot_map_combine import plot_map
 
-DEPLOY = True
+DEPLOY = False
 
 if DEPLOY:
     FY3D_L1_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L1'
@@ -23,10 +23,16 @@ if DEPLOY:
     FY3D_CLOUD_PATH = '/home/aodo3/CIMISS_DATA/fy3d/L2'
     FY3D_AOD_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/FY3D_MERSI_1KM'
     FY3D_TMP_PATH = '/home/aodo3/FY3D_AEROSOL_DATA/TMP'
+# else:
+#     FY3D_L1_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/1000M'
+#     FY3D_GEO_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/GEO1K'
+#     FY3D_CLOUD_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/CLM'
+#     FY3D_AOD_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/IMP_MERSI_1KM'
+#     FY3D_TMP_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/TMP'
 else:
-    FY3D_L1_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/1000M'
-    FY3D_GEO_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/GEO1K'
-    FY3D_CLOUD_PATH = '/DISK/DATA02/PROJECT/SourceData/FY3D/CLM'
+    FY3D_L1_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/2FY3D-MERSI-L1-ORBT-1000M'
+    FY3D_GEO_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/2FY3D-MERSI-L1-ORBT-GEO1K'
+    FY3D_CLOUD_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/2FY3D_MERSI_L2_CLM-ORBT-1000M'
     FY3D_AOD_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/IMP_MERSI_1KM'
     FY3D_TMP_PATH = '/DISK/DATA02/PROJECT/SourceData/ShangHai/AOD/TMP'
 
@@ -52,7 +58,15 @@ def get_files(dt_now: datetime, data_path: str, key_word: str):
     if DEPLOY:
         path_dt = os.path.join(data_path, y, m, d)  # 上海气象局归档路径格式
     else:
-        path_dt = os.path.join(data_path, y, ymd)  # 北京气象局归档路径格式
+        # path_dt = os.path.join(data_path, y, ymd)  # 北京气象局归档路径格式
+        # path_dt = data_path  # 上海提供的格式
+        # 验证数据的数据格式
+        if '2FY3D-MERSI-L1-ORBT-GEO1K' in data_path or '2FY3D-MERSI-L1-ORBT-1000M' in data_path:
+            path_dt = os.path.join(data_path, ymd)
+        elif '2FY3D_MERSI_L2_CLM-ORBT-1000M' in data_path:
+            path_dt = data_path
+        else:
+            raise KeyError('数据目录和数据获取错误')
     print(f'INFO: get {key_word} path_dt: {path_dt}')
     if not os.path.isdir(path_dt):
         return files
@@ -196,9 +210,9 @@ def fy3d_statistic(dt: datetime):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a segmentor')
-    parser.add_argument('--date_start', help='date  YYYYMMDD')
-    parser.add_argument('--date_end', help='date  YYYYMMDD')
-    parser.add_argument('--port', default=54321, help='bind port')
+    parser.add_argument('--date_start', '-s', help='date  YYYYMMDD')
+    parser.add_argument('--date_end', '-e', help='date  YYYYMMDD')
+    parser.add_argument('--port', '-p', default=54321, help='bind port')
     parser.add_argument('--statistic', default=False, type=bool, help='statistic')
     return parser.parse_args()
 

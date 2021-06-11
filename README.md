@@ -53,3 +53,10 @@ install_dbvm.bash
 ```shell script
 dbvm_test.bash
 ```
+
+
+#### 小赖版本
+source ./env/imapp.bash_env
+
+将aod_b01_aerosol.exe放到 ./script 文件夹下
+将lib 和lib64 解压到 ./env/lib 和./env/lib64

@@ -72,10 +72,10 @@ def plot_map(datetime_start, datetime_end, data_dir=None, out_dir=None, data_loa
             ticks = np.arange(0, 1.51, 0.3)
 
             if area_type == 'China':
-                mksize = 0.5
+                mksize = 0.1
                 nanhai = True
             else:
-                mksize = 2
+                mksize = 0.3
                 nanhai = False
 
             areas = get_areas(area_type)

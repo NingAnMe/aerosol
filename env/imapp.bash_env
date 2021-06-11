@@ -1,0 +1,5 @@
+export AEROSOL_HOME=/home/aodo3/FY3D_AEROSOL/aod
+#export AEROSOL_HOME=/home/kts_project_v1/shanghai/aerosol
+export AEROSOL_L2_BIN=${AEROSOL_HOME}/script
+export PATH=.:${AEROSOL_L2_BIN}:${PATH}
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AEROSOL_HOME}/env/lib64:${AEROSOL_HOME}/env/lib

@@ -108,5 +108,7 @@ test_data/
 # imapp
 imapp/
 imapp.zip
+script/aod_b01_aerosol.exe
 .history/
 .vscode/
+TEST_DATA_FY3D_MERSI
